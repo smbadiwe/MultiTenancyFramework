@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MVC5", "MVC5", "{FA1A9E05-5E72-4543-80E5-55326FA506D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.Core", "MultiTenancyFramework.Core\MultiTenancyFramework.Core.csproj", "{1EFEECF2-0332-4B84-8BD3-772F59B0B579}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.Mvc", "MVC5\MultiTenancyFramework.Mvc\MultiTenancyFramework.Mvc.csproj", "{8DA996FF-242D-41EB-B139-A73165874ABB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.NHibernate", "MultiTenancyFramework.NHibernate\MultiTenancyFramework.NHibernate.csproj", "{85D5D252-5629-45E1-A83E-2187B8877806}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.SimpleInjector", "MultiTenancyFramework.SimpleInjector\MultiTenancyFramework.SimpleInjector.csproj", "{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.Mvc.NHibernate", "MVC5\MultiTenancyFramework.Mvc.NHibernate\MultiTenancyFramework.Mvc.NHibernate.csproj", "{EC2F859B-110C-4E6A-9506-D917906991D2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1EFEECF2-0332-4B84-8BD3-772F59B0B579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EFEECF2-0332-4B84-8BD3-772F59B0B579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EFEECF2-0332-4B84-8BD3-772F59B0B579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EFEECF2-0332-4B84-8BD3-772F59B0B579}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DA996FF-242D-41EB-B139-A73165874ABB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DA996FF-242D-41EB-B139-A73165874ABB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DA996FF-242D-41EB-B139-A73165874ABB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DA996FF-242D-41EB-B139-A73165874ABB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85D5D252-5629-45E1-A83E-2187B8877806}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85D5D252-5629-45E1-A83E-2187B8877806}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85D5D252-5629-45E1-A83E-2187B8877806}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85D5D252-5629-45E1-A83E-2187B8877806}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC2F859B-110C-4E6A-9506-D917906991D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC2F859B-110C-4E6A-9506-D917906991D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC2F859B-110C-4E6A-9506-D917906991D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC2F859B-110C-4E6A-9506-D917906991D2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8DA996FF-242D-41EB-B139-A73165874ABB} = {FA1A9E05-5E72-4543-80E5-55326FA506D7}
+		{EC2F859B-110C-4E6A-9506-D917906991D2} = {FA1A9E05-5E72-4543-80E5-55326FA506D7}
+	EndGlobalSection
+EndGlobal
