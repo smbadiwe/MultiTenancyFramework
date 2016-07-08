@@ -62,7 +62,7 @@ namespace MultiTenancyFramework
                 var privilegesInDb = DataCacheMVC.AllPrivileges;
                 if (theUserRoles != null && theUserRoles.Count > 0)
                 {
-                    Privilege privilege;
+                    ActionAccessPrivilege privilege;
                     string roleNames = string.Empty;
                     foreach (var userRole in theUserRoles)
                     {
@@ -71,7 +71,7 @@ namespace MultiTenancyFramework
                         {
                             if (privilegesInDb.TryGetValue(priv, out privilege) && privilege != null)
                             {
-                                list.Add(privilege as ActionAccessPrivilege);
+                                list.Add(privilege);
                             }
                         }
                     }

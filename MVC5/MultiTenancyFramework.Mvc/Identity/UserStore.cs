@@ -415,7 +415,7 @@ namespace MultiTenancyFramework.Mvc.Identity
 
             if (theUserRoles != null && theUserRoles.Count > 0)
             {
-                Privilege privilege;
+                ActionAccessPrivilege privilege;
                 var functionsInDb = DataCacheMVC.AllPrivileges;
                 foreach (var userRole in theUserRoles)
                 {
@@ -455,7 +455,7 @@ namespace MultiTenancyFramework.Mvc.Identity
 
             if (theUserRoles != null && theUserRoles.Count > 0)
             {
-                Privilege privilege;
+                ActionAccessPrivilege privilege;
                 var functionsInDb = DataCacheMVC.AllPrivileges;
                 foreach (var userRole in theUserRoles)
                 {

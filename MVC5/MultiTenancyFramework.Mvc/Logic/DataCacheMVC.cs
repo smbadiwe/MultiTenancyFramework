@@ -31,14 +31,14 @@ namespace MultiTenancyFramework.Mvc.Logic
             }
         }
 
-        public static Dictionary<long, Privilege> AllPrivileges
+        public static Dictionary<long, ActionAccessPrivilege> AllPrivileges
         {
             get
             {
-                var allPrivileges = HttpRuntime.Cache[ALL_PRIVILEGES] as Dictionary<long, Privilege>;
+                var allPrivileges = HttpRuntime.Cache[ALL_PRIVILEGES] as Dictionary<long, ActionAccessPrivilege>;
                 if (allPrivileges == null || allPrivileges.Count == 0)
                 {
-                    var _dao = MyServiceLocator.GetInstance<IPrivilegeDAO<Privilege>>();
+                    var _dao = MyServiceLocator.GetInstance<IPrivilegeDAO<ActionAccessPrivilege>>();
                     allPrivileges = _dao.RetrieveAll()?.ToDictionary(x => x.Id);
                     HttpRuntime.Cache[ALL_PRIVILEGES] = allPrivileges;
                 }

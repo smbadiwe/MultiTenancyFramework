@@ -43,6 +43,15 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         public static Action<ISessionFactory> SessionFactoryCreated;
 
         /// <summary>
+        /// At some point, we'll scan for the assemblies where entities are defined. So, supply these assemblies.
+        /// (Just the assembly names).
+        /// <para>Alternatively, you can provide these assembly names in config file as a comma-separated list:
+        /// AppSettings key should be "EntityAssemblies"
+        /// </para> 
+        /// </summary>
+        public static Func<string[]> AddEntityAssemblies;
+
+        /// <summary>
         /// Use thi method to set DAO.EntityName when it's possible there is a subtype of the baseType 
         /// in the other entity assemblies
         /// </summary>
@@ -60,7 +69,10 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                     }
                 }
             }
-            foreach (var assemblyName in Utilities.EntityAssemblies.Where(x => x.IsNotContainedIn(AssemblyClasses.Keys)))
+            var entityAssemblies = AddEntityAssemblies?.Invoke() ?? new string[0];
+            var allEntityAssemblies = new HashSet<string>(Utilities.EntityAssemblies.Union(entityAssemblies));
+            allEntityAssemblies.Add("MultiTenancyFramework.Core"); //The only ony we're sure of.
+            foreach (var assemblyName in allEntityAssemblies.Where(x => x.IsNotContainedIn(AssemblyClasses.Keys)))
             {
                 try
                 {
@@ -362,7 +374,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 var otherMappingFiles = AppDomain.CurrentDomain.GetAssemblies().Where(x => x.GetName().Name.EndsWith(".NHibernate"));
                 if (otherMappingFiles.Any())
                 {
-                    foreach  (var file in otherMappingFiles)
+                    foreach (var file in otherMappingFiles)
                     {
                         mappingFiles.Add(file.GetName().Name);
                     }
@@ -386,7 +398,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                             .Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
                     }
                 }
-                
+
                 cfg.BeforeBindMapping += (sender, args) => args.Mapping.autoimport = false;
             }
 

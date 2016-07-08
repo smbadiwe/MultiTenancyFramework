@@ -109,6 +109,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Queries\GetActionAccessPrivilegesByGridSearchParamsQuery.cs" />
     <Compile Include="Data\Queries\GetAreasQuery.cs" />
     <Compile Include="EmailService.cs" />
     <Compile Include="Entities\ActionAccessPrivilege.cs" />
@@ -123,7 +124,7 @@
     <Compile Include="IPResolver.cs" />
     <Compile Include="Logic\AuditLogLogic.cs" />
     <Compile Include="Logic\DataCacheMVC.cs" />
-    <Compile Include="Logic\PrivilegeLogic.cs" />
+    <Compile Include="Logic\ActionAccessPrivilegeLogic.cs" />
     <Compile Include="Logic\SystemSettingLogic.cs" />
     <Compile Include="MvcUtils\Alert.cs" />
     <Compile Include="MvcUtils\AppStartInitializer.cs" />

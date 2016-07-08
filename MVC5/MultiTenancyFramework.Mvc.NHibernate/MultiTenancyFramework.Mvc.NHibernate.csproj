@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Maps\ActionAccessPrivilegeMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries\GetActionAccessPrivilegesByGridSearchParamsQueryHandler.cs" />
     <Compile Include="Queries\GetAreasQueryHandler.cs" />
   </ItemGroup>
   <ItemGroup>

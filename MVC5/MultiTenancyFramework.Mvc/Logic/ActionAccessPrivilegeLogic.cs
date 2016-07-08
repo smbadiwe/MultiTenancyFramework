@@ -7,15 +7,15 @@ using System.Linq;
 
 namespace MultiTenancyFramework.Logic
 {
-    public class PrivilegeLogic : CoreLogic<Privilege>
+    public class ActionAccessPrivilegeLogic : CoreLogic<ActionAccessPrivilege>
     {
-        public PrivilegeLogic() : base(MyServiceLocator.GetInstance<IPrivilegeDAO<Privilege>>())
+        public ActionAccessPrivilegeLogic() : base(MyServiceLocator.GetInstance<IPrivilegeDAO<ActionAccessPrivilege>>())
         {
         }
 
-        public override Privilege Retrieve(long id)
+        public override ActionAccessPrivilege Retrieve(long id)
         {
-            Privilege entity;
+            ActionAccessPrivilege entity;
             if (DataCacheMVC.AllPrivileges.TryGetValue(id, out entity))
             {
                 return entity;
@@ -23,7 +23,7 @@ namespace MultiTenancyFramework.Logic
             return null;
         }
         
-        public override IList<Privilege> RetrieveAll()
+        public override IList<ActionAccessPrivilege> RetrieveAll()
         {
             return DataCacheMVC.AllPrivileges.Values.ToList();
         }
@@ -33,14 +33,14 @@ namespace MultiTenancyFramework.Logic
            return  QueryProcessor.Process(new GetAreasQuery());
         }
 
-        public override IList<Privilege> RetrieveAllActive()
+        public override IList<ActionAccessPrivilege> RetrieveAllActive()
         {
             return DataCacheMVC.AllPrivileges.Values.Where(x => !x.IsDisabled).ToList();
         }
 
-        public RetrievedData<Privilege> Search(string name, AccessScope? scope, int page, int pageSize)
+        public RetrievedData<ActionAccessPrivilege> Search(string name, AccessScope? scope, int page, int pageSize)
         {
-            var query = new GetPrivilegesByGridSearchParamsQuery
+            var query = new GetActionAccessPrivilegesByGridSearchParamsQuery
             {
                 AccessScope = scope,
                 Name = name,
@@ -50,7 +50,7 @@ namespace MultiTenancyFramework.Logic
             return QueryProcessor.Process(query);
         }
         
-        public override void OnAfterCommittingChanges(Privilege e)
+        public override void OnAfterCommittingChanges(ActionAccessPrivilege e)
         {
             if (e.IsDeleted)
             {
