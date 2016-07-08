@@ -15,6 +15,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.Simpl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.Mvc.NHibernate", "MVC5\MultiTenancyFramework.Mvc.NHibernate\MultiTenancyFramework.Mvc.NHibernate.csproj", "{EC2F859B-110C-4E6A-9506-D917906991D2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{9644F30C-E238-49F0-A9CC-A5BCEAB3E3CC}"
+	ProjectSection(SolutionItems) = preProject
+		SolutionItems\ArchitectureDiagram.odg = SolutionItems\ArchitectureDiagram.odg
+		SolutionItems\SolutionArchitecture.PNG = SolutionItems\SolutionArchitecture.PNG
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
