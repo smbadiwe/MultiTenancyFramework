@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.Mvc",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.NHibernate", "MultiTenancyFramework.NHibernate\MultiTenancyFramework.NHibernate.csproj", "{85D5D252-5629-45E1-A83E-2187B8877806}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.SimpleInjector", "MultiTenancyFramework.SimpleInjector\MultiTenancyFramework.SimpleInjector.csproj", "{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.Mvc.NHibernate", "MVC5\MultiTenancyFramework.Mvc.NHibernate\MultiTenancyFramework.Mvc.NHibernate.csproj", "{EC2F859B-110C-4E6A-9506-D917906991D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{9644F30C-E238-49F0-A9CC-A5BCEAB3E3CC}"
@@ -20,6 +18,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		SolutionItems\ArchitectureDiagram.odg = SolutionItems\ArchitectureDiagram.odg
 		SolutionItems\SolutionArchitecture.PNG = SolutionItems\SolutionArchitecture.PNG
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IoCContainers", "IoCContainers", "{653C3AB2-1156-483C-9A0C-53C27EDD2A71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.SimpleInjector", "IoCContainers\MultiTenancyFramework.SimpleInjector\MultiTenancyFramework.SimpleInjector.csproj", "{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,14 +41,14 @@ Global
 		{85D5D252-5629-45E1-A83E-2187B8877806}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85D5D252-5629-45E1-A83E-2187B8877806}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85D5D252-5629-45E1-A83E-2187B8877806}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EC2F859B-110C-4E6A-9506-D917906991D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EC2F859B-110C-4E6A-9506-D917906991D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC2F859B-110C-4E6A-9506-D917906991D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC2F859B-110C-4E6A-9506-D917906991D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,5 +56,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{8DA996FF-242D-41EB-B139-A73165874ABB} = {FA1A9E05-5E72-4543-80E5-55326FA506D7}
 		{EC2F859B-110C-4E6A-9506-D917906991D2} = {FA1A9E05-5E72-4543-80E5-55326FA506D7}
+		{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3} = {653C3AB2-1156-483C-9A0C-53C27EDD2A71}
 	EndGlobalSection
 EndGlobal
