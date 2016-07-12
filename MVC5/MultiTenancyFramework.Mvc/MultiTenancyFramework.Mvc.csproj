@@ -75,6 +75,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -119,7 +120,7 @@
     <Compile Include="Extensions\MvcExtensions.cs" />
     <Compile Include="Identity\ApplicationSignInManager.cs" />
     <Compile Include="Identity\ApplicationUserManager.cs" />
-    <Compile Include="Identity\IdentityUser.cs" />
+    <Compile Include="Entities\IdentityUser.cs" />
     <Compile Include="Identity\UserStore.cs" />
     <Compile Include="IPResolver.cs" />
     <Compile Include="Logic\AuditLogLogic.cs" />

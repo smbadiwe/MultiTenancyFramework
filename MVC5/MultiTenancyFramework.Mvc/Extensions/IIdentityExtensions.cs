@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.Mvc;
 using MultiTenancyFramework.Mvc.Identity;
 using System;

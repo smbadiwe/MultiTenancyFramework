@@ -10,6 +10,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
     {
         public AppUserMap()
         {
+            Table("Users");
             Map(x => x.UserName).Index("ind_username");
             Map(x => x.PasswordHash);
             Map(x => x.UserRoles);

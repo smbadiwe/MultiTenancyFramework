@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MultiTenancyFramework.NHibernate.Maps
 {
-    public class PrivilegeMap : PrivilegeMap<Privilege>
+    public sealed class PrivilegeMap : PrivilegeMap<Privilege>
     {
     }
 
@@ -15,6 +15,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
     {
         public PrivilegeMap()
         {
+            Table("Privileges");
             Map(x => x.Name);
             Map(x => x.Description);
             Map(x => x.Scope);

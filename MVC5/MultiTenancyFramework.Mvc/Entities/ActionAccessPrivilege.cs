@@ -1,12 +1,14 @@
 ﻿
 
 using Microsoft.AspNet.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MultiTenancyFramework.Entities
 {
     /// <summary>
     /// Access to (MVC) actions and, by extension, app functionalities
     /// </summary>
+    [Table("Privileges")]
     public class ActionAccessPrivilege : Privilege, IRole<long>
     {
         /// <summary>

@@ -55,6 +55,7 @@
     <Compile Include="Entities\UserClaim.cs" />
     <Compile Include="Entities\UserLogin.cs" />
     <Compile Include="Extensions\EntityExtensions.cs" />
+    <Compile Include="IoC\IoCUtility.cs" />
     <Compile Include="IO\CsvWriter.cs" />
     <Compile Include="Data\Queries\DbPagingQuery.cs" />
     <Compile Include="Data\Queries\DbQueryProcessor.cs" />

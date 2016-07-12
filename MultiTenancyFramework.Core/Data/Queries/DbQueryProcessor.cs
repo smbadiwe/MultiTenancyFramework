@@ -10,10 +10,10 @@ namespace MultiTenancyFramework.Data.Queries
         {
             _serviceProvider = serviceProvider;
         }
+        
+        public string InstitutionCode { get; set; }
 
-        public string InstitutionCode  { get; set; }
-
-        [DebuggerStepThrough]
+        //[DebuggerStepThrough]
         public TResult Process<TResult>(IDbQuery<TResult> query)
         {
             var handlerType =

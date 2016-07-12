@@ -98,6 +98,7 @@
     <Compile Include="NHManager\WebSessionStorage.cs" />
     <Compile Include="NHUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries\GetAppUsersByGridSearchParamsQueryHandler.cs" />
     <Compile Include="Queries\GetDatabaseConnectionByNameAndConnectionStringQueryHandler.cs" />
     <Compile Include="Queries\GetEntitiesAppearingInAuditLogsQueryHandler.cs" />
     <Compile Include="Queries\GetIAppUserByEmailQueryHandler.cs" />
