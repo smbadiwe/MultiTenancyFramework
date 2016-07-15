@@ -108,22 +108,20 @@ namespace MultiTenancyFramework
             {
                 throw new InvalidOperationException("Null value for metadata's ModelType");
             }
-            Enum currentValue = null;
-            if (!string.IsNullOrWhiteSpace(expressionFullName))
-            {
-                currentValue = GetValueFromModel(htmlHelper, expressionFullName, metadata.ModelType) as Enum;
-            }
-
+            Enum currentValue = metadata.Model as Enum;
             if (currentValue == null && !string.IsNullOrWhiteSpace(expressionName))
             {
                 currentValue = htmlHelper.ViewData.Eval(expressionName) as Enum;
             }
-
-            if (currentValue == null)
+            if (currentValue == null && !string.IsNullOrWhiteSpace(expressionFullName))
             {
-                currentValue = metadata.Model as Enum;
+                currentValue = GetValueFromModel(htmlHelper, expressionFullName, metadata.ModelType) as Enum;
             }
 
+            if (currentValue == null && string.IsNullOrWhiteSpace(optionalLabel))
+            {
+                optionalLabel = "---Select Item---";
+            }
             var selectList = new SelectList(enumList, "Value", "Name", currentValue);
 
             var attr = HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes);
@@ -153,6 +151,10 @@ namespace MultiTenancyFramework
             {
                 if (modelState.Value != null)
                 {
+                    if (destinationType.IsNullable())
+                    {
+                        destinationType = Nullable.GetUnderlyingType(destinationType);
+                    }
                     destinationType = destinationType.GetEnumUnderlyingType();
                     return modelState.Value.ConvertTo(destinationType, null /* culture */);
                 }
