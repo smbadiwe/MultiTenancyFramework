@@ -20,127 +20,6 @@ namespace MultiTenancyFramework.NHibernate
 {
     public class SqlManipulations
     {
-        public static List<string> ExecuteSelectQuery(string query, IDbConnection connection, object[] Params = null)
-        {
-            var result = new List<string>();
-            try
-            {
-                if (connection.State == ConnectionState.Open)
-                {
-                    connection.Close();
-                }
-                connection.Open();
-                var sqlConn = connection as SqlConnection;
-                if (sqlConn == null)
-                {
-                    using (MySqlCommand Scmd = new MySqlCommand(query))
-                    {
-                        Scmd.Connection = connection as MySqlConnection;
-                        if (Params != null)
-                        {
-                            Scmd.Parameters.AddRange(Params);
-                        }
-                        using (var reader = Scmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                result.AddRange(reader.Cast<string>());
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    using (SqlCommand Scmd = new SqlCommand(query))
-                    {
-                        Scmd.Connection = sqlConn;
-                        if (Params != null)
-                        {
-                            Scmd.Parameters.AddRange(Params);
-                        }
-                        using (var reader = Scmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                result.AddRange(reader.Cast<string>());
-                            }
-                        }
-                    }
-                }
-            }
-            catch (DbException e)
-            {
-                //Logger.Log(new ApplicationException("DBException e.ErrorCode = " + e.ErrorCode, e));
-                return null;
-            }
-            catch (Exception e)
-            {
-                //Logger.Log(e);
-                return null;
-            }
-            return result;
-        }
-
-        public static DataTable ExecuteSelectQuery7(string Query, IDbConnection connection, object[] Params = null)
-        {
-            DataTable Dt = new DataTable();
-            DataSet Ds = new DataSet();
-            try
-            {
-                //Logger.Log("Inside SqlManipulations.ExecuteSelectQuery: Conn String = " + connection.ConnectionString);
-                if (connection.State == ConnectionState.Open)
-                {
-                    connection.Close();
-                }
-                connection.Open();
-                var sqlConn = connection as SqlConnection;
-                if (sqlConn == null)
-                {
-                    using (MySqlCommand Scmd = new MySqlCommand())
-                    {
-                        MySqlDataAdapter MyAdapter = new MySqlDataAdapter();
-                        Scmd.Connection = connection as MySqlConnection;
-                        Scmd.CommandText = Query;
-                        if (Params != null)
-                        {
-                            Scmd.Parameters.AddRange(Params);
-                        }
-                        Scmd.ExecuteNonQuery();
-                        MyAdapter.SelectCommand = Scmd;
-                        MyAdapter.Fill(Ds);
-                    }
-                }
-                else
-                {
-                    using (SqlCommand Scmd = new SqlCommand())
-                    {
-                        SqlDataAdapter MyAdapter = new SqlDataAdapter();
-                        Scmd.Connection = sqlConn;
-                        Scmd.CommandText = Query;
-                        if (Params != null)
-                        {
-                            Scmd.Parameters.AddRange(Params);
-                        }
-                        Scmd.ExecuteNonQuery();
-                        MyAdapter.SelectCommand = Scmd;
-                        MyAdapter.Fill(Ds);
-                    }
-                }
-                Dt = Ds.Tables[0];
-            }
-            catch (DbException e)
-            {
-                //Logger.Log(new ApplicationException("DBException e.ErrorCode = " + e.ErrorCode, e));
-                return null;
-            }
-            catch (Exception e)
-            {
-                //Logger.Log(e);
-                return null;
-            }
-            return Dt;
-        }
-
         /// <summary>
         /// NB: This may not work well when you have some DB column names different from the property names
         /// </summary>
@@ -211,9 +90,10 @@ namespace MultiTenancyFramework.NHibernate
             MyDataTable dt = FillInDataColumns(typeof(T), typeof(idT), connection, tableName, schema, out props);
 
             //Fill in the rows
+            var saverID = getSaverID();
             foreach (var item in items)
             {
-                BuildNewRow(dt, props, item, getSaverID());
+                BuildNewRow(dt, props, item, saverID);
             }
 
             //Finally...
@@ -331,14 +211,10 @@ namespace MultiTenancyFramework.NHibernate
 
         private static MyDataTable FillInDataColumns(Type TType, Type idType, IDbConnection connection, string tableName, string schema, out PropertyInfo[] props)
         {
-            string sqlForColumnNames;
-            if (connection is MySqlConnection)
+            string sqlForColumnNames = string.Format("select column_name from information_schema.columns where table_name = '{0}'", tableName);
+            if (connection is SqlConnection)
             {
-                sqlForColumnNames = string.Format("select column_name from information_schema.columns where table_name = '{0}'", tableName);
-            }
-            else
-            {
-                sqlForColumnNames = string.Format("select column_name from information_schema.columns where table_schema = '{0}' and table_name = '{1}'", schema, tableName);
+                sqlForColumnNames += string.Format(" and table_schema = '{0}'", schema);
             }
             var columnsInDestinationTable = ExecuteSelectQuery(sqlForColumnNames, connection);
             props = TType.GetProperties().Where(x => x.CanWrite && x.GetCustomAttribute<NotMappedAttribute>() == null).ToArray();
@@ -547,7 +423,8 @@ namespace MultiTenancyFramework.NHibernate
 
                                 if (innerProp.PropertyType.IsEnum && theInnerValue != null)
                                 {
-                                    theInnerValue = Enum.Parse(innerProp.PropertyType, theInnerValue.ToString());
+                                    //DO NOT use Enum.Parse(innerProp.PropertyType, theInnerValue.ToString()); since we store enums as integers conventionally
+                                    theInnerValue = (int)theInnerValue;
                                 }
                                 row[innerPropName] = theInnerValue;
                             }
@@ -608,7 +485,8 @@ namespace MultiTenancyFramework.NHibernate
                 }
                 if (prop.PropertyType.IsEnum && theValue != null)
                 {
-                    theValue = Enum.Parse(prop.PropertyType, theValue.ToString());
+                    //DO NOT use Enum.Parse(prop.PropertyType, theValue.ToString()); since we store enums as integers conventionally
+                    theValue = (int)theValue;
                 }
                 row[prop.GetPropertyName()] = theValue;
             }
@@ -616,5 +494,72 @@ namespace MultiTenancyFramework.NHibernate
             dt.Rows.Add(row);
         }
 
+        private static HashSet<string> ExecuteSelectQuery(string query, IDbConnection connection, object[] Params = null)
+        {
+            var result = new HashSet<string>();
+            try
+            {
+                if (connection.State == ConnectionState.Open)
+                {
+                    connection.Close();
+                }
+                connection.Open();
+                var sqlConn = connection as SqlConnection;
+                if (sqlConn == null)
+                {
+                    using (MySqlCommand Scmd = new MySqlCommand(query))
+                    {
+                        Scmd.Connection = connection as MySqlConnection;
+                        if (Params != null)
+                        {
+                            Scmd.Parameters.AddRange(Params);
+                        }
+                        using (var reader = Scmd.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    result.Add(reader.GetString(0));
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    using (SqlCommand Scmd = new SqlCommand(query))
+                    {
+                        Scmd.Connection = sqlConn;
+                        if (Params != null)
+                        {
+                            Scmd.Parameters.AddRange(Params);
+                        }
+                        using (var reader = Scmd.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    result.Add(reader.GetString(0));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (DbException e)
+            {
+                //Logger.Log(new ApplicationException("DBException e.ErrorCode = " + e.ErrorCode, e));
+                return null;
+            }
+            catch (Exception e)
+            {
+                //Logger.Log(e);
+                return null;
+            }
+            return result;
+        }
+        
     }
 }

@@ -15,7 +15,7 @@ namespace MultiTenancyFramework.Mvc
     public class WebUtilities
     {
         private static IInstitutionDAO<Institution> InstitutionEngine;
-        private static IAppUserDAO<IdentityUser> IdentityUser;
+        private static IAppUserDAO<IdentityUser> IdentityUserDAO;
 
         private const string SS_CODE = "::SS_INSTITUTION_CODE::";
         private const string SS_CURRENT_USER = "::SS_CURRENT_USER::";
@@ -23,7 +23,7 @@ namespace MultiTenancyFramework.Mvc
         static WebUtilities()
         {
             InstitutionEngine = MyServiceLocator.GetInstance<IInstitutionDAO<Institution>>();
-            IdentityUser = MyServiceLocator.GetInstance<IAppUserDAO<IdentityUser>>();
+            IdentityUserDAO = MyServiceLocator.GetInstance<IAppUserDAO<IdentityUser>>();
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace MultiTenancyFramework.Mvc
             HttpContext.Current.Session[SS_CURRENT_USER] = user;
         }
 
-        public static AppUser GetCurrentlyLoggedInUser()
+        public static IdentityUser GetCurrentlyLoggedInUser()
         {
             try
             {
@@ -70,11 +70,11 @@ namespace MultiTenancyFramework.Mvc
                     try
                     {
                         // string key = SS_CURRENT_USER + InstitutionShortName;
-                        var user = HttpContext.Current.Session[SS_CURRENT_USER] as AppUser;
+                        var user = HttpContext.Current.Session[SS_CURRENT_USER] as IdentityUser;
                         if (user == null)
                         {
-                            IdentityUser.InstitutionCode = InstitutionCode;
-                            user = IdentityUser.Retrieve(HttpContext.Current.User.Identity.GetUserId<long>());
+                            IdentityUserDAO.InstitutionCode = InstitutionCode;
+                            user = IdentityUserDAO.Retrieve(HttpContext.Current.User.Identity.GetUserId<long>());
                         }
                         if (user == null) throw new LogOutUserException();
                         HttpContext.Current.Session[SS_CURRENT_USER] = user;

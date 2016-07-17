@@ -51,7 +51,16 @@ namespace MultiTenancyFramework.Mvc
         }
 
         protected readonly ILogger Logger;
+
+        /// <summary>
+        /// The institution - tenant or central.
+        /// </summary>
         protected Institution Institution { get; set; }
+
+        /// <summary>
+        /// The (logged in) user as maintained by the framework; distinct from (IPrincipal) User
+        /// </summary>
+        protected IdentityUser IdentityUser { get; set; }
 
         public CoreController()
         {
@@ -263,17 +272,21 @@ namespace MultiTenancyFramework.Mvc
 
             //Not Anonymous. So...
             // If user is not logged in (authenticated) yet, force him to login
-            if (WebUtilities.GetCurrentlyLoggedInUser() == null)
+            IdentityUser = WebUtilities.GetCurrentlyLoggedInUser();
+            if (IdentityUser == null)
             {
                 WebUtilities.LogOut();
                 filterContext.Result = MvcUtility.GetLoginPageResult(inst);
                 return;
             }
 
-            //So, the user has been authenticated. Now onto authorisation
-            if (ConfigurationHelper.AppSettingsItem<bool>("NoSecurityTrimming"))
+            var userPrivList = WebUtilities.LoggedInUsersPrivilegesDict;
+            //This should never be true under normal circumstances, 'cos a properly logged-in user
+            // should have at least one user privllege
+            if (userPrivList == null) 
             {
-                base.OnActionExecuting(filterContext);
+                WebUtilities.LogOut();
+                filterContext.Result = MvcUtility.GetLoginPageResult(inst);
                 return;
             }
 
@@ -282,7 +295,6 @@ namespace MultiTenancyFramework.Mvc
                    actionDescriptor.ControllerDescriptor.ControllerName,
                    filterContext.RouteData.Values["area"]);
 
-            var userPrivList = WebUtilities.LoggedInUsersPrivilegesDict;
             if (!userPrivList.ContainsKey(privilegeName))
             {
                 //Normally, I use a convention where I have a 'GetData' action for every 

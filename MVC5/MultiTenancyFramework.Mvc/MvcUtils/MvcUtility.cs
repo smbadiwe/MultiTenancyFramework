@@ -22,12 +22,12 @@ namespace MultiTenancyFramework.Mvc
             };
         }
 
-        public static void RegisterArea(string area, AreaRegistrationContext context)
+        public static void RegisterArea(string areaName, AreaRegistrationContext context)
         {
             context.MapRoute(
-                name: $"{area}_MultiTenant",
-                url: "{institution}/" + area +"/{controller}/{action}/{id}",
-                defaults: new { id = UrlParameter.Optional },
+                name: $"{areaName}_MultiTenant",
+                url: "{institution}/" + areaName +"/{controller}/{action}/{id}",
+                defaults: new { area = areaName, id = UrlParameter.Optional },
                 constraints: new { id = @"\d*" }
             );
         }
