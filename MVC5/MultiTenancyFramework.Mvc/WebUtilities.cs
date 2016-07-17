@@ -27,15 +27,15 @@ namespace MultiTenancyFramework.Mvc
         }
 
         /// <summary>
-        /// Key is Module Name, Value is list of RoleNames (as in, Privilege.Name)
+        /// Key is ActionAccessPrivilege.Name,
         /// </summary>
-        public static Dictionary<string, List<string>> LoggedInUsersPrivilegesDict
+        public static Dictionary<string, ActionAccessPrivilege> LoggedInUsersPrivilegesDict
         {
             get
             {
                 try
                 {
-                    return HttpContext.Current.Session["::LoggedInUsersPrivileges::"] as Dictionary<string, List<string>>;
+                    return HttpContext.Current.Session["::LoggedInUsersPrivileges::"] as Dictionary<string, ActionAccessPrivilege>;
                 }
                 catch
                 {
@@ -54,38 +54,7 @@ namespace MultiTenancyFramework.Mvc
                 }
             }
         }
-
-        public const string LoginRedirectAction = "";
-        public static List<string> LoggedInUsersPrivileges
-        {
-            get
-            {
-                try
-                {
-                    return HttpContext.Current.Session["::LoggedInUsersPrivileges::"] as List<string> ?? new List<string>();
-                }
-                catch
-                {
-                    throw new LogOutUserException();
-                }
-            }
-            set
-            {
-                try
-                {
-                    if (value != null && !value.Contains(LoginRedirectAction))
-                    {
-                        value.Add(LoginRedirectAction);
-                    }
-                    HttpContext.Current.Session["::LoggedInUsersPrivileges::"] = value;
-                }
-                catch
-                {
-                    throw new LogOutUserException();
-                }
-            }
-        }
-
+        
         public static void SetCurrentlyLoggedInUser(AppUser user)
         {
             HttpContext.Current.Session[SS_CURRENT_USER] = user;

@@ -49,6 +49,9 @@ namespace MultiTenancyFramework.Logic
         {
             _dao = dao;
             _dao.InstitutionCode = InstitutionCode = institutionCode;
+
+            //Because this may have been preset in the incoming 'dao' instance, we do...
+            EntityName = _dao.EntityName;
         }
 
         #region Events

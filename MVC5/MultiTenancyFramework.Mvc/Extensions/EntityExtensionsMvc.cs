@@ -81,24 +81,21 @@ namespace MultiTenancyFramework
                         claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name, "http://www.w3.org/2001/XMLSchema#string"));
                     }
                 }
-                var defaultPrivs = privilegesInDb.Values.Where(x => x.IsDefault).Cast<ActionAccessPrivilege>();
-                if (!string.IsNullOrWhiteSpace(instCode))
+                var defaultPrivs = privilegesInDb.Values.Where(x => x.IsDefault);
+                if (!string.IsNullOrWhiteSpace(instCode)) // If Tenant
                 {
                     defaultPrivs = defaultPrivs.Where(x => x.Scope != AccessScope.CentralOnly);
+                }
+                else
+                {
+                    defaultPrivs = defaultPrivs.Where(x => x.Scope != AccessScope.TenantsOnly);
                 }
                 foreach (var priv in defaultPrivs)
                 {
                     list.Add(priv);
                     claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, priv.Name, "http://www.w3.org/2001/XMLSchema#string"));
                 }
-                WebUtilities.LoggedInUsersPrivileges = list.Select(x => x.Name).ToList();
-                var privSet = list.GroupBy(x => x.Area).ToDictionary(x => x.Key, x => x.Select(y => y.Name).ToList());
-                var dict = new Dictionary<string, List<string>>();
-                foreach (var item in privSet)
-                {
-                    dict.Add(item.Key, item.Value);
-                }
-                WebUtilities.LoggedInUsersPrivilegesDict = dict;
+                WebUtilities.LoggedInUsersPrivilegesDict = list.ToDictionary(x => x.Name);
             }
             if (manager.SupportsUserClaim)
             {

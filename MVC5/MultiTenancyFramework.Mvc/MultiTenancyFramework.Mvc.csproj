@@ -117,6 +117,8 @@
     <Compile Include="Entities\InstitutionAccessValidationResult.cs" />
     <Compile Include="Extensions\EntityExtensionsMvc.cs" />
     <Compile Include="Extensions\IIdentityExtensions.cs" />
+    <Compile Include="Extensions\MvcExtensions3.cs" />
+    <Compile Include="Extensions\MvcExtensions2.cs" />
     <Compile Include="Extensions\MvcExtensions.cs" />
     <Compile Include="Identity\ApplicationSignInManager.cs" />
     <Compile Include="Identity\ApplicationUserManager.cs" />

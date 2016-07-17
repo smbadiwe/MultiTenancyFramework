@@ -39,10 +39,16 @@ namespace MultiTenancyFramework.Mvc
             }
         }
 
-        //public ICommandHandler<T> CommandHandler<T>() where T : ICommand
-        //{
-        //    return MyServiceLocator.GetInstance<ICommandHandler<T>>();
-        //}
+        /// <summary>
+        /// = RouteData.Values["institution"]. It's appearing in too many controllers now
+        /// </summary>
+        protected string InstitutionCode
+        {
+            get
+            {
+                return Convert.ToString(RouteData.Values["institution"]);
+            }
+        }
 
         protected readonly ILogger Logger;
         protected Institution Institution { get; set; }
@@ -98,19 +104,43 @@ namespace MultiTenancyFramework.Mvc
             if (clearModel) ModelState.Clear();
         }
 
+        protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string institutionCode)
+        {
+            return RedirectToAction(actionName, controllerName, "", institutionCode);
+        }
+
+        protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string areaName, string institutionCode)
+        {
+            if (string.IsNullOrWhiteSpace(actionName)) throw new ArgumentNullException("action");
+            var routes = new System.Web.Routing.RouteValueDictionary();
+            if (!string.IsNullOrWhiteSpace(controllerName))
+            {
+                routes.Add("controller", controllerName);
+            }
+            if (!string.IsNullOrWhiteSpace(areaName))
+            {
+                routes.Add("area", areaName);
+            }
+            if (!string.IsNullOrWhiteSpace(institutionCode))
+            {
+                routes.Add("institution", institutionCode);
+            }
+            return RedirectToAction(actionName, routes);
+        }
+
         protected override void OnException(ExceptionContext filterContext)
         {
             if (!filterContext.ExceptionHandled)
             {
                 filterContext.ExceptionHandled = true;
                 var genEx = filterContext.Exception as GeneralException;
+                var values = filterContext.RouteData.Values;
                 if (genEx != null && genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode)
                 {
-                    filterContext.Result = RedirectToAction("InvalidUrl", "Error");
+                    filterContext.Result = RedirectToAction("InvalidUrl", "Error", Convert.ToString(values["institution"]));
                     return;
                 }
 
-                var values = filterContext.RouteData.Values;
                 string instCode = Utilities.INST_DEFAULT_CODE;
                 bool doLogout = false;
                 try
@@ -137,7 +167,7 @@ namespace MultiTenancyFramework.Mvc
                     {
                         TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception);
                     }
-                    filterContext.Result = RedirectToAction("Index", "Error");
+                    filterContext.Result = RedirectToAction("Index", "Error", instCode);
                 }
                 return;
             }
@@ -189,12 +219,12 @@ namespace MultiTenancyFramework.Mvc
                 if (!accessCheck.AllowAccess)
                 {
                     TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(accessCheck.Remarks);
-                    filterContext.Result = RedirectToAction("DenyInstitutionAccess", "Error");
+                    filterContext.Result = RedirectToAction("DenyInstitutionAccess", "Error", inst);
                     return;
                 }
                 if (Institution.IsDisabled == true || Institution.IsDeleted == true)
                 {
-                    filterContext.Result = RedirectToAction("DisabledInstitution", "Error", new { instName = Institution.Name });
+                    filterContext.Result = RedirectToAction("DisabledInstitution", "Error", new { instName = Institution.Name, institution = inst });
                     return;
                 }
             }
@@ -252,13 +282,13 @@ namespace MultiTenancyFramework.Mvc
                    actionDescriptor.ControllerDescriptor.ControllerName,
                    filterContext.RouteData.Values["area"]);
 
-            var userPrivList = WebUtilities.LoggedInUsersPrivileges;
-            if (!userPrivList.Contains(privilegeName))
+            var userPrivList = WebUtilities.LoggedInUsersPrivilegesDict;
+            if (!userPrivList.ContainsKey(privilegeName))
             {
                 //Normally, I use a convention where I have a 'GetData' action for every 
                 // 'Index' action that is used to view a list of stuffs (entities).
                 if ("GetData" == actionDescriptor.ActionName &&
-                    userPrivList.Contains(string.Format("{0}-{1}-{2}",
+                    userPrivList.ContainsKey(string.Format("{0}-{1}-{2}",
                             "Index", actionDescriptor.ControllerDescriptor.ControllerName, filterContext.RouteData.Values["area"])))
                 {
                     base.OnActionExecuting(filterContext);
@@ -272,7 +302,7 @@ namespace MultiTenancyFramework.Mvc
                 {
                     foreach (var actionName in point.ActionNames)
                     {
-                        if (userPrivList.Contains(string.Format("{0}-{1}-{2}",
+                        if (userPrivList.ContainsKey(string.Format("{0}-{1}-{2}",
                             actionName, actionDescriptor.ControllerDescriptor.ControllerName, filterContext.RouteData.Values["area"])))
                         {
                             base.OnActionExecuting(filterContext);
@@ -288,7 +318,7 @@ namespace MultiTenancyFramework.Mvc
 
         protected virtual RedirectToRouteResult HttpAccessDenied()
         {
-            return RedirectToAction("DenyAccess", "Error");
+            return RedirectToAction("DenyAccess", "Error", InstitutionCode);
         }
 
         protected virtual ViewResult ErrorView(ErrorMessageModel model)

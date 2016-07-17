@@ -14,9 +14,7 @@ namespace MultiTenancyFramework.Commands
         {
             _serviceProvider = serviceProvider;
         }
-
-        public string InstitutionCode { get; set; }
-
+        
         [DebuggerStepThrough]
         public void Process(ICommand command)
         {
@@ -24,8 +22,6 @@ namespace MultiTenancyFramework.Commands
                 typeof(ICommandHandler<>).MakeGenericType(command.GetType());
 
             dynamic handler = _serviceProvider.GetService(handlerType);
-            handler.InstitutionCode = InstitutionCode;
-
             handler.Handle((dynamic)command);
         }
     }

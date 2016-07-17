@@ -184,14 +184,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 string instCode = sessionKey.Split('_')[0];
                 if (!SessionFactories.ContainsKey(instCode))
                 {
-                    try
-                    {
-                        BuildFactory(instCode, storage, sessionKey);
-                    }
-                    catch (GeneralException e)
-                    {
-                        instCode = Utilities.INST_DEFAULT_CODE;
-                    }
+                    BuildFactory(instCode, storage, sessionKey);
                 }
 
                 //Apply the interceptor if any was registered and open the session
@@ -329,7 +322,6 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         {
             if (!string.IsNullOrWhiteSpace(institutionCode) && institutionCode != Utilities.INST_DEFAULT_CODE)
             {
-
                 var institution = Utilities.QueryProcessor.Process(new GetInstitutionByCodeQuery { Code = institutionCode });
                 if (institution == null) throw new GeneralException($"No institution with Code - {institutionCode}", ExceptionType.UnidentifiedInstitutionCode);
 
@@ -340,8 +332,6 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 }
                 if (dbConn == null)
                 {
-                    //I'll assume this guy is trying to access the system using the TempUsername and TempPassword
-
                     throw new GeneralException($"Database has not been setup for Institution: '{institution.Name}'");
                 }
                 var cfgProps = new Dictionary<string, string>();
