@@ -1,6 +1,5 @@
 ﻿using FluentNHibernate;
 using FluentNHibernate.Automapping;
-using MultiTenancyFramework;
 using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;

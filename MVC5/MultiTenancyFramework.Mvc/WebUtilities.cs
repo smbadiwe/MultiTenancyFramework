@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
-using MultiTenancyFramework;
 using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.Logic;
-using MultiTenancyFramework.Mvc.Identity;
 using System;
 using System.Collections.Generic;
 using System.Web;

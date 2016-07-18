@@ -1,5 +1,4 @@
-﻿using MultiTenancyFramework;
-using System;
+﻿using System;
 using System.Reflection;
 
 namespace MultiTenancyFramework.NHibernate.Audit

@@ -1,5 +1,4 @@
 ﻿using Microsoft.CSharp.RuntimeBinder;
-using MultiTenancyFramework;
 using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.IO;

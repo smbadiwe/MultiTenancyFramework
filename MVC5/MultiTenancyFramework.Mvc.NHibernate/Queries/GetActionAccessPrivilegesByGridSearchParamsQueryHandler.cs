@@ -1,21 +1,12 @@
 ﻿using MultiTenancyFramework.Data;
-using MultiTenancyFramework.Entities;
-using MultiTenancyFramework.NHibernate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using NHibernate.Criterion;
 using MultiTenancyFramework.Data.Queries;
+using MultiTenancyFramework.Entities;
+using NHibernate.Criterion;
 
 namespace MultiTenancyFramework.NHibernate.Queries
 {
     public class GetActionAccessPrivilegesByGridSearchParamsQueryHandler : CoreGeneralWithGridPagingDAO<Privilege>, IDbQueryHandler<GetActionAccessPrivilegesByGridSearchParamsQuery, RetrievedData<ActionAccessPrivilege>>
     {
-        //public GetActionAccessPrivilegesByGridSearchParamsQueryHandler()
-        //{
-        //    EntityName = NHManager.NHSessionManager.GetEntityNameToUseInNHSession(typeof(Privilege));
-        //}
-
         public RetrievedData<ActionAccessPrivilege> Handle(GetActionAccessPrivilegesByGridSearchParamsQuery theQuery)
         {
             var session = BuildSession();

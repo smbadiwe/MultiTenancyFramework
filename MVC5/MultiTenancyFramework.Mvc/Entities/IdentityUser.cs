@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNet.Identity;
-using MultiTenancyFramework.Entities;
 
 namespace MultiTenancyFramework.Entities
 {

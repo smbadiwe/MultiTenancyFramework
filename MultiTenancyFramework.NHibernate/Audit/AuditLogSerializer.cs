@@ -1,5 +1,4 @@
-﻿using MultiTenancyFramework;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using NHibernate.Persister.Entity;
 using System;
 using System.Collections.Generic;

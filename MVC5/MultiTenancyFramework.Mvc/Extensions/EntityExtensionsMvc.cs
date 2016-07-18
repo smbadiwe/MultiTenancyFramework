@@ -3,7 +3,6 @@ using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.Mvc;
-using MultiTenancyFramework.Mvc.Identity;
 using MultiTenancyFramework.Mvc.Logic;
 using Newtonsoft.Json;
 using System;

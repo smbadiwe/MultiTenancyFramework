@@ -1,5 +1,4 @@
-﻿using MultiTenancyFramework;
-using MultiTenancyFramework.Data;
+﻿using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
 using System.Collections.Generic;
 using System.Linq;

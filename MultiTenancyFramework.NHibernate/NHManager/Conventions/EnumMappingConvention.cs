@@ -2,7 +2,6 @@
 using FluentNHibernate.Conventions.AcceptanceCriteria;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.Conventions.Instances;
-using MultiTenancyFramework;
 using System;
 
 namespace MultiTenancyFramework.NHibernate.NHManager.Conventions

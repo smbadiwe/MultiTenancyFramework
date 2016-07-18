@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNet.Identity;
-using MultiTenancyFramework;
 using System;
 using System.Net;
 using System.Net.Mail;

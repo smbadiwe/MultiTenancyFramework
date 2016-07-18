@@ -1,5 +1,4 @@
-﻿using MultiTenancyFramework;
-using MultiTenancyFramework.Data;
+﻿using MultiTenancyFramework.Data;
 using MultiTenancyFramework.NHibernate.NHManager;
 using MySql.Data.MySqlClient;
 using NHibernate;

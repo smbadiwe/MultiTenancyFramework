@@ -1,5 +1,4 @@
-﻿using MultiTenancyFramework;
-using MultiTenancyFramework.Commands;
+﻿using MultiTenancyFramework.Commands;
 using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.Mvc.Logic;

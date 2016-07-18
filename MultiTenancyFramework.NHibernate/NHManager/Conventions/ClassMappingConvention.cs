@@ -1,6 +1,5 @@
 ﻿using FluentNHibernate.Conventions;
 using FluentNHibernate.Conventions.Instances;
-using MultiTenancyFramework;
 
 namespace MultiTenancyFramework.NHibernate.NHManager.Conventions
 {

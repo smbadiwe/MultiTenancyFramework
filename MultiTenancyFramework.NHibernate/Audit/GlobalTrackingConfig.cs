@@ -1,5 +1,4 @@
-﻿using MultiTenancyFramework;
-using MultiTenancyFramework.Entities;
+﻿using MultiTenancyFramework.Entities;
 using System;
 using System.Linq.Expressions;
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Web.Mvc;
+﻿using System.Collections.Generic;
 
 namespace MultiTenancyFramework.Data.Queries
 {

@@ -1,5 +1,4 @@
-﻿using MultiTenancyFramework;
-using MultiTenancyFramework.Entities;
+﻿using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.NHibernate.Audit;
 using NHibernate.Engine;
 using NHibernate.Event;

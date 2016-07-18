@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNet.Identity;
-using MultiTenancyFramework;
 using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.Logic;

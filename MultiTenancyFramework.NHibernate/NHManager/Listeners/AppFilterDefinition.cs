@@ -1,5 +1,4 @@
 ﻿using FluentNHibernate.Mapping;
-using MultiTenancyFramework;
 using NHibernate;
 
 namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
