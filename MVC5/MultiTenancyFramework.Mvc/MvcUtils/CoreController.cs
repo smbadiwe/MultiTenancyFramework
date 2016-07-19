@@ -11,8 +11,6 @@ namespace MultiTenancyFramework.Mvc
 {
     public abstract class CoreController : Controller
     {
-        public Func<Institution, InstitutionAccessValidationResult> ValidateInstitution;
-
         private IDbQueryProcessor _queryProcessor;
 
         public IDbQueryProcessor QueryProcessor
@@ -84,11 +82,6 @@ namespace MultiTenancyFramework.Mvc
         /// The area name. Set to empty string if not applicable
         /// </summary>
         public virtual string AreaName { get { return string.Empty; } }
-
-        protected virtual InstitutionAccessValidationResult OnValidateInstitution(Institution institution)
-        {
-            return ValidateInstitution?.Invoke(institution) ?? new InstitutionAccessValidationResult { AllowAccess = true };
-        }
 
         /// <summary>
         /// This gets to direct view filename, stopping the unnecesary work MVC does to find the views in expected folders.
@@ -185,110 +178,63 @@ namespace MultiTenancyFramework.Mvc
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var actionDescriptor = filterContext.ActionDescriptor;
-
-            #region Authorize at institution level
-            string inst = Utilities.INST_DEFAULT_CODE;
-            try
-            {
-                inst = WebUtilities.InstitutionCode ?? Utilities.INST_DEFAULT_CODE;
-            }
-            catch (LogOutUserException)
-            {
-                if (actionDescriptor.ActionName != "Login")
-                {
-                    inst = Convert.ToString(filterContext.RouteData.Values["institution"]);
-                    WebUtilities.LogOut();
-                    filterContext.Result = MvcUtility.GetLoginPageResult(inst);
-                    return;
-                }
-            }
-            catch (GeneralException ex)
-            {
-                if (ex.ExceptionType == ExceptionType.UnidentifiedInstitutionCode)
-                {
-                    filterContext.Result = RedirectToAction("InvalidUrl", "Error");
-                    return;
-                }
-                throw ex;
-            }
-
-            if (inst != Utilities.INST_DEFAULT_CODE)
-            {
-                if (Institution == null || Institution.Code != inst)
-                {
-                    Institution = DataCacheMVC.AllInstitutions.Values.SingleOrDefault(x => x.Code == inst);
-                }
-                if (Institution == null)
-                {
-                    filterContext.Result = RedirectToAction("InvalidUrl", "Error");
-                    return;
-                }
-                var accessCheck = OnValidateInstitution(Institution);
-                if (!accessCheck.AllowAccess)
-                {
-                    TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(accessCheck.Remarks);
-                    filterContext.Result = RedirectToAction("DenyInstitutionAccess", "Error", inst);
-                    return;
-                }
-                if (Institution.IsDisabled == true || Institution.IsDeleted == true)
-                {
-                    filterContext.Result = RedirectToAction("DisabledInstitution", "Error", new { instName = Institution.Name, institution = inst });
-                    return;
-                }
-            }
-            #endregion
-
-            #region Authorize at Privilege level
-
-            // This is the only action guaranteed to be 'AllowAnonymous', so no need
-            // to waste time checking what I already know.
-            if (actionDescriptor.ActionName == "Login"
-                && actionDescriptor.ControllerDescriptor.ControllerName == "Account")
-            {
-                base.OnActionExecuting(filterContext);
-                return;
-            }
-
-            // check if AllowAnonymous is on the controller
-            var anonymous = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
-                    .Cast<AllowAnonymousAttribute>();
-            if (anonymous.Any())
-            {
-                //Allow Anonymous
-                base.OnActionExecuting(filterContext);
-                return;
-            }
-
-            // It's not; so check if AllowAnonymous is on the action
-            anonymous = actionDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
-                    .Cast<AllowAnonymousAttribute>();
-            if (anonymous.Any())
-            {
-                //Allow Anonymous
-                base.OnActionExecuting(filterContext);
-                return;
-            }
-
-            //Not Anonymous. So...
-            // If user is not logged in (authenticated) yet, force him to login
+            
+            // If user is not logged in (authenticated) yet, 
             IdentityUser = WebUtilities.GetCurrentlyLoggedInUser();
             if (IdentityUser == null)
             {
+                #region Check whether it's an anonymous action
+
+                // This is the only action guaranteed to be 'AllowAnonymous', so no need
+                // to waste time checking what I already know.
+                if (actionDescriptor.ActionName == "Login"
+                    && actionDescriptor.ControllerDescriptor.ControllerName == "Account")
+                {
+                    base.OnActionExecuting(filterContext);
+                    return;
+                }
+
+                // check if AllowAnonymous is on the controller
+                var anonymous = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
+                        .Cast<AllowAnonymousAttribute>();
+                if (anonymous.Any())
+                {
+                    //Allow Anonymous
+                    base.OnActionExecuting(filterContext);
+                    return;
+                }
+
+                // It's not; so check if AllowAnonymous is on the action
+                anonymous = actionDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
+                        .Cast<AllowAnonymousAttribute>();
+                if (anonymous.Any())
+                {
+                    //Allow Anonymous
+                    base.OnActionExecuting(filterContext);
+                    return;
+                } 
+                #endregion
+
+                // It's not anonymous, so force user to login
                 WebUtilities.LogOut();
-                filterContext.Result = MvcUtility.GetLoginPageResult(inst);
+                filterContext.Result = MvcUtility.GetLoginPageResult(InstitutionCode);
                 return;
             }
+
+            // At this point, we have established that we have a logged-in user. So...
+            #region Authorize at Privilege level
 
             var userPrivList = WebUtilities.LoggedInUsersPrivilegesDict;
             //This should never be true under normal circumstances, 'cos a properly logged-in user
             // should have at least one user privllege
-            if (userPrivList == null) 
+            if (userPrivList == null)
             {
                 WebUtilities.LogOut();
-                filterContext.Result = MvcUtility.GetLoginPageResult(inst);
+                filterContext.Result = MvcUtility.GetLoginPageResult(InstitutionCode);
                 return;
             }
 
+            // OK. So the user has some privileges. So...
             string privilegeName = string.Format("{0}-{1}-{2}",
                    actionDescriptor.ActionName,
                    actionDescriptor.ControllerDescriptor.ControllerName,
@@ -325,8 +271,11 @@ namespace MultiTenancyFramework.Mvc
                 return;
             }
             #endregion
-        }
 
+            // fall back to base
+            base.OnActionExecuting(filterContext);
+        }
+        
         protected virtual RedirectToRouteResult HttpAccessDenied()
         {
             return RedirectToAction("DenyAccess", "Error", InstitutionCode);

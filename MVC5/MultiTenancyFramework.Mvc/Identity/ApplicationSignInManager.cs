@@ -3,7 +3,9 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using MultiTenancyFramework.Entities;
+using MultiTenancyFramework.Mvc.Logic;
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -12,6 +14,8 @@ namespace MultiTenancyFramework.Mvc.Identity
     // Configure the application sign-in manager which is used in this application.
     public class ApplicationSignInManager : SignInManager<IdentityUser, long>
     {
+        public Func<Institution, InstitutionAccessValidationResult> ValidateInstitution;
+
         public ApplicationSignInManager(ApplicationUserManager userManager, IAuthenticationManager authenticationManager)
             : base(userManager, authenticationManager)
         {
@@ -23,7 +27,19 @@ namespace MultiTenancyFramework.Mvc.Identity
 
             return user.GenerateUserIdentityAsync(UserManager);
         }
-        
+
+        public override Task SignInAsync(IdentityUser user, bool isPersistent, bool rememberBrowser)
+        {
+            ValidateInstitutionAccess();
+            return base.SignInAsync(user, isPersistent, rememberBrowser);
+        }
+
+        public override Task<SignInStatus> TwoFactorSignInAsync(string provider, string code, bool isPersistent, bool rememberBrowser)
+        {
+            ValidateInstitutionAccess();
+            return base.TwoFactorSignInAsync(provider, code, isPersistent, rememberBrowser);
+        }
+
         /// <summary>
         /// Sign in the user in using the user name and password
         /// </summary>
@@ -38,6 +54,7 @@ namespace MultiTenancyFramework.Mvc.Identity
             {
                 return SignInStatus.Failure;
             }
+            ValidateInstitutionAccess();
             var user = await UserManager.FindByNameAsync(userName);
             if (user == null)
             {
@@ -67,6 +84,16 @@ namespace MultiTenancyFramework.Mvc.Identity
             return SignInStatus.Failure;
         }
 
+        protected virtual InstitutionAccessValidationResult OnValidateInstitution(Institution institution)
+        {
+            return ValidateInstitution?.Invoke(institution) ?? new InstitutionAccessValidationResult { AllowAccess = true };
+        }
+
+        public static ApplicationSignInManager Create(IdentityFactoryOptions<ApplicationSignInManager> options, IOwinContext context)
+        {
+            return new ApplicationSignInManager(context.GetUserManager<ApplicationUserManager>(), context.Authentication);
+        }
+
         private async Task<SignInStatus> SignInOrTwoFactor(IdentityUser user, bool isPersistent)
         {
             var id = Convert.ToString(user.Id);
@@ -86,9 +113,50 @@ namespace MultiTenancyFramework.Mvc.Identity
             return SignInStatus.Success;
         }
 
-        public static ApplicationSignInManager Create(IdentityFactoryOptions<ApplicationSignInManager> options, IOwinContext context)
+        private void ValidateInstitutionAccess()
         {
-            return new ApplicationSignInManager(context.GetUserManager<ApplicationUserManager>(), context.Authentication);
+            InstitutionAccessValidationResult result;
+            string instCode = Convert.ToString(System.Web.HttpContext.Current.Request.RequestContext.RouteData.Values["institution"]);
+
+            if (instCode != Utilities.INST_DEFAULT_CODE)
+            {
+                Institution institution;
+                DataCacheMVC.AllInstitutions.TryGetValue(instCode, out institution);
+
+                if (institution == null)
+                {
+                    result = new InstitutionAccessValidationResult
+                    {
+                        Remarks = $"We could not retrieve institution with Code: {instCode}"
+                    };
+                }
+                else if (institution.IsDisabled == true)
+                {
+                    result = new InstitutionAccessValidationResult
+                    {
+                        Remarks = $"The institution with Code: '{instCode}' is currently disabled. Please contact administrator."
+                    };
+                }
+                else if (institution.IsDeleted == true)
+                {
+                    result = new InstitutionAccessValidationResult
+                    {
+                        Remarks = $"The institution with Code: '{instCode}' is no longer maintained by our system. Please contact administrator."
+                    };
+                }
+                else
+                {
+                    result = OnValidateInstitution(institution);
+                }
+            }
+            else
+            {
+                result = new InstitutionAccessValidationResult { AllowAccess = true };
+            }
+            if (!result.AllowAccess)
+            {
+                throw new GeneralException(result.Remarks, ExceptionType.AccessDeniedInstitution);
+            }
         }
     }
 }

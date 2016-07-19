@@ -34,5 +34,6 @@ namespace MultiTenancyFramework
         NoMoreDbForSchools,
         UnidentifiedInstitutionCode,
         DatabaseRelated,
+        AccessDeniedInstitution,
     }
 }
