@@ -42,7 +42,7 @@ namespace MultiTenancyFramework.SimpleInjector
             Container.Register(typeof(IInstitutionDAO<>), types.First(x => x.Name.EndsWith("1")));
             #endregion
 
-            // This is for convention-based registrations. Convention is Service/IService
+            // This is for convention-based registrations. Convention is IService/Service
             var registrations =
                 from type in exportedTypes
                 where !type.IsAbstract
