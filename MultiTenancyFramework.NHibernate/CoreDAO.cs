@@ -47,7 +47,7 @@ namespace MultiTenancyFramework.NHibernate
         public void Save(T obj)
         {
             var session = BuildSession();
-            if (string.IsNullOrWhiteSpace(InstitutionCode)) obj.InstitutionCode = string.Empty;
+            obj.InstitutionCode = InstitutionCode;
             if (string.IsNullOrWhiteSpace(EntityName))
             {
                 session.Save(obj);
@@ -86,7 +86,7 @@ namespace MultiTenancyFramework.NHibernate
             //
             // - MultiTenancyFramework
             var session = BuildSession();
-            if (string.IsNullOrWhiteSpace(InstitutionCode)) obj.InstitutionCode = string.Empty;
+            obj.InstitutionCode = InstitutionCode;
             obj.LastDateModified = DateTime.Now.GetLocalTime();
             if (string.IsNullOrWhiteSpace(EntityName))
             {
@@ -101,7 +101,7 @@ namespace MultiTenancyFramework.NHibernate
         public void Delete(T obj)
         {
             var session = BuildSession();
-            if (string.IsNullOrWhiteSpace(InstitutionCode)) obj.InstitutionCode = string.Empty;
+            obj.InstitutionCode = InstitutionCode;
             obj.LastDateModified = DateTime.Now.GetLocalTime();
             if (string.IsNullOrWhiteSpace(EntityName))
             {
@@ -116,14 +116,14 @@ namespace MultiTenancyFramework.NHibernate
         public void Evict(T entity)
         {
             var session = BuildSession();
-            if (string.IsNullOrWhiteSpace(InstitutionCode)) entity.InstitutionCode = string.Empty;
+            entity.InstitutionCode = InstitutionCode;
             session.Evict(entity);
         }
 
         public T Merge(T entity)
         {
             var session = BuildSession();
-            if (string.IsNullOrWhiteSpace(InstitutionCode)) entity.InstitutionCode = string.Empty;
+            entity.InstitutionCode = InstitutionCode;
             entity.LastDateModified = DateTime.Now.GetLocalTime();
             if (string.IsNullOrWhiteSpace(EntityName))
             {
@@ -139,7 +139,7 @@ namespace MultiTenancyFramework.NHibernate
         public void Refresh(T obj)
         {
             var session = BuildSession();
-            if (string.IsNullOrWhiteSpace(InstitutionCode)) obj.InstitutionCode = string.Empty;
+            obj.InstitutionCode = InstitutionCode;
             session.Refresh(obj);
         }
 
