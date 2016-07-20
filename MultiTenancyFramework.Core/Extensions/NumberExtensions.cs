@@ -50,9 +50,9 @@ namespace MultiTenancyFramework
         /// </summary>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public static string ToNaira(this long amount)
+        public static string ToMoney(this long amount)
         {
-            return Convert.ToDecimal(amount).ToNaira();
+            return Convert.ToDecimal(amount).ToMoney();
         }
 
         /// <summary>
@@ -60,9 +60,9 @@ namespace MultiTenancyFramework
         /// </summary>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public static string ToNaira(this int amount)
+        public static string ToMoney(this int amount)
         {
-            return ((long)amount).ToNaira();
+            return ((long)amount).ToMoney();
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace MultiTenancyFramework
         /// </summary>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public static string ToNaira(this decimal amount)
+        public static string ToMoney(this decimal amount)
         {
             //if (amount < 0)
             //{
@@ -85,13 +85,13 @@ namespace MultiTenancyFramework
         /// </summary>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public static string ToNairaWithBracketIfNegative(this decimal amount)
+        public static string ToMoneyWithBracketIfNegative(this decimal amount)
         {
             if (amount < 0)
             {
-                return string.Format("({0})", Math.Abs(amount).ToNaira());
+                return string.Format("({0})", Math.Abs(amount).ToMoney());
             }
-            return amount.ToNaira();
+            return amount.ToMoney();
         }
 
         // Lookup table.
