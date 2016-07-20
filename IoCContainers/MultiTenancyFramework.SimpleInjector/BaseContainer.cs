@@ -4,9 +4,7 @@ using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.IoC;
 using SimpleInjector;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace MultiTenancyFramework.SimpleInjector
 {
@@ -61,19 +59,6 @@ namespace MultiTenancyFramework.SimpleInjector
 
             // Finally...
             Container.Register(typeof(IServiceProvider), () => Container);
-        }
-
-        private void RegisterArrayResolver(UnregisteredTypeEventArgs e, Container container, Type elementType)
-        {
-            var producer = container.GetRegistration(typeof(IEnumerable<>)
-                .MakeGenericType(elementType));
-            var enumerableExpression = producer.BuildExpression();
-            var arrayMethod = typeof(Enumerable).GetMethod("ToArray")
-                .MakeGenericMethod(elementType);
-            var arrayExpression =
-                Expression.Call(arrayMethod, enumerableExpression);
-
-            e.Register(arrayExpression);
         }
     }
 }
