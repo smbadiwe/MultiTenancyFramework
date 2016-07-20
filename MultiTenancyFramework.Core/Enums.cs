@@ -33,6 +33,7 @@
     
     public enum Gender
     {
+        NotSpecified,
         Male = 1,
         Female
     }

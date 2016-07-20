@@ -107,7 +107,7 @@ namespace MultiTenancyFramework.Mvc
 
         protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string institutionCode)
         {
-            return RedirectToAction(actionName, controllerName, "NoArea", institutionCode);
+            return RedirectToAction(actionName, controllerName, "", institutionCode);
         }
 
         protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string areaName, string institutionCode)
@@ -120,7 +120,14 @@ namespace MultiTenancyFramework.Mvc
             }
             if (!string.IsNullOrWhiteSpace(areaName))
             {
-                routes.Add("area", areaName == "NoArea" ? "" : areaName);
+                routes.Add("area", areaName);
+            }
+            else
+            {
+                if (controllerName == "Error")
+                {
+                    routes.Add("area", "");
+                }
             }
             if (!string.IsNullOrWhiteSpace(institutionCode))
             {

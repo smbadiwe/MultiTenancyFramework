@@ -210,11 +210,13 @@ namespace MultiTenancyFramework.NHibernate
 
         private static MyDataTable FillInDataColumns(Type TType, Type idType, IDbConnection connection, string tableName, string schema, out PropertyInfo[] props)
         {
-            string sqlForColumnNames = string.Format("select column_name from information_schema.columns where table_name = '{0}'", tableName);
+            string prepend = "";
             if (connection is SqlConnection)
             {
-                sqlForColumnNames += string.Format(" and table_schema = '{0}'", schema);
+                prepend = $"use {connection.Database}; ";
             }
+            string sqlForColumnNames = string.Format("{0}select column_name from information_schema.columns where table_name = '{1}' and table_schema = '{2}'"
+                , prepend, tableName, string.IsNullOrWhiteSpace(prepend) ? connection.Database : schema);
             var columnsInDestinationTable = ExecuteSelectQuery(sqlForColumnNames, connection);
             props = TType.GetProperties().Where(x => x.CanWrite && x.GetCustomAttribute<NotMappedAttribute>() == null).ToArray();
 
@@ -278,6 +280,12 @@ namespace MultiTenancyFramework.NHibernate
                                     break;
                                 }
                             }
+                        }
+
+                        if (type == null)
+                        {
+                            // let it be Int64.
+                            type = typeof(long);
                         }
                     }
                     else //=> we may be dealing with a composite mapping
@@ -559,6 +567,6 @@ namespace MultiTenancyFramework.NHibernate
             }
             return result;
         }
-        
+
     }
 }
