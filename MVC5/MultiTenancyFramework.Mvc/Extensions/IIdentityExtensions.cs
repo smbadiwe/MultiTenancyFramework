@@ -45,18 +45,9 @@ namespace MultiTenancyFramework
 
         public static bool HasPrivilege(this IPrincipal user, string action, string controller, string area)
         {
-            var currentAppUser = WebUtilities.GetCurrentlyLoggedInUser() as IdentityUser;
-            //TODO: I suspect I might not need this line.
-            if ((
-                currentAppUser.UserName == user.Identity.Name
-                    && currentAppUser.Id == user.Identity.GetUserId<long>()
-                ) == false)
-            {
-                return false;
-            }
-
             string role = $"{action}-{controller}-{area}"; //NB: This MUST conform with the pattern in Privilege.Name
-            return userStore.IsInRoleAsync(currentAppUser, role).Result;
+
+            return WebUtilities.LoggedInUsersPrivilegesDict.ContainsKey(role);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace MultiTenancyFramework.Mvc
         }
 
         /// <summary>
-        /// Key is ActionAccessPrivilege.Name,
+        /// Key is ActionAccessPrivilege.Name, which is same as $"{Action}-{Controller}-{Area}";
         /// </summary>
         public static Dictionary<string, ActionAccessPrivilege> LoggedInUsersPrivilegesDict
         {
@@ -33,7 +33,10 @@ namespace MultiTenancyFramework.Mvc
             {
                 try
                 {
-                    return HttpContext.Current.Session["::LoggedInUsersPrivileges::"] as Dictionary<string, ActionAccessPrivilege>;
+                    var privs = HttpContext.Current.Session["::LoggedInUsersPrivileges::"] as Dictionary<string, ActionAccessPrivilege>;
+                    if (privs == null) throw new LogOutUserException();
+
+                    return privs;
                 }
                 catch
                 {
