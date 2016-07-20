@@ -111,6 +111,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Queries\GetActionAccessPrivilegesByGridSearchParamsQuery.cs" />
+    <Compile Include="Data\Queries\GetControllersQuery.cs" />
+    <Compile Include="Data\Queries\GetActionsQuery.cs" />
     <Compile Include="Data\Queries\GetAreasQuery.cs" />
     <Compile Include="EmailService.cs" />
     <Compile Include="Entities\ActionAccessPrivilege.cs" />

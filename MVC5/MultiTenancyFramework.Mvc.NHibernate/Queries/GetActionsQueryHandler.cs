@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace MultiTenancyFramework.NHibernate.Queries
 {
-    public class GetAreasQueryHandler : CoreGeneralDAO, IDbQueryHandler<GetAreasQuery, IList<string>>
+    public class GetActionsQueryHandler : CoreGeneralDAO, IDbQueryHandler<GetActionsQuery, IList<string>>
     {
-        public IList<string> Handle(GetAreasQuery theQuery)
+        public IList<string> Handle(GetActionsQuery theQuery)
         {
             var session = BuildSession();
             var query = session.QueryOver<ActionAccessPrivilege>()
-                .Select(Projections.Distinct(Projections.Property<ActionAccessPrivilege>(x => x.Area)));
+                .Select(Projections.Distinct(Projections.Property<ActionAccessPrivilege>(x => x.Action)));
             return query.List<string>();
         }
     }
