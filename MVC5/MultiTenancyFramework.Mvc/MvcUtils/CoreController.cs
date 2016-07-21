@@ -37,7 +37,9 @@ namespace MultiTenancyFramework.Mvc
         }
 
         /// <summary>
-        /// = RouteData.Values["institution"]. It's appearing in too many controllers now
+        /// = RouteData.Values["institution"]. It's appearing in too many controllers now.
+        /// BTW, there is also WebUtilities.InstitutionCode which essentially same, just that that one
+        /// will force logout if Session has expired, unlike this one. So, use with caution
         /// </summary>
         protected string InstitutionCode
         {
@@ -48,12 +50,7 @@ namespace MultiTenancyFramework.Mvc
         }
 
         protected readonly ILogger Logger;
-
-        /// <summary>
-        /// The institution - tenant or central.
-        /// </summary>
-        protected Institution Institution { get; set; }
-
+        
         /// <summary>
         /// The (logged in) user as maintained by the framework; distinct from (IPrincipal) User
         /// </summary>
