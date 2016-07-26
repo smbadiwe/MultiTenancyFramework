@@ -46,15 +46,28 @@ namespace MultiTenancyFramework
             return GetEnumNames(type, false, enums);
         }
 
+        public static string GetEnumName<TEnum>(object enumValue)
+        {
+            return GetEnumName(typeof(TEnum), enumValue);
+        }
+
+        public static string GetEnumName(Type enumType, object enumValue)
+        {
+            string enumName = Enum.GetName(enumType, Enum.Parse(enumType, enumValue.ToString()));
+            var nameAttribute = (EnumDescriptionAttribute[])enumType.GetField(enumName).GetCustomAttributes(typeof(EnumDescriptionAttribute), false);
+
+            return (nameAttribute == null || nameAttribute.Length == 0) 
+                ? enumName.AsSplitPascalCasedString() 
+                : nameAttribute[0].Name;
+        }
+
         public static List<NV> GetEnumNames(Type enumType, bool orderItems, IEnumerable enums)
         {
             List<NV> nameValueList = new List<NV>();
 
             foreach (int enumValue in enums.Cast<int>())
             {
-                string enumName = Enum.GetName(enumType, enumValue);
-                var nameAttribute = (EnumDescriptionAttribute[])enumType.GetField(Enum.GetName(enumType, enumValue)).GetCustomAttributes(typeof(EnumDescriptionAttribute), false);
-                nameValueList.Add(new NV { Name = ((nameAttribute == null || nameAttribute.Length == 0) ? enumName : nameAttribute[0].Name).AsSplitPascalCasedString(), Value = enumValue });
+                nameValueList.Add(new NV { Name = GetEnumName(enumType, enumValue), Value = enumValue });
             }
 
             if (orderItems)

@@ -42,12 +42,12 @@ namespace System.Web.Mvc.Html
 
         public static MvcHtmlString MyEnumDropDownListFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TEnum>> expression)
         {
-            return htmlHelper.MyEnumDropDownListFor(expression, null, null);
+            return htmlHelper.MyEnumDropDownListFor(expression, optionalLabel: null, htmlAttributes: null);
         }
 
         public static MvcHtmlString MyEnumDropDownListFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TEnum>> expression, object htmlAttributes)
         {
-            return htmlHelper.MyEnumDropDownListFor(expression, null, htmlAttributes);
+            return htmlHelper.MyEnumDropDownListFor(expression, optionalLabel: null, htmlAttributes: htmlAttributes);
         }
 
         public static MvcHtmlString MyEnumDropDownListFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TEnum>> expression, string optionalLabel, object htmlAttributes)
@@ -63,21 +63,20 @@ namespace System.Web.Mvc.Html
 
         public static MvcHtmlString MyEnumDropDownListFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TEnum>> expression, IEnumerable enumList, string optionalLabel, object htmlAttributes)
         {
-            string expressionName = ExpressionHelper.GetExpressionText(expression);
-            string expressionFullName =
-                htmlHelper.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(expressionName);
-
             ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, htmlHelper.ViewData);
             if (metadata == null)
             {
                 throw new InvalidOperationException("Could not get metadata from expression");
             }
-
             if (metadata.ModelType == null)
             {
                 throw new InvalidOperationException("Null value for metadata's ModelType");
             }
             Enum currentValue = metadata.Model as Enum;
+
+            string expressionName = ExpressionHelper.GetExpressionText(expression);
+            string expressionFullName =
+                htmlHelper.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(expressionName);
             if (currentValue == null && !string.IsNullOrWhiteSpace(expressionName))
             {
                 currentValue = htmlHelper.ViewData.Eval(expressionName) as Enum;
@@ -111,6 +110,31 @@ namespace System.Web.Mvc.Html
                 return htmlHelper.DropDownListFor(expression, selectList, optionalLabel, attr);
             }
             return htmlHelper.DropDownListFor(expression, selectList, optionalLabel, htmlAttributes);
+        }
+
+        /// <summary>
+        /// This is most useful when the enums are manually added to a list; i.e. when you want to list only specific enum items
+        /// </summary>
+        /// <typeparam name="TModel"></typeparam>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <param name="htmlHelper"></param>
+        /// <param name="expression"></param>
+        /// <param name="selectList"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static MvcHtmlString MyEnumDropDownListFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TEnum>> expression, IEnumerable<SelectListItem> selectList, object htmlAttributes)
+        {
+            var enumType = typeof(TEnum);
+            var items = from item in selectList
+                      select new SelectListItem
+                      {
+                          Value = item.Text,
+                          Text = MultiTenancyFramework.EnumHelper.GetEnumName(enumType, item.Text),
+                          Selected = item.Selected,
+                          Disabled = item.Disabled,
+                          Group = item.Group,
+                      };
+            return htmlHelper.DropDownListFor(expression, items, htmlAttributes);
         }
 
         private static object GetValueFromModel(HtmlHelper htmlHelper, string key, Type destinationType)
