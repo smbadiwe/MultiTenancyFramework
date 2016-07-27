@@ -53,11 +53,16 @@ namespace MultiTenancyFramework
 
         public static string GetEnumName(Type enumType, object enumValue)
         {
-            string enumName = Enum.GetName(enumType, Enum.Parse(enumType, enumValue.ToString()));
+            string enumName = enumValue.ToString();
+            int enumNumber;
+            if (int.TryParse(enumName, out enumNumber))
+            {
+                enumName = Enum.GetName(enumType, Enum.Parse(enumType, enumValue.ToString()));
+            }
             var nameAttribute = (EnumDescriptionAttribute[])enumType.GetField(enumName).GetCustomAttributes(typeof(EnumDescriptionAttribute), false);
 
-            return (nameAttribute == null || nameAttribute.Length == 0) 
-                ? enumName.AsSplitPascalCasedString() 
+            return (nameAttribute == null || nameAttribute.Length == 0)
+                ? enumName.AsSplitPascalCasedString()
                 : nameAttribute[0].Name;
         }
 
@@ -92,6 +97,6 @@ namespace MultiTenancyFramework
             Type enumType = Type.GetType(enumStringType);
             return GetEnumNames(enumType, orderItems);
         }
-        
+
     }
 }
