@@ -57,7 +57,7 @@ namespace MultiTenancyFramework
             int enumNumber;
             if (int.TryParse(enumName, out enumNumber))
             {
-                enumName = Enum.GetName(enumType, Enum.Parse(enumType, enumValue.ToString()));
+                enumName = Enum.GetName(enumType, Enum.Parse(enumType, enumName));
             }
             var nameAttribute = (EnumDescriptionAttribute[])enumType.GetField(enumName).GetCustomAttributes(typeof(EnumDescriptionAttribute), false);
 
