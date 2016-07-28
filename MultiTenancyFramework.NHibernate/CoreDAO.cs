@@ -273,6 +273,10 @@ namespace MultiTenancyFramework.NHibernate
         public void SqlBulkInsert(IList<T> items, IDbConnection connection, string tableName, bool isDataMigration = false, string schema = "dbo")
         {
             if (string.IsNullOrWhiteSpace(tableName)) tableName = typeof(T).GetTableName();
+            foreach (dynamic item in items)
+            {
+                item.InstitutionCode = InstitutionCode;
+            }
             SqlManipulations.SqlBulkInsert<T, idT>(items, connection, tableName, EntityName, isDataMigration, schema);
         }
 
@@ -290,6 +294,10 @@ namespace MultiTenancyFramework.NHibernate
         public void SqlBulkInsert(Type TType, IList items, IDbConnection connection, string tableName, bool isDataMigration = false, string schema = "dbo")
         {
             if (string.IsNullOrWhiteSpace(tableName)) tableName = TType.GetTableName();
+            foreach (dynamic item in items)
+            {
+                item.InstitutionCode = InstitutionCode;
+            }
             SqlManipulations.SqlBulkInsert(TType, items, connection, tableName, EntityName, isDataMigration, schema);
         }
 

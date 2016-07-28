@@ -19,7 +19,7 @@ namespace MultiTenancyFramework.NHibernate
             get { return _institutionCode; }
             set
             {
-                if (value == Utilities.INST_DEFAULT_CODE) value = string.Empty;
+                if (value == null || value == Utilities.INST_DEFAULT_CODE) value = string.Empty;
                 _institutionCode = value;
             }
         }
