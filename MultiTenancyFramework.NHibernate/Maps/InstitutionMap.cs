@@ -14,7 +14,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
             Table("Institutions");
             Map(x => x.Name);
             Map(x => x.ShortName);
-            Map(x => x.Code);
+            Map(x => x.Code).Index("ind_code");
             Map(x => x.Email);
             Map(x => x.Phone);
             Map(x => x.TempUserName);

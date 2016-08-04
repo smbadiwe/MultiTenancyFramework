@@ -115,14 +115,15 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                     ISession session = storage.Session;
                     if (session != null)
                     {
-                        if (session.IsOpen && session.Transaction != null && session.IsConnected && session.Transaction.IsActive && !session.Transaction.WasCommitted && !session.Transaction.WasRolledBack)
+                        if (session.IsOpen && session.Transaction != null && session.IsConnected && session.Transaction.IsActive 
+                            && !session.Transaction.WasCommitted && !session.Transaction.WasRolledBack)
                         {
                             session.Transaction.Rollback();
                             session.Close();
                         }
 
                         session.Dispose();
-                        storage.Session = null;
+                        storage = null;
                     }
                 }
             }
@@ -151,7 +152,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// <returns></returns>
         public static ISession GetSession(string institutionCode = null, IDbConnection dbConnection = null, bool doFreshSession = false)
         {
-            var isWebSession = IsWeb();
+            bool isWebSession = IsWeb();
             string sessionKey = GetSessionKey(institutionCode, isWebSession);
             ISessionStorage storage = null;
 
@@ -217,11 +218,11 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 //Update the storage with the new session
                 storage.Session = session;
                 SessionStorages[sessionKey] = storage;
+            }
                 if (isWebSession)
                 {
                     CurrentSessions[sessionKey] = (WebSessionStorage)storage;
                 }
-            }
 
             return session;
         }

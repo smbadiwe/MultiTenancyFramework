@@ -30,7 +30,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             {
                 if (x.Items.Contains(WebSessionStorage.CurrentSessionKey))
                 {
-                    var storageSet = NHSessionManager.CurrentSessions; //x.Items[WebSessionStorage.CurrentSessionKey] as Dictionary<string, WebSessionStorage>;
+                    var storageSet = NHSessionManager.CurrentSessions;
 
                     if (storageSet != null && storageSet.Count > 0)
                     {
@@ -39,14 +39,6 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                             //Closes the session if there's any open session
                             if (storage != null && storage.Session != null)
                             {
-                                var session = storage.Session;
-                                if (session.Transaction != null && session.IsConnected && session.Transaction.IsActive && !session.Transaction.WasCommitted && !session.Transaction.WasRolledBack)
-                                {
-                                    session.Transaction.Rollback();
-                                }
-
-                                if (session.IsOpen) session.Close();
-                                session.Dispose();
                                 NHSessionManager.CloseStorage(storage.InstitutionCode);
                             }
                         }
