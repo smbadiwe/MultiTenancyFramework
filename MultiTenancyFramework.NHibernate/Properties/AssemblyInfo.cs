@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("MultiTenancyFramework.NHibernate")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Provides NHibernate-based implementation for the Data Access interfaces in MultiTenancyFramework.Core")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Somadina Mbadiwe")]
 [assembly: AssemblyProduct("MultiTenancyFramework.NHibernate")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCopyright("Copyright © Somadina Mbadiwe 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

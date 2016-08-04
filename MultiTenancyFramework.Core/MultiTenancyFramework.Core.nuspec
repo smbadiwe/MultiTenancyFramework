@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <projectUrl>http://codedrum.blogspot.com/2016/08/MultiTenancyFramework.html</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Read more at https://github.com/smbadiwe/MultiTenancyFramework/wiki. Drop a note if need be.</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>SaaS MultiTenant MultiTenancy Framework Software-as-a-Service</tags>
+  </metadata>
+</package>

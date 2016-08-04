@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <projectUrl>http://codedrum.blogspot.com/2016/08/MultiTenancyFramework.html</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Read more at https://github.com/smbadiwe/MultiTenancyFramework/wiki. Drop a note if need be.</releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>SaaS MultiTenant MultiTenancy Framework Software-as-a-Service MVC5 NHibernate FluentNHibernate</tags>
+    <dependencies>
+      <dependency id="MultiTenancyFramework.Core" version="1.0.0.0" />
+      <dependency id="MultiTenancyFramework.Mvc" version="1.0.0.0" />
+      <dependency id="MultiTenancyFramework.NHibernate" version="1.0.0.0" />
+    </dependencies>
+  </metadata>
+</package>
