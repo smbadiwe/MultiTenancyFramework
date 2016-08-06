@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNet.Identity;
-using MultiTenancyFramework.Entities;
+﻿using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.Mvc;
 using MultiTenancyFramework.Mvc.Identity;
-using System;
-using System.Security.Principal;
 using System.Web;
 using System.Web.Routing;
+using System.Security.Principal;
+using System;
 
 namespace MultiTenancyFramework
 {
@@ -24,30 +23,29 @@ namespace MultiTenancyFramework
 
         public static bool HasPrivilege(this IPrincipal user)
         {
-            var action = Convert.ToString(routeData["action"]);
-            var controller = Convert.ToString(routeData["controller"]);
-            var area = Convert.ToString(routeData["area"]);
-            return HasPrivilege(user, action, controller, area);
+            return HasPrivilege(user, 
+                Convert.ToString(routeData["action"]), 
+                Convert.ToString(routeData["controller"]), 
+                Convert.ToString(routeData["area"]));
         }
 
         public static bool HasPrivilege(this IPrincipal user, string action)
         {
-            var controller = Convert.ToString(routeData["controller"]);
-            var area = Convert.ToString(routeData["area"]);
-            return HasPrivilege(user, action, controller, area);
+            return HasPrivilege(user, action, 
+                Convert.ToString(routeData["controller"]), 
+                Convert.ToString(routeData["area"]));
         }
 
         public static bool HasPrivilege(this IPrincipal user, string action, string controller)
         {
-            var area = Convert.ToString(routeData["area"]);
-            return HasPrivilege(user, action, controller, area);
+            return HasPrivilege(user, action, controller, 
+                Convert.ToString(routeData["area"]));
         }
 
         public static bool HasPrivilege(this IPrincipal user, string action, string controller, string area)
         {
-            string role = $"{action}-{controller}-{area}"; //NB: This MUST conform with the pattern in Privilege.Name
-
-            return WebUtilities.LoggedInUsersPrivilegesDict.ContainsKey(role);
+            return WebUtilities.LoggedInUsersPrivilegesDict
+                .ContainsKey($"{action}-{controller}-{area}");//NB: This key MUST conform with the pattern in Privilege.Name
         }
     }
 }

@@ -22,7 +22,7 @@ namespace MultiTenancyFramework
             //// Add custom user claims here
             //userIdentity.AddClaim(new Claim("InstitutionCode", WebUtils.WebUtilities.InstitutionCode));
             //return userIdentity;
-
+            
             if (manager == null)
             {
                 throw new ArgumentNullException("manager");
@@ -34,8 +34,7 @@ namespace MultiTenancyFramework
             claimsIdentity.AddClaim(new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity", "http://www.w3.org/2001/XMLSchema#string"));
 
             var instCode = WebUtilities.InstitutionCode;
-
-
+            
             if (!string.IsNullOrWhiteSpace(instCode))
             {
                 var queryProcessor = Utilities.QueryProcessor;
@@ -79,6 +78,8 @@ namespace MultiTenancyFramework
                     {
                         claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name, "http://www.w3.org/2001/XMLSchema#string"));
                     }
+                    privilege = null;
+                    theUserRoles = null;
                 }
                 var defaultPrivs = privilegesInDb.Values.Where(x => x.IsDefault);
                 if (!string.IsNullOrWhiteSpace(instCode)) // If Tenant
@@ -95,6 +96,7 @@ namespace MultiTenancyFramework
                     claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, priv.Name, "http://www.w3.org/2001/XMLSchema#string"));
                 }
                 WebUtilities.LoggedInUsersPrivilegesDict = list.ToDictionary(x => x.Name);
+                defaultPrivs = null;
             }
             if (manager.SupportsUserClaim)
             {

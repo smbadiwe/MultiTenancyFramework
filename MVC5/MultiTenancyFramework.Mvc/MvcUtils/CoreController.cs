@@ -31,7 +31,7 @@ namespace MultiTenancyFramework.Mvc
             get
             {
                 if (_commandProcessor == null) _commandProcessor = Utilities.CommandProcessor;
-                
+
                 return _commandProcessor;
             }
         }
@@ -50,7 +50,7 @@ namespace MultiTenancyFramework.Mvc
         }
 
         protected readonly ILogger Logger;
-        
+
         /// <summary>
         /// The (logged in) user as maintained by the framework; distinct from (IPrincipal) User
         /// </summary>
@@ -143,6 +143,7 @@ namespace MultiTenancyFramework.Mvc
                 if (genEx != null && genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode)
                 {
                     filterContext.Result = RedirectToAction("InvalidUrl", "Error", Convert.ToString(values["institution"]));
+                    genEx = null;
                     return;
                 }
 
@@ -182,43 +183,38 @@ namespace MultiTenancyFramework.Mvc
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var actionDescriptor = filterContext.ActionDescriptor;
+
+            #region Check whether it's an anonymous action
             
+            // check if AllowAnonymous is on the controller
+            var anonymous = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
+                    .Cast<AllowAnonymousAttribute>();
+            if (anonymous.Any())
+            {
+                //Allow Anonymous
+                anonymous = null;
+                base.OnActionExecuting(filterContext);
+                return;
+            }
+
+            // It's not; so check if AllowAnonymous is on the action
+            anonymous = actionDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
+                    .Cast<AllowAnonymousAttribute>();
+            if (anonymous.Any())
+            {
+                //Allow Anonymous
+                anonymous = null;
+                base.OnActionExecuting(filterContext);
+                return;
+            }
+            anonymous = null;
+
+            #endregion
+
             // If user is not logged in (authenticated) yet, 
             IdentityUser = WebUtilities.GetCurrentlyLoggedInUser();
             if (IdentityUser == null)
             {
-                #region Check whether it's an anonymous action
-
-                // This is the only action guaranteed to be 'AllowAnonymous', so no need
-                // to waste time checking what I already know.
-                if (actionDescriptor.ActionName == "Login"
-                    && actionDescriptor.ControllerDescriptor.ControllerName == "Account")
-                {
-                    base.OnActionExecuting(filterContext);
-                    return;
-                }
-
-                // check if AllowAnonymous is on the controller
-                var anonymous = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
-                        .Cast<AllowAnonymousAttribute>();
-                if (anonymous.Any())
-                {
-                    //Allow Anonymous
-                    base.OnActionExecuting(filterContext);
-                    return;
-                }
-
-                // It's not; so check if AllowAnonymous is on the action
-                anonymous = actionDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
-                        .Cast<AllowAnonymousAttribute>();
-                if (anonymous.Any())
-                {
-                    //Allow Anonymous
-                    base.OnActionExecuting(filterContext);
-                    return;
-                } 
-                #endregion
-
                 // It's not anonymous, so force user to login
                 WebUtilities.LogOut();
                 filterContext.Result = MvcUtility.GetLoginPageResult(InstitutionCode);
@@ -274,12 +270,13 @@ namespace MultiTenancyFramework.Mvc
                 filterContext.Result = HttpAccessDenied();
                 return;
             }
+
             #endregion
 
             // fall back to base
             base.OnActionExecuting(filterContext);
         }
-        
+
         protected virtual RedirectToRouteResult HttpAccessDenied()
         {
             return RedirectToAction("DenyAccess", "Error", InstitutionCode);

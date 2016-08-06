@@ -107,6 +107,7 @@ namespace MultiTenancyFramework.Mvc.Identity
                 var identity = new ClaimsIdentity(DefaultAuthenticationTypes.TwoFactorCookie);
                 identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, id));
                 AuthenticationManager.SignIn(identity);
+                identity = null;
                 return SignInStatus.RequiresVerification;
             }
             await SignInAsync(user, isPersistent, false);

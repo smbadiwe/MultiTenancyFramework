@@ -62,6 +62,7 @@ namespace MultiTenancyFramework.Mvc.Identity
                 manager.UserTokenProvider =
                     new DataProtectorTokenProvider<IdentityUser, long>(dataProtectionProvider.Create("ASP.NET Identity"));
             }
+            userStore = null;
             return manager;
         }
 
@@ -85,6 +86,7 @@ namespace MultiTenancyFramework.Mvc.Identity
             {
                 return result;
             }
+            result = null;
             user.ForceChangeOfPassword = false;
             return await UpdateAsync(user).ConfigureAwait(false);
         }
@@ -97,6 +99,7 @@ namespace MultiTenancyFramework.Mvc.Identity
             {
                 return result;
             }
+            result = null;
             await passwordStore.SetPasswordHashAsync(user, PasswordHasher.HashPassword(newPassword)).ConfigureAwait(false);
             //await UpdateSecurityStampInternal(user).ConfigureAwait(false);
             return IdentityResult.Success;
