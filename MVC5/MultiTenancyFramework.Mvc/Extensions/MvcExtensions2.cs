@@ -8,11 +8,21 @@ namespace System.Web.Mvc
         /// This incorporates the institution code in the generated Url
         /// </summary>
         /// <param name="url"></param>
+        /// <returns></returns>
+        public static string MyAction(this UrlHelper url)
+        {
+            return url.MyAction(null, null, null, null);
+        }
+
+        /// <summary>
+        /// This incorporates the institution code in the generated Url
+        /// </summary>
+        /// <param name="url"></param>
         /// <param name="actionName"></param>
         /// <returns></returns>
         public static string MyAction(this UrlHelper url, string actionName)
         {
-            return url.MyAction(actionName, null, (object)null);
+            return url.MyAction(actionName, null, null, null);
         }
 
         /// <summary>
@@ -24,7 +34,7 @@ namespace System.Web.Mvc
         /// <returns></returns>
         public static string MyAction(this UrlHelper url, string actionName, string controllerName)
         {
-            return url.MyAction(actionName, controllerName, (object)null);
+            return url.MyAction(actionName, controllerName, null, null);
         }
 
         /// <summary>
@@ -37,7 +47,7 @@ namespace System.Web.Mvc
         /// <returns></returns>
         public static string MyAction(this UrlHelper url, string actionName, string controllerName, string areaName)
         {
-            return url.MyAction(actionName, controllerName, new { area = areaName });
+            return url.MyAction(actionName, controllerName, areaName, null);
         }
 
         /// <summary>
@@ -46,9 +56,10 @@ namespace System.Web.Mvc
         /// <param name="url"></param>
         /// <param name="actionName"></param>
         /// <param name="controllerName"></param>
+        /// <param name="areaName"></param>
         /// <param name="routeValues"></param>
         /// <returns></returns>
-        public static string MyAction(this UrlHelper url, string actionName, string controllerName, object routeValues)
+        public static string MyAction(this UrlHelper url, string actionName, string controllerName, string areaName, object routeValues)
         {
             RouteValueDictionary routes;
             if (routeValues == null)
@@ -59,8 +70,15 @@ namespace System.Web.Mvc
             {
                 routes = new RouteValueDictionary(routeValues);
             }
-            routes["institution"] = System.Web.HttpContext.Current.Request.RequestContext.RouteData.Values["institution"];
-
+            routes["institution"] = HttpContext.Current.Request.RequestContext.RouteData.Values["institution"];
+            if (!string.IsNullOrWhiteSpace(areaName))
+            {
+                routes["area"] = areaName;
+            }
+            if (string.IsNullOrWhiteSpace(actionName))
+            {
+                actionName = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["action"]);
+            }
             if (string.IsNullOrWhiteSpace(controllerName))
             {
                 return url.Action(actionName, routes);
