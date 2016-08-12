@@ -14,6 +14,8 @@ namespace MultiTenancyFramework.Commands
         [DebuggerStepThrough]
         public void Process(ICommand command)
         {
+            if (command == null) throw new ArgumentNullException("command");
+
             var handlerType =
                 typeof(ICommandHandler<>).MakeGenericType(command.GetType());
 

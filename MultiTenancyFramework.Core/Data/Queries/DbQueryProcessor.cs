@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace MultiTenancyFramework.Data.Queries
 {
@@ -12,9 +13,11 @@ namespace MultiTenancyFramework.Data.Queries
         
         public string InstitutionCode { get; set; }
 
-        //[DebuggerStepThrough]
+        [DebuggerStepThrough]
         public TResult Process<TResult>(IDbQuery<TResult> query)
         {
+            if (query == null) throw new ArgumentNullException("query");
+
             var handlerType =
                 typeof(IDbQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResult));
 
