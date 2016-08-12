@@ -10,7 +10,7 @@ namespace MultiTenancyFramework.Mvc
     {
         public EmailService()
         {
-            EmailAndSmtpSetting = MvcUtility.SystemSettings.EmailAndSmtpSetting;
+            EmailAndSmtpSetting = Utilities.SystemSettings.EmailAndSmtpSetting;
         }
 
         public EmailService(EmailAndSmtpSetting emailAndSmtpSetting)

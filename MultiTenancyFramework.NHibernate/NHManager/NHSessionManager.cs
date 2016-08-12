@@ -115,7 +115,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                     ISession session = storage.Session;
                     if (session != null)
                     {
-                        if (session.IsOpen && session.Transaction != null && session.IsConnected && session.Transaction.IsActive 
+                        if (session.IsOpen && session.Transaction != null && session.IsConnected && session.Transaction.IsActive
                             && !session.Transaction.WasCommitted && !session.Transaction.WasRolledBack)
                         {
                             session.Transaction.Rollback();
@@ -219,10 +219,10 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 storage.Session = session;
                 SessionStorages[sessionKey] = storage;
             }
-                if (isWebSession)
-                {
-                    CurrentSessions[sessionKey] = (WebSessionStorage)storage;
-                }
+            if (isWebSession)
+            {
+                CurrentSessions[sessionKey] = (WebSessionStorage)storage;
+            }
 
             return session;
         }

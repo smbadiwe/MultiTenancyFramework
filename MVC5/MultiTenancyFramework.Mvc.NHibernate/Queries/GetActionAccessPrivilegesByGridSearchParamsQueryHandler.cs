@@ -5,7 +5,7 @@ using NHibernate.Criterion;
 
 namespace MultiTenancyFramework.NHibernate.Queries
 {
-    public class GetActionAccessPrivilegesByGridSearchParamsQueryHandler : CoreGeneralWithGridPagingDAO<Privilege>, IDbQueryHandler<GetActionAccessPrivilegesByGridSearchParamsQuery, RetrievedData<ActionAccessPrivilege>>
+    public class GetActionAccessPrivilegesByGridSearchParamsQueryHandler : CoreGeneralWithGridPagingDAO<ActionAccessPrivilege>, IDbQueryHandler<GetActionAccessPrivilegesByGridSearchParamsQuery, RetrievedData<ActionAccessPrivilege>>
     {
         public RetrievedData<ActionAccessPrivilege> Handle(GetActionAccessPrivilegesByGridSearchParamsQuery theQuery)
         {

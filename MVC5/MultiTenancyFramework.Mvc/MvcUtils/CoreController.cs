@@ -96,7 +96,7 @@ namespace MultiTenancyFramework.Mvc
             return $"~/Areas/{AreaName}/Views/{ViewFolder}/{viewName}.cshtml";
         }
 
-        protected virtual void AlertSuccess(string message, bool dismissable = true, bool clearModel = true)
+        protected void AlertSuccess(string message, bool dismissable = true, bool clearModel = true)
         {
             AddAlert(AlertStyles.Success, message, dismissable);
             if (clearModel) ModelState.Clear();
@@ -277,34 +277,43 @@ namespace MultiTenancyFramework.Mvc
             base.OnActionExecuting(filterContext);
         }
 
-        protected virtual RedirectToRouteResult HttpAccessDenied()
+        /// <summary>
+        /// Redirects to \Error\DenyAccess
+        /// </summary>
+        /// <returns></returns>
+        protected RedirectToRouteResult HttpAccessDenied()
         {
             return RedirectToAction("DenyAccess", "Error", InstitutionCode);
         }
 
-        protected virtual ViewResult ErrorView(ErrorMessageModel model)
+        /// <summary>
+        /// Redirects to \Error
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        protected ViewResult ErrorView(ErrorMessageModel model)
         {
             return View("Error", model);
         }
 
-        protected virtual void AlertInformation(string message, bool dismissable = true)
+        protected void AlertInformation(string message, bool dismissable = true)
         {
             AddAlert(AlertStyles.Information, message, dismissable);
         }
 
-        protected virtual void AlertWarning(string message, bool dismissable = false)
+        protected void AlertWarning(string message, bool dismissable = false)
         {
             AddAlert(AlertStyles.Warning, message, dismissable);
         }
 
-        protected virtual void AlertFailure(string message = "Failure processing request", bool dismissable = false)
+        protected void AlertFailure(string message = "Failure processing request", bool dismissable = false)
         {
             AddAlert(AlertStyles.Danger, message, dismissable);
         }
 
-        protected virtual void AlertFailureInvalidModel(bool dismissable = false)
+        protected void AlertFailureInvalidModel(bool dismissable = false)
         {
-            AddAlert(AlertStyles.Danger, "Invalid data POSTed", dismissable);
+            AddAlert(AlertStyles.Danger, "One or more data items received is invalid", dismissable);
         }
 
         private void AddAlert(string alertStyle, string message, bool dismissable)

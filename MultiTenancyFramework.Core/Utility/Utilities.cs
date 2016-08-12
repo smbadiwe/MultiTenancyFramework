@@ -1,6 +1,9 @@
 ﻿using MultiTenancyFramework.Commands;
+using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Data.Queries;
+using MultiTenancyFramework.Entities;
 using System;
+using System.Runtime.Caching;
 
 namespace MultiTenancyFramework
 {
@@ -37,8 +40,6 @@ namespace MultiTenancyFramework
         public const string SoftDeleteFilterName = "SoftDeleteFilter";
         public const string InstitutionCodePropertyName = "InstitutionCode";
         public const string InstitutionCodeQueryParamName = "instCode";
-
-        public const string SS_SYS_SETTINGS = "::SystemSettings::";
         
         public static string DefaultPassword
         {
@@ -69,5 +70,42 @@ namespace MultiTenancyFramework
         
         public static ICommandProcessor CommandProcessor { get { return MyServiceLocator.GetInstance<ICommandProcessor>(); } }
         public static IDbQueryProcessor QueryProcessor { get { return MyServiceLocator.GetInstance<IDbQueryProcessor>(); } }
+
+
+        public const string SS_SYS_SETTINGS = "::SystemSettings::";
+
+        public static SystemSetting SystemSettings
+        {
+            get
+            {
+                if (MemoryCache.Default != null)
+                {
+                    var item = MemoryCache.Default[SS_SYS_SETTINGS] as SystemSetting;
+                    if (item == null)
+                    {
+                        var dao = MyServiceLocator.GetInstance<ICoreDAO<SystemSetting>>();
+                        try
+                        {
+                            item = dao.RetrieveOne();
+                        }
+                        catch (System.Data.Common.DbException)
+                        {
+                            return new SystemSetting();
+                        }
+                        MemoryCache.Default[SS_SYS_SETTINGS] = item;
+                    }
+                    return item;
+                }
+                return null;
+            }
+            set
+            {
+                if (MemoryCache.Default != null)
+                {
+                    MemoryCache.Default[SS_SYS_SETTINGS] = value;
+                }
+            }
+        }
+
     }
 }

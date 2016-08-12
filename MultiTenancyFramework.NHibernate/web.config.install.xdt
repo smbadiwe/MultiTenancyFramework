@@ -1,0 +1,38 @@
+﻿<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections xdt:Transform="Insert">
+    <section name="hibernate-configuration" type="NHibernate.Cfg.ConfigurationSectionHandler, NHibernate" />
+  </configSections>
+  <appSettings xdt:Transform="Insert">
+    <!--MultiTenancyFramework: Used by NHibernate to locate entities. Add assemblies where your entities reside. -->
+    <add key="EntityAssemblies" value="" />
+  </appSettings>
+  <hibernate-configuration xmlns="urn:nhibernate-configuration-2.2" xdt:Transform="Insert">
+    <session-factory>
+      <!--Defaulting to MySql; but the SQL settings are provided too. Other settings can be found easily on the web-->
+      <!--<property name="dialect">NHibernate.Dialect.MsSql2005Dialect</property>
+      <property name="connection.driver_class">NHibernate.Driver.SqlClientDriver</property>-->
+      <property name="dialect">NHibernate.Dialect.MySQLDialect</property>
+      <property name="connection.driver_class">NHibernate.Driver.MySqlDataDriver</property>
+      <property name="connection.connection_string">
+        <!--Modify as needed-->
+        server=YourServer;user id=YourUserName;password=YourPassword;database=YourDb
+      </property>
+      <!--Modify as needed-->
+      <property name="adonet.batch_size">1000</property>
+      <property name="command_timeout">360</property>
+      <!--Schema update. Remove in production-->
+      <property name="hbm2ddl.auto">update</property>
+      <!-- Specify the assembly(-ies) where your mapping files reside -->
+      <!--<mapping assembly="Assembly1" />
+      <mapping assembly="Assembly2" />-->
+    </session-factory>
+  </hibernate-configuration>
+  <system.webServer>
+    <modules>
+      <add name="NhibModule"
+           type="MultiTenancyFramework.NHibernate.NHManager.NHSessionHttpModule, MultiTenancyFramework.NHibernate"
+           xdt:Transform="Insert" />
+    </modules>
+  </system.webServer>
+</configuration>

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <system.runtime.caching>
+    <memoryCache>
+      <namedCaches>
+        <add name="default"
+             cacheMemoryLimitMegabytes="0" 
+             physicalMemoryLimitPercentage="0"
+             pollingInterval="00:02:00" 
+             xdt:Transform="Insert" />
+      </namedCaches>
+    </memoryCache>
+  </system.runtime.caching>
+</configuration>

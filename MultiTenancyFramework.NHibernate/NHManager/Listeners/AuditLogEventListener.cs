@@ -28,17 +28,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
     internal class AuditLogEventListener<idT> : DefaultFlushEventListener, IMergeEventListener, IPreDeleteEventListener where idT : IEquatable<idT>
     {
         private HashSet<AuditLog> _auditLogItems { get; set; } = new HashSet<AuditLog>();
-        private DateTime _now;
-        private DateTime Now
-        {
-            get
-            {
-                if (_now == null || _now == DateTime.MinValue) _now = DateTime.Now.GetLocalTime();
-                return _now;
-            }
-            set { _now = value; }
-        }
-
+        
         public override void OnFlush(FlushEvent @event)
         {
             base.OnFlush(@event);
@@ -102,8 +92,8 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
 
             if (typeof(IDoNotNeedAudit).IsAssignableFrom(entity.GetType())) return;
 
-            entity.LastDateModified = Now;
-            var audit = CreateLogRecord(entity.InstitutionCode, NHUtils.CurrentUser, entity, Now, eventType);
+            entity.LastDateModified = DateTime.Now.GetLocalTime();
+            var audit = CreateLogRecord(entity.InstitutionCode, NHUtils.CurrentUser, entity, entity.LastDateModified, eventType);
             if (audit != null)
             {
                 audit.AuditData = AuditLogSerializer.SerializeData(persister, currentValues, oldValues);

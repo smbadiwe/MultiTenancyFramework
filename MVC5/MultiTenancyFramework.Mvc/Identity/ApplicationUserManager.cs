@@ -20,7 +20,7 @@ namespace MultiTenancyFramework.Mvc.Identity
         {
             var userStore = new UserStore<IdentityUser>();
             var manager = new ApplicationUserManager(userStore);
-            var UsernameAndPasswordRule = MvcUtility.SystemSettings.UsernameAndPasswordRule;
+            var UsernameAndPasswordRule = Utilities.SystemSettings.UsernameAndPasswordRule;
             // Configure validation logic for usernames
             manager.UserValidator = new UserValidator<IdentityUser, long>(manager)
             {

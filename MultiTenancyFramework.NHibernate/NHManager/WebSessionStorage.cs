@@ -11,13 +11,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// <summary>
         /// Constant key for storing the session in the HttpContext
         /// </summary>
-        public static string CurrentSessionKey
-        {
-            get
-            {
-                return "::nhibernate_current_session::";
-            }
-        }
+        public const string CurrentSessionKey = "::nhibernate_current_session::";
 
         public string InstitutionCode { get; set; }
         public ISession Session { get; set; }

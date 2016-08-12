@@ -2,6 +2,7 @@
 using MultiTenancyFramework.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Web;
 
 namespace MultiTenancyFramework.Mvc.Logic
@@ -15,14 +16,14 @@ namespace MultiTenancyFramework.Mvc.Logic
         {
             get
             {
-                if (HttpRuntime.Cache != null)
+                if (MemoryCache.Default != null)
                 {
-                    var allInstitutions = HttpRuntime.Cache[ALL_INSTITUTIONS] as Dictionary<string, Institution>;
+                    var allInstitutions = MemoryCache.Default[ALL_INSTITUTIONS] as Dictionary<string, Institution>;
                     if (allInstitutions == null || allInstitutions.Count == 0)
                     {
                         var instDAO = MyServiceLocator.GetInstance<IInstitutionDAO<Institution>>();
                         allInstitutions = instDAO.RetrieveAll()?.ToDictionary(x => x.Code);
-                        HttpRuntime.Cache[ALL_INSTITUTIONS] = allInstitutions;
+                        MemoryCache.Default[ALL_INSTITUTIONS] = allInstitutions;
                     }
                     return allInstitutions;
                 }
@@ -34,18 +35,18 @@ namespace MultiTenancyFramework.Mvc.Logic
         {
             get
             {
-                var allPrivileges = HttpRuntime.Cache[ALL_PRIVILEGES] as Dictionary<long, ActionAccessPrivilege>;
+                var allPrivileges = MemoryCache.Default[ALL_PRIVILEGES] as Dictionary<long, ActionAccessPrivilege>;
                 if (allPrivileges == null || allPrivileges.Count == 0)
                 {
                     var _dao = MyServiceLocator.GetInstance<IPrivilegeDAO<ActionAccessPrivilege>>();
                     allPrivileges = _dao.RetrieveAll()?.ToDictionary(x => x.Id);
-                    HttpRuntime.Cache[ALL_PRIVILEGES] = allPrivileges;
+                    MemoryCache.Default[ALL_PRIVILEGES] = allPrivileges;
                 }
                 return allPrivileges;
             }
             set
             {
-                HttpRuntime.Cache[ALL_PRIVILEGES] = value;
+                MemoryCache.Default[ALL_PRIVILEGES] = value;
             }
         }
 

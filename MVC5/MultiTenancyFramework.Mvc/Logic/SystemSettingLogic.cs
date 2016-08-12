@@ -17,7 +17,7 @@ namespace MultiTenancyFramework.Logic
 
         public override void OnAfterCommittingChanges(SystemSetting e)
         {
-            MvcUtility.SystemSettings = e;
+            Utilities.SystemSettings = e;
             base.OnAfterCommittingChanges(e);
         }
     }

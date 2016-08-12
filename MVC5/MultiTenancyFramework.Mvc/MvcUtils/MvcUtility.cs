@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
+using System.Runtime.Caching;
 using System.Web;
 using System.Web.Mvc;
 
@@ -30,43 +31,7 @@ namespace MultiTenancyFramework.Mvc
                 constraints: new { id = @"\d*" }
             );
         }
-
-
-        public const string SS_SYS_SETTINGS = "::SystemSettings::";
-
-        public static SystemSetting SystemSettings
-        {
-            get
-            {
-                if (HttpRuntime.Cache != null)
-                {
-                    var item = HttpRuntime.Cache[SS_SYS_SETTINGS] as SystemSetting;
-                    if (item == null)
-                    {
-                        var dao = MyServiceLocator.GetInstance<ICoreDAO<SystemSetting>>();
-                        try
-                        {
-                            item = dao.RetrieveOne();
-                        }
-                        catch (System.Data.Common.DbException)
-                        {
-                            return new SystemSetting();
-                        }
-                        HttpRuntime.Cache[SS_SYS_SETTINGS] = item;
-                    }
-                    return item;
-                }
-                return null;
-            }
-            set
-            {
-                if (HttpRuntime.Cache != null)
-                {
-                    HttpRuntime.Cache[SS_SYS_SETTINGS] = value;
-                }
-            }
-        }
-
+        
         public static string HashString(string clearText)
         {
             return System.Web.Helpers.Crypto.HashPassword(clearText); //new Microsoft.AspNet.Identity.PasswordHasher()

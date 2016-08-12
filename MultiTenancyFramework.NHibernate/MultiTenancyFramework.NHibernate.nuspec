@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>$version$</version>
+    <version>1.0.0.1</version>
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
@@ -12,8 +12,8 @@
     <releaseNotes>Read more at https://github.com/smbadiwe/MultiTenancyFramework/wiki. Drop a note if need be.</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>SaaS MultiTenant MultiTenancy Framework Software-as-a-Service MVC5 NHibernate FluentNHibernate</tags>
-	<dependencies>
-      <dependency id="MultiTenancyFramework.Core" version="1.0.0.0" />
+    <dependencies>
+      <dependency id="MultiTenancyFramework.Core" version="1.0.0.1" />
     </dependencies>
   </metadata>
 </package>

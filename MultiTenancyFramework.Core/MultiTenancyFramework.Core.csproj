@@ -43,6 +43,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -59,6 +60,7 @@
     <Compile Include="Commands\ICommandProcessor.cs" />
     <Compile Include="Data\IDataInitializer.cs" />
     <Compile Include="Data\IPrivilegeDAO.cs" />
+    <Compile Include="Data\Queries\GetUserRoleByNameQuery.cs" />
     <Compile Include="Data\Queries\GetPrivilegesByGridSearchParamsQuery.cs" />
     <Compile Include="Entities\Privilege.cs" />
     <Compile Include="Entities\UserClaim.cs" />
@@ -137,7 +139,11 @@
     <Compile Include="Utility\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config.uninstall.xdt" />
     <None Include="MultiTenancyFramework.Core.nuspec" />
+    <None Include="app.config.install.xdt" />
+    <None Include="web.config.uninstall.xdt" />
+    <None Include="web.config.install.xdt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
