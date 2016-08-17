@@ -5,6 +5,7 @@ using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.NHibernate.NHManager.Conventions;
 using MultiTenancyFramework.NHibernate.NHManager.Listeners;
+using MultiTenancyFramework.NHibernate.Queries;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Cfg.ConfigurationSchema;
@@ -150,7 +151,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// <param name="isWebSession"></param>
         /// <param name="doFreshSession"></param>
         /// <returns></returns>
-        public static ISession GetSession(string institutionCode = null, IDbConnection dbConnection = null, bool doFreshSession = false)
+        public static ISession GetSession(string institutionCode = "", IDbConnection dbConnection = null, bool doFreshSession = false)
         {
             bool isWebSession = IsWeb();
             string sessionKey = GetSessionKey(institutionCode, isWebSession);
@@ -158,10 +159,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
             if (!doFreshSession)
             {
-                if (SessionStorages.ContainsKey(sessionKey))
-                {
-                    storage = SessionStorages[sessionKey];
-                }
+                SessionStorages.TryGetValue(sessionKey, out storage);
             }
             if (storage == null)
             {
@@ -181,31 +179,32 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             //Start a new session if no current session exists
             if (session == null || !session.IsOpen)
             {
-                string instCode = sessionKey.Split('_')[0];
-                if (!SessionFactories.ContainsKey(instCode))
+                ISessionFactory fac;
+                string instCode = sessionKey.Split('_')[0]; // will be 'Utilities.INST_DEFAULT_CODE' if 'institutionCode' is null or empty
+                if (SessionFactories.TryGetValue(instCode, out fac) && fac != null)
                 {
-                    BuildFactory(instCode, storage, sessionKey);
+                    //Do what now? Nothing.
+                }
+                else
+                {
+                    fac = BuildFactory(instCode, sessionKey);
                 }
 
                 //Apply the interceptor if any was registered and open the session
-                ISessionFactory fac;
-                if (SessionFactories.TryGetValue(instCode, out fac) && fac != null)
+                if (dbConnection == null)
                 {
-                    if (dbConnection == null)
-                    {
-                        session = fac.OpenSession();
-                    }
-                    else
-                    {
-                        session = fac.OpenSession(dbConnection);
-                    }
+                    session = fac.OpenSession();
+                }
+                else
+                {
+                    session = fac.OpenSession(dbConnection);
                 }
             }
 
             if (session != null)
             {
                 session.EnableFilter(Utilities.InstitutionFilterName)
-                    .SetParameter(Utilities.InstitutionCodeQueryParamName, institutionCode ?? string.Empty);
+                    .SetParameter(Utilities.InstitutionCodeQueryParamName, institutionCode);
 
                 //Begin a transaction
                 if (!session.IsConnected || session.Transaction == null || !session.Transaction.IsActive || session.Transaction.WasCommitted || session.Transaction.WasRolledBack) //if (storage is WebSessionStorage)
@@ -271,12 +270,12 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             return null;
         }
 
-        internal static Configuration Init(ISessionStorage storage, string cfgFile, string sessionKey)
+        internal static ISessionFactory Init(string cfgFile, string sessionKey)
         {
-            return Init(storage, cfgFile, sessionKey, null);
+            return Init(cfgFile, sessionKey, null);
         }
 
-        private static Configuration Init(ISessionStorage storage, string cfgFile, string sessionKey, IDictionary<string, string> cfgProperties)
+        private static ISessionFactory Init(string cfgFile, string sessionKey, IDictionary<string, string> cfgProperties)
         {
             Configuration cfg = ConfigureNHibernate(cfgFile, cfgProperties);
 
@@ -306,29 +305,36 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
                 SessionFactories[instCode] = factory;
 
-                ISession session = factory.OpenSession();
-                storage.Session = session;
-
-                SessionStorages[sessionKey] = storage;
+                return factory;
             }
             catch (HibernateException ex)
             {
                 throw new HibernateException("Cannot create session factory; " + ex.GetFullExceptionMessage());
             }
-            return cfg;
+            finally //Trivial I guess, but GC may not happen as soon as I want it
+            {
+                cfg = null;
+                autoPersistenceModel = null;
+                auditLogEvent = null;
+            }
         }
 
-        private static void BuildFactory(string institutionCode, ISessionStorage storage, string sessionKey)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="instCode">The modified Institution Code; will be 'Utilities.INST_DEFAULT_CODE' if not tenant</param>
+        /// <param name="sessionKey"></param>
+        private static ISessionFactory BuildFactory(string instCode, string sessionKey)
         {
-            if (!string.IsNullOrWhiteSpace(institutionCode) && institutionCode != Utilities.INST_DEFAULT_CODE)
+            if (instCode != Utilities.INST_DEFAULT_CODE)
             {
-                var institution = Utilities.QueryProcessor.Process(new GetInstitutionByCodeQuery { Code = institutionCode });
-                if (institution == null) throw new GeneralException($"No institution with Code - {institutionCode}", ExceptionType.UnidentifiedInstitutionCode);
+                var institution = new GetInstitutionByCodeQueryHandler().Handle(new GetInstitutionByCodeQuery { Code = instCode });
+                if (institution == null) throw new GeneralException($"No institution with Code - {instCode}", ExceptionType.UnidentifiedInstitutionCode);
 
                 DatabaseConnection dbConn = null;
                 if (institution.DatabaseConnectionId > 0)
                 {
-                    dbConn = MyServiceLocator.GetInstance<ICoreDAO<DatabaseConnection>>().Retrieve(institution.DatabaseConnectionId);
+                    dbConn = new CoreDAO<DatabaseConnection>().Retrieve(institution.DatabaseConnectionId);
                 }
                 if (dbConn == null)
                 {
@@ -341,11 +347,11 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 //}
                 cfgProps.Add(Environment.ConnectionString, dbConn.ConnectionString);
 
-                Init(storage, null, sessionKey, cfgProps);
+                return Init(null, sessionKey, cfgProps);
             }
             else
             {
-                Init(storage, null, sessionKey);
+                return Init(null, sessionKey);
             }
         }
 
@@ -369,6 +375,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                         mappingFiles.Add(file.GetName().Name);
                     }
                 }
+                otherMappingFiles = null;
 
                 foreach (var mappingAssemblyCfg in mappingFiles)
                 {
@@ -393,7 +400,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             }
 
             cfg.AddAutoMappings(autoPersistenceModel);
-
+            hc = null;
         }
 
         /// <summary>
@@ -424,15 +431,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
                 foreach (var item in cfgProperties)
                 {
-                    string key = item.Key;
-                    if (cfg.Properties.ContainsKey(key))
-                    {
-                        cfg.Properties[key] = item.Value;
-                    }
-                    else
-                    {
-                        cfg.Properties.Add(item.Key, item.Value);
-                    }
+                    cfg.Properties[item.Key] = item.Value;
                 }
             }
             if (!canUseSchema && cfg.Properties.ContainsKey(Environment.DefaultSchema))

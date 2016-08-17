@@ -7,18 +7,8 @@ namespace MultiTenancyFramework.NHibernate
     {
         public virtual void Init(bool isWeb = true)
         {
-            ISessionStorage sessionStorage;
-            if (isWeb)
-            {
-                sessionStorage = new WebSessionStorage();
-            }
-            else
-            {
-                sessionStorage = new NonWebSessionStorage();
-            }
             //Sesson Factory
-            NHSessionManager.Init(sessionStorage, null, NHSessionManager.GetSessionKey(isWebSession: isWeb));
-            
+            NHSessionManager.Init(null, NHSessionManager.GetSessionKey(isWebSession: isWeb));
         }
 
         public virtual void Terminate(bool isWeb = true)

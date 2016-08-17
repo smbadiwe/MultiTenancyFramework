@@ -88,18 +88,14 @@ namespace MultiTenancyFramework.Logic
                             auditTrail.UserId = user.Id;
                         }
                     }
-                    auditTrail.ClientIpAddress = IPResolver.GetIP4Address(); //HttpContext.Current.Request.UserHostAddress; //IPResolver.GetIP4Address();
-                    auditTrail.ClientName = HttpContext.Current.Request.UserHostName; //Dns.GetHostEntryAsync(auditTrail.ClientIpAddress).Result.HostName; //.GetHostName(); // Dns.GetHostEntry(auditTrail.ClientIpAddress).HostName; //HttpContext.Current.Request.UserHostName; // 
+                    auditTrail.ClientIpAddress = IPResolver.GetIP4Address();
+                    auditTrail.ClientName = HttpContext.Current.Request.UserHostName;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 auditTrail.ClientName = "[Could not resolve Client Name]";
             }
-            //this._inserts.Add(auditTrail);
-            //PostFlush(null);
-            ////_session.Save(auditTrail);
-            ////_session.Transaction.Commit();
         }
 
     }

@@ -35,7 +35,7 @@ namespace MultiTenancyFramework.Logic
         /// Use this to point to entities that are hosted centrally
         /// </summary>
         /// <param name="dao">The data access object. Set by calling <code>MyServiceLocator.GetInstance<ICoreDAO<T, idT>>();</code></param>
-        protected CoreBaseLogic(ICoreDAO<T, idT> dao) : this(dao, null)
+        protected CoreBaseLogic(ICoreDAO<T, idT> dao) : this(dao, "")
         {
 
         }
@@ -48,7 +48,7 @@ namespace MultiTenancyFramework.Logic
         protected CoreBaseLogic(ICoreDAO<T, idT> dao, string institutionCode)
         {
             _dao = dao;
-            _dao.InstitutionCode = InstitutionCode = institutionCode;
+            _dao.InstitutionCode = InstitutionCode = _institutionCode;
 
             //Because this may have been preset in the incoming 'dao' instance, we do...
             EntityName = _dao.EntityName;
@@ -116,10 +116,13 @@ namespace MultiTenancyFramework.Logic
         /// </summary>
         public virtual string InstitutionCode
         {
-            get { return _institutionCode; }
+            get
+            {
+                return _institutionCode;
+            }
             set
             {
-                if (value == Utilities.INST_DEFAULT_CODE) value = string.Empty;
+                if (value == null || value == Utilities.INST_DEFAULT_CODE) value = string.Empty;
                 _institutionCode = value;
             }
         }
@@ -136,7 +139,7 @@ namespace MultiTenancyFramework.Logic
         /// <returns></returns>
         public virtual T Retrieve(idT id)
         {
-            _dao.InstitutionCode = InstitutionCode;
+            _dao.InstitutionCode = _institutionCode;
             _dao.EntityName = EntityName;
             return _dao.Retrieve(id);
         }
@@ -147,7 +150,7 @@ namespace MultiTenancyFramework.Logic
         /// <param name="entity">The entity.</param>
         public T Insert(T entity)
         {
-            _dao.InstitutionCode = InstitutionCode;
+            _dao.InstitutionCode = _institutionCode;
             _dao.EntityName = EntityName;
             OnBeforeSaving(entity);
             try
@@ -171,7 +174,7 @@ namespace MultiTenancyFramework.Logic
         /// <param name="entity">The entity.</param>
         public T Update(T entity)
         {
-            _dao.InstitutionCode = InstitutionCode;
+            _dao.InstitutionCode = _institutionCode;
             _dao.EntityName = EntityName;
             OnBeforeUpdating(entity);
             try
@@ -195,7 +198,7 @@ namespace MultiTenancyFramework.Logic
         /// <param name="entity">The entity.</param>
         public T Merge(T entity)
         {
-            _dao.InstitutionCode = InstitutionCode;
+            _dao.InstitutionCode = _institutionCode;
             _dao.EntityName = EntityName;
             OnBeforeUpdating(entity);
             try
@@ -219,7 +222,7 @@ namespace MultiTenancyFramework.Logic
         /// <param name="entity">The entity.</param>
         public void Delete(T entity)
         {
-            _dao.InstitutionCode = InstitutionCode;
+            _dao.InstitutionCode = _institutionCode;
             _dao.EntityName = EntityName;
             OnBeforeDeleting(entity);
             try
@@ -242,7 +245,7 @@ namespace MultiTenancyFramework.Logic
         /// <param name="entity">The entity.</param>
         public void Refresh(T entity)
         {
-            _dao.InstitutionCode = InstitutionCode;
+            _dao.InstitutionCode = _institutionCode;
             _dao.EntityName = EntityName;
             _dao.Refresh(entity);
         }

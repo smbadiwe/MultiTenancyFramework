@@ -28,11 +28,11 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
     internal class AuditLogEventListener<idT> : DefaultFlushEventListener, IMergeEventListener, IPreDeleteEventListener where idT : IEquatable<idT>
     {
         private HashSet<AuditLog> _auditLogItems { get; set; } = new HashSet<AuditLog>();
-        
+
         public override void OnFlush(FlushEvent @event)
         {
-            base.OnFlush(@event);
             SaveAuditLogs(@event.Session);
+            base.OnFlush(@event);
         }
 
         public bool OnPreDelete(PreDeleteEvent @event)
@@ -56,7 +56,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
             }
             return true;
         }
-        
+
         public void OnMerge(MergeEvent @event)
         {
             DoMerge(@event);
@@ -142,23 +142,14 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
 
             return auditLog;
         }
-
-
+        
         private void SaveAuditLogs(IEventSource session)
         {
             if (_auditLogItems.Count == 0) return;
 
-            var factory = session.SessionFactory;
-            var fac = NHSessionManager.SessionFactories.First(x => x.Value == factory); //There has to be a value in the dictionary. Let it crash if there isn't
-
-            var instCode = fac.Key == Utilities.INST_DEFAULT_CODE ? string.Empty : fac.Key;
-            using (var sSession = factory.OpenStatelessSession())
+            foreach (var audit in _auditLogItems)
             {
-                foreach (var audit in _auditLogItems)
-                {
-                    audit.InstitutionCode = instCode;
-                    sSession.Insert(audit);
-                }
+                session.Save(audit);
             }
             _auditLogItems.Clear();
         }

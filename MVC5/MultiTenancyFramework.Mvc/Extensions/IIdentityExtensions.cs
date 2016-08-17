@@ -10,12 +10,12 @@ namespace MultiTenancyFramework
 {
     public static class IIdentityExtensions
     {
-        private static UserStore<IdentityUser> userStore;
+        //private static UserStore<IdentityUser> userStore;
         private static RouteValueDictionary routeData { get { return HttpContext.Current.Request.RequestContext.RouteData.Values; } }
-        static IIdentityExtensions()
-        {
-            userStore = new UserStore<IdentityUser>();
-        }
+        //static IIdentityExtensions()
+        //{
+        //    userStore = new UserStore<IdentityUser>();
+        //}
 
         // This is probably an irrelevant optimisation; but then, I detest unnecessary call stacks.
         // So please, leave these 'HasPrivilege' method overloads the way I wrote them

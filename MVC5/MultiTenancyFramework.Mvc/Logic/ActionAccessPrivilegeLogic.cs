@@ -12,16 +12,6 @@ namespace MultiTenancyFramework.Logic
         public ActionAccessPrivilegeLogic() : base(MyServiceLocator.GetInstance<IPrivilegeDAO<ActionAccessPrivilege>>())
         {
         }
-
-        public override ActionAccessPrivilege Retrieve(long id)
-        {
-            ActionAccessPrivilege entity;
-            if (DataCacheMVC.AllPrivileges.TryGetValue(id, out entity))
-            {
-                return entity;
-            }
-            return null;
-        }
         
         public override IList<ActionAccessPrivilege> RetrieveAll()
         {

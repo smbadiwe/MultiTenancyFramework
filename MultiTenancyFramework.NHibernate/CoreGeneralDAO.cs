@@ -16,7 +16,10 @@ namespace MultiTenancyFramework.NHibernate
         /// </summary>
         public string InstitutionCode
         {
-            get { return _institutionCode; }
+            get
+            {
+                return _institutionCode;
+            }
             set
             {
                 if (value == null || value == Utilities.INST_DEFAULT_CODE) value = string.Empty;
@@ -24,7 +27,13 @@ namespace MultiTenancyFramework.NHibernate
             }
         }
 
-        public string EntityName { get; set; } = string.Empty;
+        public string EntityName { get; set; }
+
+        public CoreGeneralDAO()
+        {
+            _institutionCode = string.Empty;
+            EntityName = string.Empty;
+        }
 
         /// <summary>
         /// Just call 'BuildSession' directly or cast this to 'ISession'.
@@ -49,12 +58,12 @@ namespace MultiTenancyFramework.NHibernate
         /// <returns></returns>
         public virtual ISession BuildSession()
         {
-            return NHSessionManager.GetSession(InstitutionCode);
+            return NHSessionManager.GetSession(_institutionCode);
         }
 
         public void CloseSession()
         {
-            NHSessionManager.CloseStorage(InstitutionCode);
+            NHSessionManager.CloseStorage(_institutionCode);
         }
 
         public void RunDirectQuery(string query, bool clearSession = false)
