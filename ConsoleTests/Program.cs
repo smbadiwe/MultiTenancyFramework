@@ -1,5 +1,6 @@
 ﻿using MultiTenancyFramework;
 using MultiTenancyFramework.Entities;
+using MultiTenancyFramework.Logic;
 using MultiTenancyFramework.SimpleInjector;
 using System;
 using System.Collections.Generic;
@@ -21,24 +22,8 @@ namespace ConsoleTests
         {
             Init();
 
-            var login = new UserRole
-            {
-                Name = "UserRole 1"
-            };
-            var dao = new MultiTenancyFramework.Logic.UserRoleLogic("Core");
-            //dao.Insert(login);
-
-            UserRole thatLogin = null;
-            foreach (var item in dao.RetrieveAllActive())
-            {
-                if (item.Name == "UserRole 1")
-                {
-                    item.Name += " Modified";
-                    thatLogin = item;
-                }
-            }
-            dao.Update(thatLogin);
-
+            var engine = new UserRoleLogic("LYYKL");
+            UserRole item = engine.Retrieve(1);
             Console.ReadKey();
         }
 

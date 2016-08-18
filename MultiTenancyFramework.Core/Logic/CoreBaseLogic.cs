@@ -48,7 +48,7 @@ namespace MultiTenancyFramework.Logic
         protected CoreBaseLogic(ICoreDAO<T, idT> dao, string institutionCode)
         {
             _dao = dao;
-            _dao.InstitutionCode = InstitutionCode = _institutionCode;
+            _dao.InstitutionCode = InstitutionCode = institutionCode;
 
             //Because this may have been preset in the incoming 'dao' instance, we do...
             EntityName = _dao.EntityName;
