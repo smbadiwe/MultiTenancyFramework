@@ -57,7 +57,7 @@ namespace MultiTenancyFramework.Entities
 
         public override string ToString()
         {
-            return $"Id: {Id}; Institution Code: {InstitutionCode}";
+            return $"Id: {Id}; Institution Code: {InstitutionCode}; Name: {Name}";
         }
 
         private bool IsSameAs(Entity<idT> other)

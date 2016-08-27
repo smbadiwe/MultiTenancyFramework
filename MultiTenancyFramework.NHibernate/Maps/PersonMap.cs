@@ -10,6 +10,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
             Map(x => x.OtherNames);
             Map(x => x.Gender);
             Map(x => x.Email);
+            Map(x => x.PhoneNumber);
         }
     }
 }

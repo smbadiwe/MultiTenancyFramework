@@ -2,6 +2,7 @@
 using MultiTenancyFramework.Entities;
 using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.Transform;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -181,57 +182,112 @@ namespace MultiTenancyFramework.NHibernate
             }
             return query.Take(1).SingleOrDefault();
         }
-
-        public IList<T> RetrieveAll()
+        
+        public IList<T> RetrieveAll(params string[] fields)
         {
             var session = BuildSession();
+            IQueryOver<T, T> query;
             if (string.IsNullOrWhiteSpace(EntityName))
             {
-                return session.QueryOver<T>().List();
+                query = session.QueryOver<T>();
             }
-            return session.QueryOver<T>(EntityName).List();
+            else
+            {
+                query = session.QueryOver<T>(EntityName);
+            }
+
+            return GetResultUsingProjection(query, fields);
         }
 
-        public IList<T> RetrieveAllActive()
+        public IList<T> RetrieveAllActive(params string[] fields)
         {
             var session = BuildSession();
+            IQueryOver<T, T> query;
             if (string.IsNullOrWhiteSpace(EntityName))
             {
-                return session.QueryOver<T>().Where(x => !x.IsDisabled).List();
+                query = session.QueryOver<T>();
             }
-            return session.QueryOver<T>(EntityName).Where(x => !x.IsDisabled).List();
+            else
+            {
+                query = session.QueryOver<T>(EntityName);
+            }
+            query = query.Where(x => !x.IsDisabled);
+
+            return GetResultUsingProjection(query, fields);
         }
 
-        public IList<T> RetrieveAllDeleted()
+        public IList<T> RetrieveAllDeleted(params string[] fields)
         {
             var session = BuildSession();
+            IQueryOver<T, T> query;
             if (string.IsNullOrWhiteSpace(EntityName))
             {
-                return session.QueryOver<T>().Where(x => !x.IsDeleted).List();
+                query = session.QueryOver<T>();
             }
-            return session.QueryOver<T>(EntityName).Where(x => x.IsDeleted).List();
+            else
+            {
+                query = session.QueryOver<T>(EntityName);
+            }
+            query = query.Where(x => x.IsDeleted);
+
+            return GetResultUsingProjection(query, fields);
         }
 
-        public IList<T> RetrieveAllInactive()
+        public IList<T> RetrieveAllInactive(params string[] fields)
         {
             var session = BuildSession();
+            IQueryOver<T, T> query;
             if (string.IsNullOrWhiteSpace(EntityName))
             {
-                return session.QueryOver<T>().Where(x => x.IsDisabled).List();
+                query = session.QueryOver<T>();
             }
-            return session.QueryOver<T>(EntityName).Where(x => x.IsDisabled).List();
+            else
+            {
+                query = session.QueryOver<T>(EntityName);
+            }
+            query = query.Where(x => x.IsDisabled);
+
+            return GetResultUsingProjection(query, fields);
         }
 
-        public IList<T> RetrieveByIDs(idT[] IDs)
+        public IList<T> RetrieveByIDs(idT[] IDs, params string[] fields)
         {
             var session = BuildSession();
+            IQueryOver<T, T> query;
             if (string.IsNullOrWhiteSpace(EntityName))
             {
-                return session.QueryOver<T>().Where(x => x.Id.IsIn(IDs)).List();
+                query = session.QueryOver<T>();
             }
-            return session.QueryOver<T>(EntityName).Where(x => x.Id.IsIn(IDs)).List();
+            else
+            {
+                query = session.QueryOver<T>(EntityName);
+            }
+            query = query.Where(x => x.Id.IsIn(IDs));
+
+            return GetResultUsingProjection(query, fields);
         }
 
+        private IList<T> GetResultUsingProjection(IQueryOver<T, T> query, params string[] fields)
+        {
+            if (fields == null || fields.Length == 0)
+            {
+                return query.List<T>();
+            }
+
+            var projectionList = Projections.ProjectionList()
+                     .Add(Projections.Id(), "Id");
+            foreach (var prop in fields)
+            {
+                if (prop == "Id") continue;
+                projectionList.Add(Projections.Property(prop), prop);
+            }
+            var results = query.Select(projectionList)
+                .TransformUsing(Transformers.AliasToBean<T>())
+                .List<T>();
+
+            return results;
+        }
+        
         public IList<idT> RetrieveIDs()
         {
             var session = BuildSession();

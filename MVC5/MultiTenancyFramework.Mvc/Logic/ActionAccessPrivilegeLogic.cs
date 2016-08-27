@@ -13,7 +13,7 @@ namespace MultiTenancyFramework.Logic
         {
         }
         
-        public override IList<ActionAccessPrivilege> RetrieveAll()
+        public override IList<ActionAccessPrivilege> RetrieveAll(params string[] fields)
         {
             return DataCacheMVC.AllPrivileges.Values.ToList();
         }
@@ -23,7 +23,7 @@ namespace MultiTenancyFramework.Logic
            return  QueryProcessor.Process(new GetAreasQuery());
         }
 
-        public override IList<ActionAccessPrivilege> RetrieveAllActive()
+        public override IList<ActionAccessPrivilege> RetrieveAllActive(params string[] fields)
         {
             return DataCacheMVC.AllPrivileges.Values.Where(x => !x.IsDisabled).ToList();
         }

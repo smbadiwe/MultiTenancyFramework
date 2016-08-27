@@ -11,7 +11,7 @@ namespace MultiTenancyFramework.Mvc
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-            routes.IgnoreRoute("{*staticfile}", new { staticfile = @".*\.(css|less|sass|js|gif|png|jpg|jpeg|ico|svg|ttf|eot\woff|woff2)(/.*)?" });
+            routes.IgnoreRoute("{*staticfile}", new { staticfile = @".*\.(css|less|sass|js|gif|png|jpg|jpeg|ico|svg|ttf|eot\woff|woff2|xml|csv|txt|map|json)(/.*)?" });
           
             routes.MapMvcAttributeRoutes();
 

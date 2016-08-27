@@ -9,7 +9,13 @@ namespace MultiTenancyFramework.Data
     {
         IList<idT> RetrieveIDs();
 
-        IList<T> RetrieveByIDs(idT[] IDs);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="IDs"></param>
+        /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
+        /// <returns></returns>
+        IList<T> RetrieveByIDs(idT[] IDs, params string[] fields);
 
         /// <summary>
         /// This one is when you need it as List of T.
@@ -29,11 +35,30 @@ namespace MultiTenancyFramework.Data
         /// <summary>
         /// Retrieves all.
         /// </summary>
+        /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        IList<T> RetrieveAll();
-        IList<T> RetrieveAllActive();
-        IList<T> RetrieveAllInactive();
-        IList<T> RetrieveAllDeleted();
+        IList<T> RetrieveAll(params string[] fields);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
+        /// <returns></returns>
+        IList<T> RetrieveAllActive(params string[] fields);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
+        /// <returns></returns>
+        IList<T> RetrieveAllInactive(params string[] fields);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
+        /// <returns></returns>
+        IList<T> RetrieveAllDeleted(params string[] fields);
 
         /// <summary>
         /// Retrieve the first item found inthe db. This is useful for tables expected to have just one enty

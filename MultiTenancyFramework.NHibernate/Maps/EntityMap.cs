@@ -15,7 +15,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
         public EntityMap()
         { 
             Id(x => x.Id);
-            Map(x => x.InstitutionCode);
+            Map(x => x.InstitutionCode).Index("ind_InstitutionCode");
             Map(x => x.IsDeleted);
             Map(x => x.IsDisabled);
             Map(x => x.DateCreated);

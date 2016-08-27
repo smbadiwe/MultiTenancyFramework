@@ -83,16 +83,28 @@ namespace MultiTenancyFramework.Logic
             return DateTime.Now.GetLocalTime();
         }
 
-        public virtual Dictionary<idT, T> RetrieveByIDsAsDictionary(idT[] IDs)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="IDs"></param>
+        /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
+        /// <returns></returns>
+        public virtual Dictionary<idT, T> RetrieveByIDsAsDictionary(idT[] IDs, params string[] fields)
         {
-            return RetrieveByIDs(IDs).ToDictionary(x => x.Id);
+            return RetrieveByIDs(IDs, fields).ToDictionary(x => x.Id);
         }
 
-        public virtual IList<T> RetrieveByIDs(idT[] IDs)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="IDs"></param>
+        /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
+        /// <returns></returns>
+        public virtual IList<T> RetrieveByIDs(idT[] IDs, params string[] fields)
         {
             _dao.InstitutionCode = InstitutionCode;
             _dao.EntityName = EntityName;
-            return _dao.RetrieveByIDs(IDs);
+            return _dao.RetrieveByIDs(IDs, fields);
         }
 
         public virtual IList<idT> RetrieveIDs()
@@ -105,33 +117,49 @@ namespace MultiTenancyFramework.Logic
         /// <summary>
         /// Retrieves all.
         /// </summary>
+        /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        public virtual IList<T> RetrieveAll()
+        public virtual IList<T> RetrieveAll(params string[] fields)
         {
             _dao.InstitutionCode = InstitutionCode;
             _dao.EntityName = EntityName;
-            return _dao.RetrieveAll();
+            return _dao.RetrieveAll(fields);
         }
 
-        public virtual IList<T> RetrieveAllActive()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
+        /// <returns></returns>
+        public virtual IList<T> RetrieveAllActive(params string[] fields)
         {
             _dao.InstitutionCode = InstitutionCode;
             _dao.EntityName = EntityName;
-            return _dao.RetrieveAllActive();
+            return _dao.RetrieveAllActive(fields);
         }
 
-        public virtual IList<T> RetrieveAllInactive()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
+        /// <returns></returns>
+        public virtual IList<T> RetrieveAllInactive(params string[] fields)
         {
             _dao.InstitutionCode = InstitutionCode;
             _dao.EntityName = EntityName;
-            return _dao.RetrieveAllInactive();
+            return _dao.RetrieveAllInactive(fields);
         }
 
-        public virtual IList<T> RetrieveAllDeleted()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
+        /// <returns></returns>
+        public virtual IList<T> RetrieveAllDeleted(params string[] fields)
         {
             _dao.InstitutionCode = InstitutionCode;
             _dao.EntityName = EntityName;
-            return _dao.RetrieveAllDeleted();
+            return _dao.RetrieveAllDeleted(fields);
         }
 
         public void Insert(IList<T> entities)
