@@ -71,7 +71,7 @@ namespace System.Web.Mvc
                 routes = new RouteValueDictionary(routeValues);
             }
             routes["institution"] = HttpContext.Current.Request.RequestContext.RouteData.Values["institution"];
-            if (!string.IsNullOrWhiteSpace(areaName))
+            if (areaName != null)
             {
                 routes["area"] = areaName;
             }
