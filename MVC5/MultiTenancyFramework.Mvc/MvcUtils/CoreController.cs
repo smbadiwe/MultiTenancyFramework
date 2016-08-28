@@ -52,9 +52,11 @@ namespace MultiTenancyFramework.Mvc
         protected readonly ILogger Logger;
 
         /// <summary>
-        /// The (logged in) user as maintained by the framework; distinct from (IPrincipal) User
+        /// The (logged in) user as maintained by the framework; distinct from (IPrincipal) User. It's shorthand for 
+        /// <code>WebUtilities.GetCurrentlyLoggedInUser();</code>
+        /// <para>If you need to set the value, call <code>WebUtilities.SetCurrentlyLoggedInUser(newValue);</code></para>
         /// </summary>
-        protected IdentityUser IdentityUser { get; set; }
+        protected IdentityUser IdentityUser { get; private set; }
 
         public CoreController()
         {
