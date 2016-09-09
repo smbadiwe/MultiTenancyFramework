@@ -1,0 +1,18 @@
+﻿<?xml version="1.0"?>
+<configuration>
+
+  <appSettings>
+    <!--MultiTenancyFramework: key 'SiteUrl': Edit to specify the base url where your site is deployed-->
+    <add key="SiteUrl" value="http://localhost/" />
+  </appSettings>
+  <system.runtime.caching>
+    <memoryCache>
+      <namedCaches>
+        <add name="default"
+             cacheMemoryLimitMegabytes="0"
+             physicalMemoryLimitPercentage="0"
+             pollingInterval="00:02:00" />
+      </namedCaches>
+    </memoryCache>
+  </system.runtime.caching>
+</configuration>

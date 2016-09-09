@@ -1,0 +1,13 @@
+﻿<?xml version="1.0"?>
+<configuration>
+  <system.runtime.caching>
+    <memoryCache>
+      <namedCaches>
+        <add name="default"
+             cacheMemoryLimitMegabytes="0" 
+             physicalMemoryLimitPercentage="0"
+             pollingInterval="00:02:00" />
+      </namedCaches>
+    </memoryCache>
+  </system.runtime.caching>
+</configuration>

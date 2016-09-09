@@ -37,6 +37,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\ReleasePackage\MultiTenancyFramework.Core.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -140,11 +141,17 @@
     <Compile Include="Utility\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config.transform" />
     <None Include="app.config.uninstall.xdt" />
     <None Include="MultiTenancyFramework.Core.nuspec" />
     <None Include="app.config.install.xdt" />
+    <None Include="web.config.transform">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="web.config.uninstall.xdt" />
-    <None Include="web.config.install.xdt" />
+    <None Include="web.config.install.xdt">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

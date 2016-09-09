@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>$id$</id>
-    <version>1.0.0.1</version>
+    <version>1.0.0.5</version>
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
@@ -13,4 +13,14 @@
     <copyright>Copyright 2016</copyright>
     <tags>SaaS MultiTenant MultiTenancy Framework Software-as-a-Service</tags>
   </metadata>
+  <files>
+    <file src="\bin\ReleasePackage\MultiTenancyFramework.Core.dll" target="lib\net45" />
+    <file src="\bin\ReleasePackage\MultiTenancyFramework.Core.XML" target="lib\net45" />
+    <!--<file src="app.config.install.xdt" target="content" />
+    <file src="app.config.uninstall.xdt" target="content" />
+    <file src="web.config.install.xdt" target="content" />
+    <file src="web.config.uninstall.xdt" target="content" />-->
+    <file src="app.config.transform" target="content" />
+    <file src="web.config.transform" target="content" />
+  </files>
 </package>

@@ -37,6 +37,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Release Package\MultiTenancyFramework.SimpleInjector.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SimpleInjector">
@@ -62,7 +63,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="MultiTenancyFramework.SimpleInjector.nuspec" />
+    <None Include="MultiTenancyFramework.SimpleInjector.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -30,13 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleasePackage|AnyCPU' ">
-    <OutputPath>bin\Release Package\</OutputPath>
+    <OutputPath>bin\ReleasePackage\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\ReleasePackage\MultiTenancyFramework.NHibernate.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -129,10 +130,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="app.config.transform" />
     <None Include="app.config.install.xdt" />
     <None Include="app.config.uninstall.xdt" />
     <None Include="MultiTenancyFramework.NHibernate.nuspec" />
     <None Include="packages.config" />
+    <None Include="web.config.transform" />
     <None Include="web.config.install.xdt" />
     <None Include="web.config.uninstall.xdt" />
   </ItemGroup>

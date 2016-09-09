@@ -279,6 +279,7 @@ namespace MultiTenancyFramework.NHibernate
             foreach (var prop in fields)
             {
                 if (prop == "Id") continue;
+
                 projectionList.Add(Projections.Property(prop), prop);
             }
             var results = query.Select(projectionList)
