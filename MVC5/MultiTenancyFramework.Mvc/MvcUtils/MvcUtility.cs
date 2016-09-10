@@ -25,7 +25,7 @@ namespace MultiTenancyFramework.Mvc
 
         public static void RegisterArea(string areaName, AreaRegistrationContext context)
         {
-            context.MapRouteLowerCase(
+            context.MapRoute( //LowerCase(
                 name: $"{areaName}_MultiTenant",
                 url: "{institution}/" + areaName +"/{controller}/{action}/{id}",
                 defaults: new { area = areaName, id = UrlParameter.Optional },
