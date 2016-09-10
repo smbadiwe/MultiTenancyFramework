@@ -16,25 +16,49 @@ namespace WebTests.Controllers
         // GET: Home
         public ActionResult Index()
         {
-            var login = new UserRole
-            {
-                Name = "UserRole Web 3"
-            };
-            var dao = new MultiTenancyFramework.Logic.UserRoleLogic("Core");
-            dao.Insert(login);
+            //var login = new UserRole
+            //{
+            //    Name = "UserRole Web 3"
+            //};
+            //var dao = new MultiTenancyFramework.Logic.UserRoleLogic("Core");
+            //dao.Insert(login);
 
-            UserRole thatLogin = null;
-            foreach (var item in dao.RetrieveAllActive())
-            {
-                if (item.Name == "UserRole Web 3")
-                {
-                    item.Name += " Modified";
-                    thatLogin = item;
-                }
-            }
-            dao.Update(thatLogin);
-
+            //UserRole thatLogin = null;
+            //foreach (var item in dao.RetrieveAllActive())
+            //{
+            //    if (item.Name == "UserRole Web 3")
+            //    {
+            //        item.Name += " Modified";
+            //        thatLogin = item;
+            //    }
+            //}
+            //dao.Update(thatLogin);
+            Logger.Log("Testing stuffs in Index");
             return View();
+        }
+
+        public ActionResult Welcome()
+        {
+            //var login = new UserRole
+            //{
+            //    Name = "UserRole Web 3"
+            //};
+            //var dao = new MultiTenancyFramework.Logic.UserRoleLogic("Core");
+            //dao.Insert(login);
+
+            //UserRole thatLogin = null;
+            //foreach (var item in dao.RetrieveAllActive())
+            //{
+            //    if (item.Name == "UserRole Web 3")
+            //    {
+            //        item.Name += " Modified";
+            //        thatLogin = item;
+            //    }
+            //}
+            //dao.Update(thatLogin);
+
+            Logger.Log("Testing stuffs in Welcome");
+            return View("Index");
         }
     }
 }

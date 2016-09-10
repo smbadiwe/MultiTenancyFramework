@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -157,21 +158,11 @@ namespace MultiTenancyFramework
             string xmlFilePath = null;
             if (context == null)
             {
-                xmlFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LoggingConfig.xml"); //HttpContext.Current != null ? HttpContext.Current.Server.MapPath("bin/LoggingConfig.xml") : ;
+                xmlFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LoggingConfig.xml");
             }
             else
             {
-                string siteUrl = System.Configuration.ConfigurationManager.AppSettings["SiteUrl"];
-                if (string.IsNullOrWhiteSpace(siteUrl))
-                {
-                    //xmlFilePath = Path.Combine(context.Request.Url.AbsoluteUri.Split(new[] { ".com", ".com.ng", ".net" }, StringSplitOptions.RemoveEmptyEntries)[0], "LoggingConfig.xml");
-
-                    xmlFilePath = "~/LoggingConfig.xml";
-                }
-                else
-                {
-                    xmlFilePath = siteUrl + "LoggingConfig.xml";
-                }
+                xmlFilePath = context.Server.MapPath("~/LoggingConfig.xml");
             }
             if (string.IsNullOrWhiteSpace(xmlFilePath)) throw new ApplicationException("Could not get any LoggingConfig file.");
             if (!xmlFilePath.EndsWith("LoggingConfig.xml")) throw new ApplicationException("No LoggingConfig file supplied");
@@ -211,6 +202,11 @@ namespace MultiTenancyFramework
                                               <!--in MB. The system must have at least this amount of space-->
                                               <SizeLimit>100</SizeLimit>
                                             </LoggingConfig>", AppDomain.CurrentDomain.FriendlyName));
+                    try
+                    {
+                        doc.Save(xmlFilePath);
+                    }
+                    catch { }
                 }
             }
             XElement rootNode = doc.Root;

@@ -63,7 +63,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 if (_context.Context != null && _context.Context.Response != null)
                 {
                     var baseUrl = ConfigurationHelper.GetSiteUrl() ?? _context.Context.Request.Url.Authority;
-                    _context.Context.Response.Redirect($"{baseUrl}Error/?gl=1");
+                    _context.Context.Response.Redirect($"{baseUrl}/{_context.Context.Request.RequestContext.RouteData.Values["institution"]}/Error/?gl=1");
                 }
             }
         }

@@ -95,7 +95,7 @@ namespace MultiTenancyFramework
                     list.Add(priv);
                     claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, priv.Name, "http://www.w3.org/2001/XMLSchema#string"));
                 }
-                WebUtilities.LoggedInUsersPrivilegesDict = list.ToDictionary(x => x.Name);
+                WebUtilities.LoggedInUsersPrivilegesDict = list.ToDictionary(x => x.Name, StringComparer.InvariantCultureIgnoreCase);
                 defaultPrivs = null;
             }
             if (manager.SupportsUserClaim)

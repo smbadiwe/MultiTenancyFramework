@@ -124,10 +124,12 @@
     <Compile Include="EmailService.cs" />
     <Compile Include="Entities\ActionAccessPrivilege.cs" />
     <Compile Include="Entities\InstitutionAccessValidationResult.cs" />
+    <Compile Include="Extensions\AreaRegistrationContextExtensions.cs" />
     <Compile Include="Extensions\EntityExtensionsMvc.cs" />
     <Compile Include="Extensions\IIdentityExtensions.cs" />
-    <Compile Include="Extensions\MvcExtensions3.cs" />
-    <Compile Include="Extensions\MvcExtensions2.cs" />
+    <Compile Include="Extensions\HtmlHelperExtensions.cs" />
+    <Compile Include="Extensions\RouteCollectionExtensions.cs" />
+    <Compile Include="Extensions\UrlHelperExtensions.cs" />
     <Compile Include="Extensions\MvcExtensions.cs" />
     <Compile Include="Identity\ApplicationSignInManager.cs" />
     <Compile Include="Identity\ApplicationUserManager.cs" />
@@ -145,6 +147,7 @@
     <Compile Include="MvcUtils\ErrorMessageModel.cs" />
     <Compile Include="MvcUtils\InstitutionFilterConfig.cs" />
     <Compile Include="MvcUtils\InstitutionRouteConfig.cs" />
+    <Compile Include="MvcUtils\LowerCaseRoute.cs" />
     <Compile Include="MvcUtils\MvcUtility.cs" />
     <Compile Include="MvcUtils\MyModelMetadataProvider.cs" />
     <Compile Include="MvcUtils\ValidateUsingPrivilegeForActionAttribute.cs" />

@@ -2,7 +2,7 @@
 
 namespace System.Web.Mvc
 {
-    public static class MvcExtensions2
+    public static class UrlHelperExtensions
     {
         /// <summary>
         /// This incorporates the institution code in the generated Url

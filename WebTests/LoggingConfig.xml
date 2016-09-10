@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LoggingConfig>
+  <SendMailInstead>true</SendMailInstead>
+  <MailSetup>
+    <DisplayName>/LM/W3SVC/2/ROOT-1-131179573442470325</DisplayName>
+    <Subject>ERROR ON /LM/W3SVC/2/ROOT-1-131179573442470325</Subject>
+    <ToEmail>somadinambadiwe@gmail.com</ToEmail>
+    <SmtpUsername>DoNotReply.QCPTA@gmail.com</SmtpUsername>
+    <SmtpPassword>october2014</SmtpPassword>
+    <SmtpHost>smtp.gmail.com</SmtpHost>
+    <SmtpPort>587</SmtpPort>
+    <EnableSSL>true</EnableSSL>
+  </MailSetup>
+  <!--Where the log files are -->
+  <LogDirectory>Logs</LogDirectory>
+  <!--When false, only actual errors are logged-->
+  <Enabled>true</Enabled>
+  <!--in MB. The system must have at least this amount of space-->
+  <SizeLimit>100</SizeLimit>
+</LoggingConfig>

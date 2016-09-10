@@ -163,7 +163,7 @@ namespace MultiTenancyFramework.Mvc
                 if (doLogout || filterContext.Exception is LogOutUserException)
                 {
                     WebUtilities.LogOut();
-                    filterContext.Result = MvcUtility.GetLoginPageResult(instCode);
+                    filterContext.Result = MvcUtility.GetLoginPageResult(instCode, filterContext.HttpContext);
                 }
                 else
                 {
@@ -219,7 +219,7 @@ namespace MultiTenancyFramework.Mvc
             {
                 // It's not anonymous, so force user to login
                 WebUtilities.LogOut();
-                filterContext.Result = MvcUtility.GetLoginPageResult(InstitutionCode);
+                filterContext.Result = MvcUtility.GetLoginPageResult(InstitutionCode, filterContext.HttpContext);
                 return;
             }
 
@@ -232,7 +232,7 @@ namespace MultiTenancyFramework.Mvc
             if (userPrivList == null)
             {
                 WebUtilities.LogOut();
-                filterContext.Result = MvcUtility.GetLoginPageResult(InstitutionCode);
+                filterContext.Result = MvcUtility.GetLoginPageResult(InstitutionCode, filterContext.HttpContext);
                 return;
             }
 
