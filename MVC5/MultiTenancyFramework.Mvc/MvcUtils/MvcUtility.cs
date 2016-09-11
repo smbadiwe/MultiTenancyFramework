@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
+using MultiTenancyFramework.Mvc.Logic;
 using System.Runtime.Caching;
 using System.Web;
 using System.Web.Mvc;
@@ -13,9 +14,8 @@ namespace MultiTenancyFramework.Mvc
         public const string _FALSE_ICON = "<i class='text-danger fa fa-close'></i>";
         public static ContentResult GetLoginPageResult(string instCode, HttpContextBase context)
         {
-            //var baseUrl = context.Request.Url.Authority; // "/"; // VirtualPathUtility.ToAbsolute("~/"); //
             var baseUrl = ConfigurationHelper.GetSiteUrl();
-            var url = string.Format("{0}{1}/Account/Login", baseUrl, instCode);
+            var url = string.Format("{0}{1}{2}", baseUrl, instCode, DataCacheMVC.MultiTenancyFrameworkSettings.LoginPath);
             return new ContentResult
             {
                 Content = "<html><script>window.top.location.href = '" + url + "'; </script></html>",
@@ -35,12 +35,12 @@ namespace MultiTenancyFramework.Mvc
         
         public static string HashString(string clearText)
         {
-            return System.Web.Helpers.Crypto.HashPassword(clearText); //new Microsoft.AspNet.Identity.PasswordHasher()
+            return System.Web.Helpers.Crypto.HashPassword(clearText);
         }
 
         public static bool VerifyHash(string hashedText, string clearText)
         {
-            return System.Web.Helpers.Crypto.VerifyHashedPassword(hashedText, clearText); //new Microsoft.AspNet.Identity.PasswordHasher()
+            return System.Web.Helpers.Crypto.VerifyHashedPassword(hashedText, clearText);
         }
 
         public static void SendMail(string toEmail, string subject, string body)

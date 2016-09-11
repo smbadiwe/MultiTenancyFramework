@@ -1,4 +1,7 @@
 ﻿using MultiTenancyFramework.Data;
+using MultiTenancyFramework.Mvc.Identity;
+using MultiTenancyFramework.Mvc.Logic;
+using Owin;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -35,5 +38,21 @@ namespace MultiTenancyFramework
             return new FileContentResult(theBytes, mimeType) { FileDownloadName = fileName };
         }
         
+        /// <summary>
+        /// Tells the system to use the MultiTenancy framework.
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="settings">Every setting has a defaultt value, so you can safely use a new unstance</param>
+        /// <returns></returns>
+        public static IAppBuilder UseMultiTenancyFramework(this IAppBuilder app, MultiTenancyFrameworkSettings settings)
+        {
+            if (settings == null)
+            {
+                settings = new MultiTenancyFrameworkSettings();
+            }
+            DataCacheMVC.MultiTenancyFrameworkSettings = settings;
+            return app;
+        }
+
     }
 }

@@ -58,6 +58,9 @@ namespace MultiTenancyFramework.Mvc
         /// </summary>
         protected IdentityUser IdentityUser { get; private set; }
 
+        /// <summary>
+        /// Provides core functionalities for the framework, especially authorization and exception handling
+        /// </summary>
         public CoreController()
         {
             Logger = Utilities.Logger;
@@ -72,13 +75,29 @@ namespace MultiTenancyFramework.Mvc
             return DateTime.Now.GetLocalTime();
         }
 
-        /// <summary>
-        /// The name of the folder where the views for this controller are. This will usually be the controller name
-        /// </summary>
-        public virtual string ViewFolder { get { return string.Empty; } }
+        private string _viewFolder;
 
         /// <summary>
-        /// The area name. Set to empty string if not applicable
+        /// The name of the folder where the views for this controller are. This will usually be (and is defauletd to) the controller name
+        /// </summary>
+        public virtual string ViewFolder
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_viewFolder))
+                {
+                    _viewFolder = this.GetType().Name.Replace("Controller", "");
+                }
+                return _viewFolder;
+            }
+            set
+            {
+                _viewFolder = value;
+            }
+        }
+
+        /// <summary>
+        /// The area name. Override within an area and set with appropriate value
         /// </summary>
         public virtual string AreaName { get { return string.Empty; } }
 
@@ -104,11 +123,26 @@ namespace MultiTenancyFramework.Mvc
             if (clearModel) ModelState.Clear();
         }
 
+        /// <summary>
+        /// Handy way to include <paramref name="institutionCode"/> in the traditional 'RedirectToAction' call
+        /// </summary>
+        /// <param name="actionName"></param>
+        /// <param name="controllerName"></param>
+        /// <param name="institutionCode"></param>
+        /// <returns></returns>
         protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string institutionCode)
         {
             return RedirectToAction(actionName, controllerName, "", institutionCode);
         }
 
+        /// <summary>
+        /// Handy way to include <paramref name="areaName"/> and <paramref name="institutionCode"/> in the traditional 'RedirectToAction' call
+        /// </summary>
+        /// <param name="actionName"></param>
+        /// <param name="controllerName"></param>
+        /// <param name="areaName"></param>
+        /// <param name="institutionCode"></param>
+        /// <returns></returns>
         protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string areaName, string institutionCode)
         {
             if (string.IsNullOrWhiteSpace(actionName)) throw new ArgumentNullException("action");
@@ -135,6 +169,10 @@ namespace MultiTenancyFramework.Mvc
             return RedirectToAction(actionName, routes);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filterContext"></param>
         protected override void OnException(ExceptionContext filterContext)
         {
             if (!filterContext.ExceptionHandled)
@@ -182,12 +220,16 @@ namespace MultiTenancyFramework.Mvc
             base.OnException(filterContext);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filterContext"></param>
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var actionDescriptor = filterContext.ActionDescriptor;
 
             #region Check whether it's an anonymous action
-            
+
             // check if AllowAnonymous is on the controller
             var anonymous = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
                     .Cast<AllowAnonymousAttribute>();

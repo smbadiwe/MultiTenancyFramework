@@ -134,6 +134,7 @@
     <Compile Include="Identity\ApplicationSignInManager.cs" />
     <Compile Include="Identity\ApplicationUserManager.cs" />
     <Compile Include="Entities\IdentityUser.cs" />
+    <Compile Include="Identity\MultiTenancyFrameworkSettings.cs" />
     <Compile Include="Identity\UserStore.cs" />
     <Compile Include="IPResolver.cs" />
     <Compile Include="Logic\AuditLogLogic.cs" />

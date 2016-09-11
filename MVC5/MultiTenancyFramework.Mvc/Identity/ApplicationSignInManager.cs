@@ -20,7 +20,7 @@ namespace MultiTenancyFramework.Mvc.Identity
             : base(userManager, authenticationManager)
         {
         }
-
+        
         public override Task<ClaimsIdentity> CreateUserIdentityAsync(IdentityUser user)
         {
             if (user.ForceChangeOfPassword) throw new ForceChangeOfPasswordException();

@@ -1,5 +1,6 @@
 ﻿using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
+using MultiTenancyFramework.Mvc.Identity;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
@@ -50,5 +51,16 @@ namespace MultiTenancyFramework.Mvc.Logic
             }
         }
 
+        internal static MultiTenancyFrameworkSettings MultiTenancyFrameworkSettings
+        {
+            get
+            {
+                return MemoryCache.Default["::MultiTenancyFrameworkSettings::"] as MultiTenancyFrameworkSettings ?? new MultiTenancyFrameworkSettings();
+            }
+            set
+            {
+                MemoryCache.Default["::MultiTenancyFrameworkSettings::"] = value;
+            }
+        }
     }
 }
