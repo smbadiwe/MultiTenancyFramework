@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>1.0.0.5</version>
+    <version>1.0.0.6</version>
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
@@ -13,7 +13,7 @@
     <copyright>Copyright 2016</copyright>
     <tags>SaaS MultiTenant MultiTenancy Framework Software-as-a-Service MVC5</tags>
     <dependencies>
-      <dependency id="MultiTenancyFramework.Core" version="1.0.0.5" />
+      <dependency id="MultiTenancyFramework.Core" version="1.0.0.6" />
     </dependencies>
   </metadata>
 </package>

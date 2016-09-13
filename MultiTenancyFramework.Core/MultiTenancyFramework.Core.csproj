@@ -62,6 +62,7 @@
     <Compile Include="Commands\ICommandProcessor.cs" />
     <Compile Include="Data\IDataInitializer.cs" />
     <Compile Include="Data\IPrivilegeDAO.cs" />
+    <Compile Include="Data\Queries\GetPhotosByOwnerIdAndImageTypeQuery.cs" />
     <Compile Include="Data\Queries\GetUserRoleByNameQuery.cs" />
     <Compile Include="Data\Queries\GetPrivilegesByGridSearchParamsQuery.cs" />
     <Compile Include="Entities\Privilege.cs" />

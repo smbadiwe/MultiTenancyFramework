@@ -28,7 +28,10 @@
     {
         Passport = 0,
         Picture,
-        Signature
+        Signature,
+        LeftThumbPrint,
+        RightThumbPrint,
+        Other = 99,
     }
     
     public enum Gender

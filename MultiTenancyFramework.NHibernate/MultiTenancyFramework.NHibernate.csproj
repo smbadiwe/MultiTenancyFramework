@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Maps\PhotoMap.cs" />
     <Compile Include="Maps\PrivilegeMap.cs" />
     <Compile Include="PrivilegeDAO.cs" />
     <Compile Include="AppUserDAO.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="NHManager\WebSessionStorage.cs" />
     <Compile Include="NHUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries\GetPhotosByOwnerIdAndImageTypeQueryHandler.cs" />
     <Compile Include="Queries\GetUserRoleByNameQueryHandler.cs" />
     <Compile Include="Queries\GetAppUsersByGridSearchParamsQueryHandler.cs" />
     <Compile Include="Queries\GetDatabaseConnectionByNameAndConnectionStringQueryHandler.cs" />
