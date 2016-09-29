@@ -9,13 +9,17 @@ using MultiTenancyFramework.NHibernate.Queries;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Cfg.ConfigurationSchema;
+using NHibernate.Engine;
 using NHibernate.Event;
+using NHibernate.Type;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using Environment = NHibernate.Cfg.Environment;
 
@@ -23,7 +27,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 {
     public class NHSessionManager
     {
-        private static readonly ConcurrentDictionary<string, Type[]> AssemblyClasses = new ConcurrentDictionary<string, Type[]>();
+        private static readonly Dictionary<string, Type[]> AssemblyClasses = new Dictionary<string, Type[]>();
 
         /// <summary>
         /// Key is institution code
@@ -40,6 +44,9 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// </summary>
         public static readonly ConcurrentDictionary<string, IStatelessSession> StatelessSessionStorages = new ConcurrentDictionary<string, IStatelessSession>();
 
+        /// <summary>
+        /// Implement additional processing on the session factory after it's created. For instance, you may want to inject Glimpse for monitoring.
+        /// </summary>
         public static Action<ISessionFactory> SessionFactoryCreated;
 
         /// <summary>
@@ -49,7 +56,35 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// AppSettings key should be "EntityAssemblies"
         /// </para> 
         /// </summary>
-        public static Func<string[]> AddEntityAssemblies;
+        public static void AddEntityAssemblies(string[] entityAssemblies)
+        {
+            if (entityAssemblies != null)
+            {
+                if (EntityAssemblies == null) EntityAssemblies = new HashSet<string>();
+                foreach (var item in entityAssemblies)
+                {
+                    EntityAssemblies.Add(item);
+                }
+            }
+        }
+
+        private static HashSet<string> EntityAssemblies;
+        private static HashSet<string> MappingAssemblies;
+        /// <summary>
+        /// If you build another library with NHibernate on another (web) framework, use this to register the cnsequent mapping assembly(-ies).
+        /// Ultimately, it'll be merged with what's in Nhibernate config section.
+        /// </summary>
+        public static void AddMappingAssemblies(string[] mappingAssemblies)
+        {
+            if (mappingAssemblies != null)
+            {
+                if (MappingAssemblies == null) MappingAssemblies = new HashSet<string>();
+                foreach (var item in mappingAssemblies)
+                {
+                    MappingAssemblies.Add(item);
+                }
+            }
+        }
 
         /// <summary>
         /// Use thi method to set DAO.EntityName when it's possible there is a subtype of the baseType 
@@ -59,6 +94,24 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// <returns></returns>
         public static string GetEntityNameToUseInNHSession(Type baseType)
         {
+            if (AssemblyClasses.Count == 0)
+            {
+                var allEntityAssemblies = new HashSet<string>(Utilities.EntityAssemblies.Union(EntityAssemblies));
+                allEntityAssemblies.Add("MultiTenancyFramework.Core"); //The only ony we're sure of.
+                foreach (var assemblyName in allEntityAssemblies)
+                {
+                    try
+                    {
+                        var assembly = Assembly.Load(assemblyName);
+                        if (assembly != null)
+                        {
+                            var types = assembly.GetTypes().Where(x => x.IsClass && !x.IsAbstract).ToArray();
+                            AssemblyClasses[assemblyName] = types;
+                        }
+                    }
+                    catch { }
+                }
+            }
             foreach (var assemblyClassSet in AssemblyClasses)
             {
                 foreach (var theType in assemblyClassSet.Value)
@@ -67,31 +120,6 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                     {
                         return theType.FullName;
                     }
-                }
-            }
-            var entityAssemblies = AddEntityAssemblies?.Invoke() ?? new string[0];
-            var allEntityAssemblies = new HashSet<string>(Utilities.EntityAssemblies.Union(entityAssemblies));
-            allEntityAssemblies.Add("MultiTenancyFramework.Core"); //The only ony we're sure of.
-            foreach (var assemblyName in allEntityAssemblies.Where(x => x.IsNotContainedIn(AssemblyClasses.Keys)))
-            {
-                try
-                {
-                    var assembly = Assembly.Load(assemblyName);
-                    if (assembly != null)
-                    {
-                        var types = assembly.GetTypes().Where(x => x.IsClass).ToArray();
-                        AssemblyClasses.TryAdd(assemblyName, types);
-                        foreach (var theType in types)
-                        {
-                            if (baseType.IsAssignableFrom(theType) && !theType.Equals(baseType))
-                            {
-                                return theType.FullName;
-                            }
-                        }
-                    }
-                }
-                catch
-                { //Do Nothing
                 }
             }
             return baseType.FullName;
@@ -130,6 +158,10 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             }
         }
 
+        /// <summary>
+        /// Whether or not there's a HTTP context
+        /// </summary>
+        /// <returns></returns>
         public static bool IsWeb()
         {
             return HttpContext.Current != null;
@@ -144,11 +176,10 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// <summary>
         /// NB: If your tables were created on the fly, then you'll have to pass in the entity name to get the right table.
         /// And, If you must pass in 'autoPersistenceModel', you should only pass in a dynamically created mapping file.
+        /// <para>NB: The returned session only Flushes when you commit. You can always change to .FlushMode to your taste.</para>
         /// </summary>
         /// <param name="institutionCode"></param>
-        /// <param name="entityName"></param>
         /// <param name="dbConnection"></param>
-        /// <param name="isWebSession"></param>
         /// <param name="doFreshSession"></param>
         /// <returns></returns>
         public static ISession GetSession(string institutionCode = "", IDbConnection dbConnection = null, bool doFreshSession = false)
@@ -205,7 +236,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             {
                 session.EnableFilter(Utilities.InstitutionFilterName)
                     .SetParameter(Utilities.InstitutionCodeQueryParamName, institutionCode);
-
+                session.FlushMode = FlushMode.Commit;
                 //Begin a transaction
                 if (!session.IsConnected || session.Transaction == null || !session.Transaction.IsActive || session.Transaction.WasCommitted || session.Transaction.WasRolledBack) //if (storage is WebSessionStorage)
                 {
@@ -340,11 +371,21 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 {
                     throw new GeneralException($"Database has not been setup for Institution: '{institution.Name}'");
                 }
+                // Sometimes, you just want to use the same DB for all the tenants. In that case, simply use one session factory
+                if (string.Equals(dbConn.ConnectionString, GetConnectionString(), StringComparison.InvariantCultureIgnoreCase))
+                {
+                    ISessionFactory fac = null;
+                    // if we can't get the session factory for the central institution.
+                    // This should never happen 'cos the central would have been contacted earlier; but just in case...
+                    if (false == (SessionFactories.TryGetValue(Utilities.INST_DEFAULT_CODE, out fac) && fac != null))
+                    {
+                        // Like I said above, this should never be reached
+                        fac = Init(null, GetSessionKey(null, IsWeb())); // build and return session key for central institution
+                    }
+                    SessionFactories[instCode] = fac;
+                    return fac;
+                }
                 var cfgProps = new Dictionary<string, string>();
-                //if (!IsMySqlDatabase())
-                //{
-                //    cfgProps.Add(Environment.DefaultSchema, institution.PreferredSchema ?? "dbo");
-                //}
                 cfgProps.Add(Environment.ConnectionString, dbConn.ConnectionString);
 
                 return Init(null, sessionKey, cfgProps);
@@ -364,20 +405,21 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             }
             if (hc.SessionFactory != null)
             {
-                var mappingFiles = new HashSet<string>(hc.SessionFactory.Mappings.Select(x => x.Assembly));
+                var mappingAssemblies = new HashSet<string>(hc.SessionFactory.Mappings.Select(x => x.Assembly));
 
                 //Doing this ensure framework libraries are captured without having duplicates
-                var otherMappingFiles = AppDomain.CurrentDomain.GetAssemblies().Where(x => x.GetName().Name.EndsWith(".NHibernate"));
-                if (otherMappingFiles.Any())
+                var otherMappingAssemblies = MappingAssemblies;
+                if (otherMappingAssemblies.Any())
                 {
-                    foreach (var file in otherMappingFiles)
+                    foreach (var file in otherMappingAssemblies)
                     {
-                        mappingFiles.Add(file.GetName().Name);
+                        mappingAssemblies.Add(file);
                     }
                 }
-                otherMappingFiles = null;
+                mappingAssemblies.Add("MultiTenancyFramework.NHibernate"); // Add yourself
+                otherMappingAssemblies = null;
 
-                foreach (var mappingAssemblyCfg in mappingFiles)
+                foreach (var mappingAssemblyCfg in mappingAssemblies)
                 {
                     var assembly = Assembly.Load(mappingAssemblyCfg);
 
@@ -448,6 +490,19 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             cfg.Properties.Add(Environment.Isolation, "ReadCommitted");
             cfg.Properties.Add(Environment.ProxyFactoryFactoryClass, "NHibernate.Bytecode.DefaultProxyFactoryFactory, NHibernate");
             cfg.Properties.Add(Environment.CurrentSessionContextClass, "web");
+
+            #region Defined in the class: AppFilterDefinition
+            ////To filter queries: 
+            ////Where IsDeleted != 1 AND InstitutionCode = :instCode
+            //var filterDef = new FilterDefinition(
+            //                        name: Utilities.InstitutionFilterName,
+            //                        defaultCondition: $"{Utilities.SoftDeletePropertyName} != 1 AND {Utilities.InstitutionCodePropertyName} = :{Utilities.InstitutionCodeQueryParamName}",
+            //                        parameterTypes: new Dictionary<string, IType> { { Utilities.InstitutionCodeQueryParamName, NHibernateUtil.String } },
+            //                        useManyToOne: false);
+
+            //cfg.AddFilterDefinition(filterDef); 
+            #endregion
+
             return cfg;
         }
 

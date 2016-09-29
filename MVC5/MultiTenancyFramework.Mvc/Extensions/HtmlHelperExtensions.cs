@@ -7,7 +7,7 @@ using System.Web.Routing;
 
 namespace System.Web.Mvc.Html
 {
-    public static class MvcExtensions3
+    public static class HtmlHelperExtensions
     {
         public static IDictionary<string, object> MergeHtmlAttributes(this HtmlHelper helper, object htmlAttributesObject, object defaultHtmlAttributesObject)
         {
@@ -58,7 +58,7 @@ namespace System.Web.Mvc.Html
                 enumType = Nullable.GetUnderlyingType(enumType);
             }
             var list = MultiTenancyFramework.EnumHelper.GetEnumNames(enumType);
-            return htmlHelper.MyEnumDropDownListFor(expression, list, null, htmlAttributes);
+            return htmlHelper.MyEnumDropDownListFor(expression, list, optionalLabel, htmlAttributes);
         }
 
         public static MvcHtmlString MyEnumDropDownListFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TEnum>> expression, IEnumerable enumList, string optionalLabel, object htmlAttributes)
@@ -88,7 +88,7 @@ namespace System.Web.Mvc.Html
 
             if (currentValue == null && string.IsNullOrWhiteSpace(optionalLabel))
             {
-                optionalLabel = "---Select Item---";
+                optionalLabel = "Choose an item...";
             }
             var selectList = new SelectList(enumList, "Value", "Name", currentValue);
 

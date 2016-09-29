@@ -40,7 +40,11 @@ namespace MultiTenancyFramework
         public const string SoftDeleteFilterName = "SoftDeleteFilter";
         public const string InstitutionCodePropertyName = "InstitutionCode";
         public const string InstitutionCodeQueryParamName = "instCode";
-        
+
+        /// <summary>
+        /// The default value is "Password@1". To change it, add key: 'DefaultPassword' to your appSettings in your config file.
+        /// <para>When changing, stick to the password rules setup</para>para>
+        /// </summary>
         public static string DefaultPassword
         {
             get
@@ -49,6 +53,9 @@ namespace MultiTenancyFramework
             }
         }
 
+        /// <summary>
+        /// To set it, add key: 'EntityAssemblies' to your appSettings in your config file. If value is more than one items, use comma-separated list
+        /// </summary>
         public static string[] EntityAssemblies
         {
             get
@@ -72,7 +79,7 @@ namespace MultiTenancyFramework
         public static IDbQueryProcessor QueryProcessor { get { return MyServiceLocator.GetInstance<IDbQueryProcessor>(); } }
 
 
-        public const string SS_SYS_SETTINGS = "::SystemSettings::";
+        private const string SS_SYS_SETTINGS = "::SystemSettings::";
 
         public static SystemSetting SystemSettings
         {

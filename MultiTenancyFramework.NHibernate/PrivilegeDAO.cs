@@ -11,7 +11,7 @@ namespace MultiTenancyFramework.NHibernate
     {
         public PrivilegeDAO()
         {
-            EntityName = NHManager.NHSessionManager.GetEntityNameToUseInNHSession(typeof(Privilege));
+            EntityName = NHManager.NHSessionManager.GetEntityNameToUseInNHSession(typeof(T));
         }
     }
 }

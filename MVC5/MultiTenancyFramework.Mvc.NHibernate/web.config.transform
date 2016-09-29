@@ -1,0 +1,9 @@
+﻿<?xml version="1.0"?>
+<configuration>
+  <system.webServer>
+    <modules>
+      <add name="MvcNhibAssemblyModule"
+           type="MultiTenancyFramework.Mvc.NHibernate.RegisterAssemblyHttpModule, MultiTenancyFramework.Mvc.NHibernate" />
+    </modules>
+  </system.webServer>
+</configuration>

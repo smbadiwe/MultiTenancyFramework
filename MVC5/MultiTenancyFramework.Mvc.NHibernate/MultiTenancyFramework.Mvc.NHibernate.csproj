@@ -59,6 +59,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -68,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Maps\ActionAccessPrivilegeMap.cs" />
+    <Compile Include="RegisterAssemblyHttpModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\GetActionAccessPrivilegesByGridSearchParamsQueryHandler.cs" />
     <Compile Include="Queries\GetControllersQueryHandler.cs" />
@@ -92,6 +94,7 @@
     <None Include="app.config" />
     <None Include="MultiTenancyFramework.Mvc.NHibernate.nuspec" />
     <None Include="packages.config" />
+    <None Include="web.config.transform" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="readme.txt" />

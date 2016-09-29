@@ -20,7 +20,7 @@ namespace MultiTenancyFramework.IoC
             if (frameworkDlls == null || !frameworkDlls.Any())
             {
                 // Maybe it's Web and we're not looking into the bin folder. So...
-                execFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin");
+                execFolder = Path.Combine(execFolder, "bin");
                 frameworkDlls = Directory.EnumerateFiles(execFolder, "MultiTenancyFramework*.dll", SearchOption.TopDirectoryOnly);
             }
             if (frameworkDlls != null)

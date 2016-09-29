@@ -136,6 +136,7 @@ namespace MultiTenancyFramework.Mvc
             set
             {
                 if (string.IsNullOrWhiteSpace(value)) value = Utilities.INST_DEFAULT_CODE;
+                HttpContext.Current.Request.RequestContext.RouteData.Values["institution"] = value;
                 HttpContext.Current.Session[SS_CODE] = value;
             }
         }

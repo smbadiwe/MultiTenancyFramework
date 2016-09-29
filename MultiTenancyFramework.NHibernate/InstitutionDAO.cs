@@ -11,7 +11,7 @@ namespace MultiTenancyFramework.NHibernate
     {
         public InstitutionDAO()
         {
-            EntityName = NHManager.NHSessionManager.GetEntityNameToUseInNHSession(typeof(Institution));
+            EntityName = NHManager.NHSessionManager.GetEntityNameToUseInNHSession(typeof(T));
         }
     }
 }

@@ -40,5 +40,10 @@ namespace MultiTenancyFramework.Data
         /// <param name="query">The query to run.</param>
         void RunDirectQueryADODotNET(string query, bool closeConnection = false);
 
+        /// <summary>
+        /// When more than one entity can be mapped to a table, this will scan and select the correct one, based mostly on the inheritance structure.
+        /// </summary>
+        void SetEntityName<T>();
     }
+    
 }

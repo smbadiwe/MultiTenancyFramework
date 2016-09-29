@@ -15,7 +15,7 @@ namespace MultiTenancyFramework.NHibernate.Queries
         {
             var session = BuildSession();
             var query = session.QueryOver<AppUser>(EntityName)
-                .Where(x => x.Email == theQuery.Username);
+                .Where(x => x.UserName == theQuery.Username);
             return query.SingleOrDefault();
         }
     }

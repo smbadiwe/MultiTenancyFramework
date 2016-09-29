@@ -23,6 +23,7 @@ namespace MultiTenancyFramework.Mvc.Logic
                     if (allInstitutions == null || allInstitutions.Count == 0)
                     {
                         var instDAO = MyServiceLocator.GetInstance<IInstitutionDAO<Institution>>();
+                        //instDAO.SetEntityName<Institution>();
                         allInstitutions = instDAO.RetrieveAll()?.ToDictionary(x => x.Code);
                         MemoryCache.Default[ALL_INSTITUTIONS] = allInstitutions;
                     }
@@ -40,6 +41,7 @@ namespace MultiTenancyFramework.Mvc.Logic
                 if (allPrivileges == null || allPrivileges.Count == 0)
                 {
                     var _dao = MyServiceLocator.GetInstance<IPrivilegeDAO<ActionAccessPrivilege>>();
+                    //_dao.SetEntityName<ActionAccessPrivilege>();
                     allPrivileges = _dao.RetrieveAll()?.ToDictionary(x => x.Id);
                     MemoryCache.Default[ALL_PRIVILEGES] = allPrivileges;
                 }

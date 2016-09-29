@@ -5,6 +5,7 @@ using NHibernate;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System;
 
 namespace MultiTenancyFramework.NHibernate
 {
@@ -26,7 +27,7 @@ namespace MultiTenancyFramework.NHibernate
                 _institutionCode = value;
             }
         }
-
+        
         public string EntityName { get; set; }
 
         public CoreGeneralDAO()
@@ -54,6 +55,7 @@ namespace MultiTenancyFramework.NHibernate
         /// WARNING:
         /// <para>DO NOT use this session directly for anything other than retrieves (like constructing QueryOver or CreateCriteria). 
         /// For every other case, use what is provided in the base class</para>
+        /// <para>NB: The returned session only Flushes when you commit. You can always change to .FlushMode to your taste.</para>
         /// </summary>
         /// <returns></returns>
         public virtual ISession BuildSession()
@@ -118,5 +120,12 @@ namespace MultiTenancyFramework.NHibernate
             return NHSessionManager.IsMySqlDatabase();
         }
 
+        /// <summary>
+        /// When more than one entity can be mapped to a table, this will scan and select the correct one, based mostly on the inheritance structure.
+        /// </summary>
+        public void SetEntityName<T>()
+        {
+            EntityName = NHSessionManager.GetEntityNameToUseInNHSession(typeof(T));
+        }
     }
 }
