@@ -162,84 +162,109 @@ namespace MultiTenancyFramework.Logic
             return _dao.RetrieveAllDeleted(fields);
         }
 
+        /// <summary>
+        /// Inserts list to database. It does nothing if <paramref name="entities"/> is null or empty
+        /// </summary>
+        /// <param name="entities"></param>
         public void Insert(IList<T> entities)
         {
-            _dao.InstitutionCode = InstitutionCode;
-            _dao.EntityName = EntityName;
-            OnBeforeSavingList(entities);
-            try
+            if (entities != null && entities.Count > 0)
             {
-                foreach (var entity in entities)
+                _dao.InstitutionCode = InstitutionCode;
+                _dao.EntityName = EntityName;
+                OnBeforeSavingList(entities);
+                try
                 {
-                    _dao.Save(entity);
+                    foreach (var entity in entities)
+                    {
+                        _dao.Save(entity);
+                    }
+                    OnBeforeCommittingListChanges(entities);
+                    _dao.CommitChanges();
                 }
-                OnBeforeCommittingListChanges(entities);
-                _dao.CommitChanges();
-            }
-            catch (Exception)
-            {
-                _dao.RollbackChanges();
-                throw;
-            }
-            OnAfterCommittingListChanges(entities);
-        }
-
-        public void Update(IList<T> entities)
-        {
-            _dao.InstitutionCode = InstitutionCode;
-            _dao.EntityName = EntityName;
-            OnBeforeUpdatingList(entities);
-            try
-            {
-                foreach (var entity in entities)
+                catch (Exception)
                 {
-                    _dao.Update(entity);
+                    _dao.RollbackChanges();
+                    throw;
                 }
-                OnBeforeCommittingListChanges(entities);
-                _dao.CommitChanges();
+                OnAfterCommittingListChanges(entities); 
             }
-            catch (Exception)
-            {
-                _dao.RollbackChanges();
-                throw;
-            }
-            OnAfterCommittingListChanges(entities);
-        }
-
-        public void Merge(IList<T> entities)
-        {
-            _dao.InstitutionCode = InstitutionCode;
-            _dao.EntityName = EntityName;
-            OnBeforeUpdatingList(entities);
-            try
-            {
-                foreach (var entity in entities)
-                {
-                    _dao.Merge(entity);
-                }
-                OnBeforeCommittingListChanges(entities);
-                _dao.CommitChanges();
-            }
-            catch (Exception)
-            {
-                _dao.RollbackChanges();
-                throw;
-            }
-            OnAfterCommittingListChanges(entities);
         }
 
         /// <summary>
-        /// Use this to insert bulk data into the db. A typical case is when you're uploading thousands of data
+        /// Updates records in database. It does nothing if <paramref name="entities"/> is null or empty
+        /// </summary>
+        /// <param name="entities"></param>
+        public void Update(IList<T> entities)
+        {
+            if (entities != null && entities.Count > 0)
+            {
+                _dao.InstitutionCode = InstitutionCode;
+                _dao.EntityName = EntityName;
+                OnBeforeUpdatingList(entities);
+                try
+                {
+                    foreach (var entity in entities)
+                    {
+                        _dao.Update(entity);
+                    }
+                    OnBeforeCommittingListChanges(entities);
+                    _dao.CommitChanges();
+                }
+                catch (Exception)
+                {
+                    _dao.RollbackChanges();
+                    throw;
+                }
+                OnAfterCommittingListChanges(entities); 
+            }
+        }
+
+        /// <summary>
+        /// Updates records in database. It does nothing if <paramref name="entities"/> is null or empty
+        /// </summary>
+        /// <param name="entities"></param>
+        public void Merge(IList<T> entities)
+        {
+            if (entities != null && entities.Count > 0)
+            {
+                _dao.InstitutionCode = InstitutionCode;
+                _dao.EntityName = EntityName;
+                OnBeforeUpdatingList(entities);
+                try
+                {
+                    foreach (var entity in entities)
+                    {
+                        _dao.Merge(entity);
+                    }
+                    OnBeforeCommittingListChanges(entities);
+                    _dao.CommitChanges();
+                }
+                catch (Exception)
+                {
+                    _dao.RollbackChanges();
+                    throw;
+                }
+                OnAfterCommittingListChanges(entities); 
+            }
+        }
+
+        /// <summary>
+        /// Use this to insert bulk data into the db. A typical case is when you're uploading thousands of data.
+        /// NB: This does nothing if <paramref name="entities"/> is null or empty.
         /// </summary>
         /// <param name="entities"></param>
         public void SqlBulkInsert(IList<T> entities)
         {
-            _dao.InstitutionCode = InstitutionCode;
-            _dao.EntityName = EntityName;
-            OnBeforeSavingList(entities);
-            OnBeforeCommittingListChanges(entities);
-            _dao.SqlBulkInsert(entities);
-            OnAfterCommittingListChanges(entities);
+            if (entities != null && entities.Count > 0)
+            {
+                _dao.InstitutionCode = InstitutionCode;
+                _dao.EntityName = EntityName;
+                OnBeforeSavingList(entities);
+                OnBeforeCommittingListChanges(entities);
+                _dao.SqlBulkInsert(entities);
+                OnAfterCommittingListChanges(entities); 
+            }
         }
     }
 }

@@ -60,7 +60,6 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         {
             if (entityAssemblies != null)
             {
-                if (EntityAssemblies == null) EntityAssemblies = new HashSet<string>();
                 foreach (var item in entityAssemblies)
                 {
                     EntityAssemblies.Add(item);
@@ -68,8 +67,8 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             }
         }
 
-        private static HashSet<string> EntityAssemblies;
-        private static HashSet<string> MappingAssemblies;
+        private static HashSet<string> EntityAssemblies = new HashSet<string>();
+        private static HashSet<string> MappingAssemblies = new HashSet<string>();
         /// <summary>
         /// If you build another library with NHibernate on another (web) framework, use this to register the cnsequent mapping assembly(-ies).
         /// Ultimately, it'll be merged with what's in Nhibernate config section.
@@ -78,7 +77,6 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         {
             if (mappingAssemblies != null)
             {
-                if (MappingAssemblies == null) MappingAssemblies = new HashSet<string>();
                 foreach (var item in mappingAssemblies)
                 {
                     MappingAssemblies.Add(item);

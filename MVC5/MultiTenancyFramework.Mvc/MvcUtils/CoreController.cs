@@ -180,14 +180,16 @@ namespace MultiTenancyFramework.Mvc
                 filterContext.ExceptionHandled = true;
                 var genEx = filterContext.Exception as GeneralException;
                 var values = filterContext.RouteData.Values;
+                string instCode = Convert.ToString(values["institution"]);
+                Logger.Log(new GeneralException(string.Format("Crash from {0}/{1}/{2}", instCode, values["controller"], values["action"]), filterContext.Exception));
+
                 if (genEx != null && genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode)
                 {
-                    filterContext.Result = RedirectToAction("InvalidUrl", "Error", Convert.ToString(values["institution"]));
+                    filterContext.Result = RedirectToAction("InvalidUrl", "Error", instCode);
                     genEx = null;
                     return;
                 }
 
-                string instCode = Utilities.INST_DEFAULT_CODE;
                 bool doLogout = false;
                 try
                 {
@@ -197,7 +199,6 @@ namespace MultiTenancyFramework.Mvc
                 {
                     doLogout = true;
                 }
-                Logger.Log(new GeneralException(string.Format("Crash from {0}/{1}/{2}", instCode, values["controller"], values["action"]), filterContext.Exception));
                 if (doLogout || filterContext.Exception is LogOutUserException)
                 {
                     WebUtilities.LogOut();
@@ -259,6 +260,7 @@ namespace MultiTenancyFramework.Mvc
             IdentityUser = WebUtilities.GetCurrentlyLoggedInUser();
             if (IdentityUser == null)
             {
+                Logger.Log("Could not get Identity User. Logging out...");
                 // It's not anonymous, so force user to login
                 WebUtilities.LogOut();
                 filterContext.Result = MvcUtility.GetLoginPageResult(InstitutionCode, filterContext.HttpContext);
@@ -273,6 +275,7 @@ namespace MultiTenancyFramework.Mvc
             // should have at least one user privllege
             if (userPrivList == null)
             {
+                Logger.Log("No user privilege list. Logging out...");
                 WebUtilities.LogOut();
                 filterContext.Result = MvcUtility.GetLoginPageResult(InstitutionCode, filterContext.HttpContext);
                 return;
@@ -311,6 +314,7 @@ namespace MultiTenancyFramework.Mvc
                         }
                     }
                 }
+                Logger.Log("Access Denied. User does not have the privilege: " + privilegeName);
                 filterContext.Result = HttpAccessDenied();
                 return;
             }

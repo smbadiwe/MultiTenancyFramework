@@ -629,7 +629,7 @@ namespace MultiTenancyFramework.Mvc.Identity
             }
 
             _userEngine.InstitutionCode = WebUtilities.InstitutionCode;
-            TUser result = _userEngine.RetrieveByUsername(email) as TUser;
+            TUser result = _userEngine.RetrieveByEmail(email) as TUser;
             if (result != null)
             {
                 return Task.FromResult(result);

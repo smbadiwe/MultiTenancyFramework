@@ -81,16 +81,26 @@ namespace MultiTenancyFramework.Mvc
                         HttpContext.Current.Session[SS_CURRENT_USER] = user;
                         return user;
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        Utilities.Logger.Log(ex);
                         throw new LogOutUserException();
                     }
                 }
+                var sb = new System.Text.StringBuilder();
+                sb.AppendFormat("HttpContext.Current != null: {0}\n", HttpContext.Current != null);
+                sb.AppendFormat("HttpContext.Current.User != null: {0}\n", HttpContext.Current.User != null);
+                sb.AppendFormat("HttpContext.Current.User.Identity != null: {0}\n", HttpContext.Current.User.Identity != null);
+                sb.AppendFormat("Should NOT be null:- HttpContext.Current.User.Identity.Name: {0}\n", HttpContext.Current.User.Identity.Name);
+                sb.AppendFormat("Should NOT be null:- HttpContext.Current.User.Identity.GetUserName(): {0}\n", HttpContext.Current.User.Identity.GetUserName());
+                sb.AppendFormat("Should NOT be zero:- HttpContext.Current.User.Identity.GetUserId<long>(): {0}\n", HttpContext.Current.User.Identity.GetUserId<long>());
+                Utilities.Logger.Log(sb.ToString());
                 return null;
             }
             catch (LogOutUserException) { throw; }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Utilities.Logger.Log(ex);
                 return null;
             }
         }
@@ -166,9 +176,9 @@ namespace MultiTenancyFramework.Mvc
                 if (auth == null) auth = HttpContext.Current.GetOwinContext().Authentication;
                 auth.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             }
-            catch //(Exception ex)
+            catch (Exception ex)
             {
-                //Logging.Logger.Log(ex);
+                Utilities.Logger.Log(ex);
             }
         }
 
