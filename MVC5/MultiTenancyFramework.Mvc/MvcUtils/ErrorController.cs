@@ -28,10 +28,14 @@ namespace MultiTenancyFramework.Mvc
 
         private ViewResult ErrorView(bool showFully = false)
         {
-            ErrorMessageModel model = new ErrorMessageModel(showFully);
+            ErrorMessageModel model;
             if (TempData.ContainsKey(ErrorMessageModel.ErrorMessageKey))
             {
                 model = TempData[ErrorMessageModel.ErrorMessageKey] as ErrorMessageModel;
+            }
+            else
+            {
+                model = new ErrorMessageModel(showFully);
             }
             return View(SharedErrorViewName, model);
         }

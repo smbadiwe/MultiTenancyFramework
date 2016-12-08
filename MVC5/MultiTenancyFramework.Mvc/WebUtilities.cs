@@ -65,8 +65,9 @@ namespace MultiTenancyFramework.Mvc
         {
             try
             {
-                if (HttpContext.Current != null && HttpContext.Current.User != null &&
-                    HttpContext.Current.User.Identity != null && !string.IsNullOrWhiteSpace(HttpContext.Current.User.Identity.Name))
+                //if (HttpContext.Current != null && HttpContext.Current.User != null &&
+                //    HttpContext.Current.User.Identity != null && !string.IsNullOrWhiteSpace(HttpContext.Current.User.Identity.Name))
+                if (HttpContext.Current != null && HttpContext.Current.Session != null)
                 {
                     try
                     {
@@ -87,14 +88,14 @@ namespace MultiTenancyFramework.Mvc
                         throw new LogOutUserException();
                     }
                 }
-                var sb = new System.Text.StringBuilder();
-                sb.AppendFormat("HttpContext.Current != null: {0}\n", HttpContext.Current != null);
-                sb.AppendFormat("HttpContext.Current.User != null: {0}\n", HttpContext.Current.User != null);
-                sb.AppendFormat("HttpContext.Current.User.Identity != null: {0}\n", HttpContext.Current.User.Identity != null);
-                sb.AppendFormat("Should NOT be null:- HttpContext.Current.User.Identity.Name: {0}\n", HttpContext.Current.User.Identity.Name);
-                sb.AppendFormat("Should NOT be null:- HttpContext.Current.User.Identity.GetUserName(): {0}\n", HttpContext.Current.User.Identity.GetUserName());
-                sb.AppendFormat("Should NOT be zero:- HttpContext.Current.User.Identity.GetUserId<long>(): {0}\n", HttpContext.Current.User.Identity.GetUserId<long>());
-                Utilities.Logger.Log(sb.ToString());
+                //var sb = new System.Text.StringBuilder();
+                //sb.AppendFormat("HttpContext.Current != null: {0}\n", HttpContext.Current != null);
+                //sb.AppendFormat("HttpContext.Current.User != null: {0}\n", HttpContext.Current.User != null);
+                //sb.AppendFormat("HttpContext.Current.User.Identity != null: {0}\n", HttpContext.Current.User.Identity != null);
+                //sb.AppendFormat("Should NOT be null:- HttpContext.Current.User.Identity.Name: {0}\n", HttpContext.Current.User.Identity.Name);
+                //sb.AppendFormat("Should NOT be null:- HttpContext.Current.User.Identity.GetUserName(): {0}\n", HttpContext.Current.User.Identity.GetUserName());
+                //sb.AppendFormat("Should NOT be zero:- HttpContext.Current.User.Identity.GetUserId<long>(): {0}\n", HttpContext.Current.User.Identity.GetUserId<long>());
+                //Utilities.Logger.Log(sb.ToString());
                 return null;
             }
             catch (LogOutUserException) { throw; }

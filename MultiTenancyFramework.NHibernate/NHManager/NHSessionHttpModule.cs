@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web;
 
 namespace MultiTenancyFramework.NHibernate.NHManager
@@ -30,7 +31,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             {
                 if (x.Items.Contains(WebSessionStorage.CurrentSessionKey))
                 {
-                    var storageSet = NHSessionManager.CurrentSessions;
+                    var storageSet = new Dictionary<string, ISessionStorage>(NHSessionManager.SessionStorages);
 
                     if (storageSet != null && storageSet.Count > 0)
                     {
@@ -39,7 +40,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                             //Closes the session if there's any open session
                             if (storage != null && storage.Session != null)
                             {
-                                NHSessionManager.CloseStorage(storage.InstitutionCode);
+                                NHSessionManager.CloseStorage(((WebSessionStorage)storage)?.InstitutionCode);
                             }
                         }
                         storageSet.Clear();

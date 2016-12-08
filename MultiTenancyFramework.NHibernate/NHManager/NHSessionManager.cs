@@ -19,6 +19,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Web;
 using Environment = NHibernate.Cfg.Environment;
@@ -37,12 +38,80 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// <summary>
         /// Key is built from GetSessionKey method
         /// </summary>
-        public static readonly ConcurrentDictionary<string, ISessionStorage> SessionStorages = new ConcurrentDictionary<string, ISessionStorage>();
+        //public static readonly ConcurrentDictionary<string, ISessionStorage> SessionStorages = new ConcurrentDictionary<string, ISessionStorage>();
+        public static Dictionary<string, ISessionStorage> SessionStorages
+        {
+            get
+            {
+                if (HttpContext.Current != null)
+                {
+                    if (!HttpContext.Current.Items.Contains(WebSessionStorage.CurrentSessionKey))
+                    {
+                        HttpContext.Current.Items[WebSessionStorage.CurrentSessionKey] = new Dictionary<string, ISessionStorage>();
+                    }
+                    return HttpContext.Current.Items[WebSessionStorage.CurrentSessionKey] as Dictionary<string, ISessionStorage>;
+                }
+                else
+                {
+                    if (CallContext.GetData(WebSessionStorage.CurrentSessionKey) == null)
+                    {
+                        CallContext.SetData(WebSessionStorage.CurrentSessionKey, new Dictionary<string, ISessionStorage>());
+                    }
+                    return CallContext.GetData(WebSessionStorage.CurrentSessionKey) as Dictionary<string, ISessionStorage>;
+                }
+            }
+            set
+            {
+                if (HttpContext.Current != null)
+                {
+                    HttpContext.Current.Items[WebSessionStorage.CurrentSessionKey] = value;
+                }
+                else
+                {
+                    CallContext.SetData(WebSessionStorage.CurrentSessionKey, value);
+                }
+            }
+        }
 
         /// <summary>
         /// Key is built from GetSessionKey method
         /// </summary>
-        public static readonly ConcurrentDictionary<string, IStatelessSession> StatelessSessionStorages = new ConcurrentDictionary<string, IStatelessSession>();
+        //public static readonly ConcurrentDictionary<string, IStatelessSession> StatelessSessionStorages = new ConcurrentDictionary<string, IStatelessSession>();
+        public static Dictionary<string, IStatelessSession> StatelessSessionStorages
+        {
+            get
+            {
+                var key = WebSessionStorage.CurrentSessionKey + "_ss";
+                if (HttpContext.Current != null)
+                {
+                    if (!HttpContext.Current.Items.Contains(key))
+                    {
+                        HttpContext.Current.Items[key] = new Dictionary<string, IStatelessSession>();
+                    }
+                    return HttpContext.Current.Items[key] as Dictionary<string, IStatelessSession>;
+                }
+                else
+                {
+                    if (CallContext.GetData(key) == null)
+                    {
+                        CallContext.SetData(key, new Dictionary<string, IStatelessSession>());
+                    }
+                    return CallContext.GetData(key) as Dictionary<string, IStatelessSession>;
+                }
+            }
+            set
+            {
+                var key = WebSessionStorage.CurrentSessionKey + "_ss";
+                if (HttpContext.Current != null)
+                {
+                    HttpContext.Current.Items[key] = value;
+                }
+                else
+                {
+                    CallContext.SetData(key, value);
+                }
+            }
+        }
 
         /// <summary>
         /// Implement additional processing on the session factory after it's created. For instance, you may want to inject Glimpse for monitoring.
@@ -134,25 +203,23 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
             ISessionStorage storage = null;
 
-            if (SessionStorages.TryRemove(dataSourceKey, out storage))
+            if (SessionStorages.TryGetValue(dataSourceKey, out storage) && storage != null)
             {
-                if (storage != null) //
+                //Get the current session from the storage object
+                ISession session = storage.Session;
+                if (session != null)
                 {
-                    //Get the current session from the storage object
-                    ISession session = storage.Session;
-                    if (session != null)
+                    if (session.IsOpen && session.Transaction != null && session.IsConnected && session.Transaction.IsActive
+                        && !session.Transaction.WasCommitted && !session.Transaction.WasRolledBack)
                     {
-                        if (session.IsOpen && session.Transaction != null && session.IsConnected && session.Transaction.IsActive
-                            && !session.Transaction.WasCommitted && !session.Transaction.WasRolledBack)
-                        {
-                            session.Transaction.Rollback();
-                            session.Close();
-                        }
-
-                        session.Dispose();
-                        storage = null;
+                        session.Transaction.Rollback();
+                        session.Close();
                     }
+
+                    session.Dispose();
+                    storage = null;
                 }
+                SessionStorages.Remove(dataSourceKey);
             }
         }
 
@@ -247,32 +314,32 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 storage.Session = session;
                 SessionStorages[sessionKey] = storage;
             }
-            if (isWebSession)
-            {
-                CurrentSessions[sessionKey] = (WebSessionStorage)storage;
-            }
+            //if (isWebSession)
+            //{
+            //    SessionStorages[sessionKey] = (WebSessionStorage)storage;
+            //}
 
             return session;
         }
 
-        /// <summary>
-        /// Sometimes, a logged in tenant user moves between her space and the landlord's. So, this set will usually be not more than two entries
-        /// </summary>
-        internal static Dictionary<string, WebSessionStorage> CurrentSessions
-        {
-            get
-            {
-                if (!HttpContext.Current.Items.Contains(WebSessionStorage.CurrentSessionKey))
-                {
-                    HttpContext.Current.Items[WebSessionStorage.CurrentSessionKey] = new Dictionary<string, WebSessionStorage>();
-                }
-                return HttpContext.Current.Items[WebSessionStorage.CurrentSessionKey] as Dictionary<string, WebSessionStorage>;
-            }
-            set
-            {
-                HttpContext.Current.Items[WebSessionStorage.CurrentSessionKey] = value;
-            }
-        }
+        ///// <summary>
+        ///// Sometimes, a logged in tenant user moves between her space and the landlord's. So, this set will usually be not more than two entries
+        ///// </summary>
+        //internal static Dictionary<string, WebSessionStorage> CurrentSessions
+        //{
+        //    get
+        //    {
+        //        if (!HttpContext.Current.Items.Contains(WebSessionStorage.CurrentSessionKey))
+        //        {
+        //            HttpContext.Current.Items[WebSessionStorage.CurrentSessionKey] = new Dictionary<string, WebSessionStorage>();
+        //        }
+        //        return HttpContext.Current.Items[WebSessionStorage.CurrentSessionKey] as Dictionary<string, WebSessionStorage>;
+        //    }
+        //    set
+        //    {
+        //        HttpContext.Current.Items[WebSessionStorage.CurrentSessionKey] = value;
+        //    }
+        //}
 
         /// <summary>
         /// Whether or not the DB we're using is MySql

@@ -16,6 +16,9 @@ namespace WebTests.Controllers
         // GET: Home
         public ActionResult Index()
         {
+            var dao = new MultiTenancyFramework.Logic.UserRoleLogic("Core");
+            dao.RetrieveAll();
+
             //var login = new UserRole
             //{
             //    Name = "UserRole Web 3"

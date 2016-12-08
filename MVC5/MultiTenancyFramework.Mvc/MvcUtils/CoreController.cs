@@ -208,11 +208,17 @@ namespace MultiTenancyFramework.Mvc
                 {
                     if (filterContext.Exception is HttpAntiForgeryException)
                     {
-                        TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception.Message);
+                        TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception.Message, Convert.ToString(values["controller"]), Convert.ToString(values["action"]))
+                        {
+                            AreaName = Convert.ToString(values["area"])
+                        };
                     }
                     else
                     {
-                        TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception);
+                        TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception, Convert.ToString(values["controller"]), Convert.ToString(values["action"]))
+                        {
+                            AreaName = Convert.ToString(values["area"])
+                        };
                     }
                     filterContext.Result = RedirectToAction("Index", "Error", instCode);
                 }

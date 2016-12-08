@@ -35,5 +35,6 @@ namespace MultiTenancyFramework
         UnidentifiedInstitutionCode,
         DatabaseRelated,
         AccessDeniedInstitution,
+        DoNothing = 99,
     }
 }
