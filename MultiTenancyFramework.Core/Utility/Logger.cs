@@ -49,7 +49,7 @@ namespace MultiTenancyFramework
                     return;
                 }
             }
-            var exMsg = this.BuildErrorMsg(ex, context);
+            var exMsg = this.BuildErrorMsg(ex, context, isInfo);
 
             string schemaForTestEnvironment;
             schemaForTestEnvironment = string.Empty;
@@ -74,13 +74,15 @@ namespace MultiTenancyFramework
             ConfigurationManager.UnloadConfigFileAndResetLoggerConfigProp();
         }
         
-        private string BuildErrorMsg(Exception ex, HttpContext context)
+        private string BuildErrorMsg(Exception ex, HttpContext context, bool isInfo)
         {
-            bool isJustAMessage = string.IsNullOrWhiteSpace(ex.StackTrace);
             if (ex != null)
             {
                 if (context == null) context = HttpContext.Current;
-                //ex = ex.GetBaseException();
+                if (!isInfo) ex = ex.GetBaseException();
+
+                if (ex == null) return string.Empty;
+
                 string page = string.Empty;
                 string date = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss.ffffffK tt");
                 string msg = ex.GetFullExceptionMessage(true);

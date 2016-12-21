@@ -9,11 +9,17 @@ using System.Web.Mvc;
 
 namespace MultiTenancyFramework.Mvc
 {
+    /// <summary>
+    /// Provides core functionalities for the framework, especially authorization and exception handling
+    /// </summary>
     public abstract class CoreController : Controller
     {
         private IDbQueryProcessor _queryProcessor;
 
-        public IDbQueryProcessor QueryProcessor
+        /// <summary>
+        /// Query Processor to process queries
+        /// </summary>
+        protected IDbQueryProcessor QueryProcessor
         {
             get
             {
@@ -26,12 +32,14 @@ namespace MultiTenancyFramework.Mvc
 
         private ICommandProcessor _commandProcessor;
 
-        public ICommandProcessor CommandProcessor
+        /// <summary>
+        /// Command Processor to execute commands
+        /// </summary>
+        protected ICommandProcessor CommandProcessor
         {
             get
             {
                 if (_commandProcessor == null) _commandProcessor = Utilities.CommandProcessor;
-
                 return _commandProcessor;
             }
         }
@@ -49,22 +57,25 @@ namespace MultiTenancyFramework.Mvc
             }
         }
 
-        protected readonly ILogger Logger;
+        private ILogger _logger;
+        /// <summary>
+        /// Logger to log errors and/or messages
+        /// </summary>
+        protected ILogger Logger
+        {
+            get
+            {
+                if (_logger == null) _logger = Utilities.Logger;
+                return _logger;
+            }
+        }
 
         /// <summary>
         /// The (logged in) user as maintained by the framework; distinct from (IPrincipal) User. It's shorthand for 
         /// <code>WebUtilities.GetCurrentlyLoggedInUser();</code>
         /// <para>If you need to set the value, call <code>WebUtilities.SetCurrentlyLoggedInUser(newValue);</code></para>
         /// </summary>
-        protected IdentityUser IdentityUser { get; private set; }
-
-        /// <summary>
-        /// Provides core functionalities for the framework, especially authorization and exception handling
-        /// </summary>
-        public CoreController()
-        {
-            Logger = Utilities.Logger;
-        }
+        protected IdentityUser IdentityUser { get { return WebUtilities.GetCurrentlyLoggedInUser(); } }
 
         /// <summary>
         /// Current datetime
@@ -117,12 +128,6 @@ namespace MultiTenancyFramework.Mvc
             return $"~/Areas/{AreaName}/Views/{ViewFolder}/{viewName}.cshtml";
         }
 
-        protected void AlertSuccess(string message, bool dismissable = true, bool clearModel = true)
-        {
-            AddAlert(AlertStyles.Success, message, dismissable);
-            if (clearModel) ModelState.Clear();
-        }
-
         /// <summary>
         /// Handy way to include <paramref name="institutionCode"/> in the traditional 'RedirectToAction' call
         /// </summary>
@@ -170,168 +175,6 @@ namespace MultiTenancyFramework.Mvc
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filterContext"></param>
-        protected override void OnException(ExceptionContext filterContext)
-        {
-            if (!filterContext.ExceptionHandled)
-            {
-                filterContext.ExceptionHandled = true;
-                var genEx = filterContext.Exception as GeneralException;
-                var values = filterContext.RouteData.Values;
-                string instCode = Convert.ToString(values["institution"]);
-                Logger.Log(new GeneralException(string.Format("Crash from {0}/{1}/{2}", instCode, values["controller"], values["action"]), filterContext.Exception));
-
-                if (genEx != null && genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode)
-                {
-                    filterContext.Result = RedirectToAction("InvalidUrl", "Error", instCode);
-                    genEx = null;
-                    return;
-                }
-
-                bool doLogout = false;
-                try
-                {
-                    instCode = WebUtilities.InstitutionCode ?? Utilities.INST_DEFAULT_CODE;
-                }
-                catch (LogOutUserException)
-                {
-                    doLogout = true;
-                }
-                if (doLogout || filterContext.Exception is LogOutUserException)
-                {
-                    WebUtilities.LogOut();
-                    filterContext.Result = MvcUtility.GetLoginPageResult(instCode, filterContext.HttpContext);
-                }
-                else
-                {
-                    if (filterContext.Exception is HttpAntiForgeryException)
-                    {
-                        TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception.Message, Convert.ToString(values["controller"]), Convert.ToString(values["action"]))
-                        {
-                            AreaName = Convert.ToString(values["area"])
-                        };
-                    }
-                    else
-                    {
-                        TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception, Convert.ToString(values["controller"]), Convert.ToString(values["action"]))
-                        {
-                            AreaName = Convert.ToString(values["area"])
-                        };
-                    }
-                    filterContext.Result = RedirectToAction("Index", "Error", instCode);
-                }
-                return;
-            }
-            base.OnException(filterContext);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filterContext"></param>
-        protected override void OnActionExecuting(ActionExecutingContext filterContext)
-        {
-            var actionDescriptor = filterContext.ActionDescriptor;
-
-            #region Check whether it's an anonymous action
-
-            // check if AllowAnonymous is on the controller
-            var anonymous = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
-                    .Cast<AllowAnonymousAttribute>();
-            if (anonymous.Any())
-            {
-                //Allow Anonymous
-                anonymous = null;
-                base.OnActionExecuting(filterContext);
-                return;
-            }
-
-            // It's not; so check if AllowAnonymous is on the action
-            anonymous = actionDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
-                    .Cast<AllowAnonymousAttribute>();
-            if (anonymous.Any())
-            {
-                //Allow Anonymous
-                anonymous = null;
-                base.OnActionExecuting(filterContext);
-                return;
-            }
-            anonymous = null;
-
-            #endregion
-
-            // If user is not logged in (authenticated) yet, 
-            IdentityUser = WebUtilities.GetCurrentlyLoggedInUser();
-            if (IdentityUser == null)
-            {
-                Logger.Log("Could not get Identity User. Logging out...");
-                // It's not anonymous, so force user to login
-                WebUtilities.LogOut();
-                filterContext.Result = MvcUtility.GetLoginPageResult(InstitutionCode, filterContext.HttpContext);
-                return;
-            }
-
-            // At this point, we have established that we have a logged-in user. So...
-            #region Authorize at Privilege level
-
-            var userPrivList = WebUtilities.LoggedInUsersPrivilegesDict;
-            //This should never be true under normal circumstances, 'cos a properly logged-in user
-            // should have at least one user privllege
-            if (userPrivList == null)
-            {
-                Logger.Log("No user privilege list. Logging out...");
-                WebUtilities.LogOut();
-                filterContext.Result = MvcUtility.GetLoginPageResult(InstitutionCode, filterContext.HttpContext);
-                return;
-            }
-
-            // OK. So the user has some privileges. So...
-            string privilegeName = string.Format("{0}-{1}-{2}",
-                   actionDescriptor.ActionName,
-                   actionDescriptor.ControllerDescriptor.ControllerName,
-                   filterContext.RouteData.Values["area"]);
-
-            if (!userPrivList.ContainsKey(privilegeName))
-            {
-                //Normally, I use a convention where I have a 'GetData' action for every 
-                // 'Index' action that is used to view a list of stuffs (entities).
-                if ("GetData" == actionDescriptor.ActionName &&
-                    userPrivList.ContainsKey(string.Format("{0}-{1}-{2}",
-                            "Index", actionDescriptor.ControllerDescriptor.ControllerName, filterContext.RouteData.Values["area"])))
-                {
-                    base.OnActionExecuting(filterContext);
-                    return;
-                }
-
-                //The generalized case of the above 'GetData' trick 
-                var point = actionDescriptor.GetCustomAttributes(typeof(ValidateUsingPrivilegeForActionAttribute), true)
-                        .Cast<ValidateUsingPrivilegeForActionAttribute>().FirstOrDefault();
-                if (point != null)
-                {
-                    foreach (var actionName in point.ActionNames)
-                    {
-                        if (userPrivList.ContainsKey(string.Format("{0}-{1}-{2}",
-                            actionName, actionDescriptor.ControllerDescriptor.ControllerName, filterContext.RouteData.Values["area"])))
-                        {
-                            base.OnActionExecuting(filterContext);
-                            return;
-                        }
-                    }
-                }
-                Logger.Log("Access Denied. User does not have the privilege: " + privilegeName);
-                filterContext.Result = HttpAccessDenied();
-                return;
-            }
-
-            #endregion
-
-            // fall back to base
-            base.OnActionExecuting(filterContext);
-        }
-
-        /// <summary>
         /// Redirects to \Error\DenyAccess
         /// </summary>
         /// <returns></returns>
@@ -348,6 +191,12 @@ namespace MultiTenancyFramework.Mvc
         protected ViewResult ErrorView(ErrorMessageModel model)
         {
             return View("Error", model);
+        }
+
+        protected void AlertSuccess(string message, bool dismissable = true, bool clearModel = true)
+        {
+            AddAlert(AlertStyles.Success, message, dismissable);
+            if (clearModel) ModelState.Clear();
         }
 
         protected void AlertInformation(string message, bool dismissable = true)

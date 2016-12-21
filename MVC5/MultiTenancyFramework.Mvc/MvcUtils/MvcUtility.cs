@@ -12,7 +12,7 @@ namespace MultiTenancyFramework.Mvc
     {
         public const string _TRUE_ICON= "<i class='text-info fa fa-check'></i>";
         public const string _FALSE_ICON = "<i class='text-danger fa fa-close'></i>";
-        public static ContentResult GetLoginPageResult(string instCode, HttpContextBase context)
+        public static ContentResult GetLoginPageResult(string instCode)
         {
             var baseUrl = ConfigurationHelper.GetSiteUrl();
             var url = string.Format("{0}{1}{2}", baseUrl, instCode, DataCacheMVC.MultiTenancyFrameworkSettings.LoginPath);
@@ -21,6 +21,19 @@ namespace MultiTenancyFramework.Mvc
                 Content = "<html><script>window.top.location.href = '" + url + "'; </script></html>",
                 ContentType = "text/html"
             };
+        }
+
+        /// <summary>
+        /// Use this to get a page when outside of a controller-derived class. It's supposed to work like a RedirectToAction(...) method
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="controller"></param>
+        /// <param name="area"></param>
+        /// <param name="instCode"></param>
+        /// <returns></returns>
+        public static RedirectToRouteResult GetPageResult(string action, string controller, string area, string instCode)
+        {
+            return new RedirectToRouteResult(new System.Web.Routing.RouteValueDictionary(new { area = area, controller = controller, action = action, institution = instCode }));
         }
 
         public static void RegisterArea(string areaName, AreaRegistrationContext context)

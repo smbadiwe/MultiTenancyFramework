@@ -22,7 +22,7 @@ namespace MultiTenancyFramework
             //// Add custom user claims here
             //userIdentity.AddClaim(new Claim("InstitutionCode", WebUtils.WebUtilities.InstitutionCode));
             //return userIdentity;
-            
+
             if (manager == null)
             {
                 throw new ArgumentNullException("manager");
@@ -34,7 +34,7 @@ namespace MultiTenancyFramework
             claimsIdentity.AddClaim(new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity", "http://www.w3.org/2001/XMLSchema#string"));
 
             var instCode = WebUtilities.InstitutionCode;
-            
+
             if (!string.IsNullOrWhiteSpace(instCode))
             {
                 var queryProcessor = Utilities.QueryProcessor;
@@ -45,59 +45,64 @@ namespace MultiTenancyFramework
                 user.InstitutionShortName = queryProcessor.Process(query)?.ShortName;
                 claimsIdentity.AddClaim(new Claim("ic", instCode));
             }
+            else
+            {
+                claimsIdentity.AddClaim(new Claim("ic", Utilities.INST_DEFAULT_CODE));
+            }
             if (manager.SupportsUserSecurityStamp && !string.IsNullOrWhiteSpace(user.SecurityStamp))
             {
                 claimsIdentity.AddClaim(new Claim(Constants.DefaultSecurityStampClaimType, user.SecurityStamp, "http://www.w3.org/2001/XMLSchema#string"));
             }
-            if (manager.SupportsUserRole)
+            HashSet<ActionAccessPrivilege> list = new HashSet<ActionAccessPrivilege>();
+            var _userRoleEngine = MyServiceLocator.GetInstance<ICoreDAO<UserRole>>();
+            _userRoleEngine.InstitutionCode = instCode;
+
+            var theUserRoles = _userRoleEngine.RetrieveByIDs(user.UserRoleIDs.ToArray());
+
+            var privilegesInDb = DataCacheMVC.AllPrivileges;
+            if (theUserRoles != null && theUserRoles.Count > 0)
             {
-                HashSet<ActionAccessPrivilege> list = new HashSet<ActionAccessPrivilege>();
-                var _userRoleEngine = MyServiceLocator.GetInstance<ICoreDAO<UserRole>>();
-                _userRoleEngine.InstitutionCode = instCode;
-
-                var theUserRoles = _userRoleEngine.RetrieveByIDs(user.UserRoleIDs.ToArray());
-
-                var privilegesInDb = DataCacheMVC.AllPrivileges;
-                if (theUserRoles != null && theUserRoles.Count > 0)
+                ActionAccessPrivilege privilege;
+                string roleNames = string.Empty;
+                foreach (var userRole in theUserRoles)
                 {
-                    ActionAccessPrivilege privilege;
-                    string roleNames = string.Empty;
-                    foreach (var userRole in theUserRoles)
+                    roleNames += $"{userRole.Name} / ";
+                    foreach (var priv in userRole.PrivilegeIDs)
                     {
-                        roleNames += $"{userRole.Name} / ";
-                        foreach (var priv in userRole.PrivilegeIDs)
+                        if (privilegesInDb.TryGetValue(priv, out privilege) && privilege != null)
                         {
-                            if (privilegesInDb.TryGetValue(priv, out privilege) && privilege != null)
-                            {
-                                list.Add(privilege);
-                            }
+                            list.Add(privilege);
                         }
                     }
-                    user.RoleNames = roleNames.Substring(0, roleNames.Length - 3);
-                    foreach (var role in list)
-                    {
-                        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name, "http://www.w3.org/2001/XMLSchema#string"));
-                    }
-                    privilege = null;
-                    theUserRoles = null;
                 }
-                var defaultPrivs = privilegesInDb.Values.Where(x => x.IsDefault);
-                if (!string.IsNullOrWhiteSpace(instCode)) // If Tenant
-                {
-                    defaultPrivs = defaultPrivs.Where(x => x.Scope != AccessScope.CentralOnly);
-                }
-                else
-                {
-                    defaultPrivs = defaultPrivs.Where(x => x.Scope != AccessScope.TenantsOnly);
-                }
-                foreach (var priv in defaultPrivs)
-                {
-                    list.Add(priv);
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, priv.Name, "http://www.w3.org/2001/XMLSchema#string"));
-                }
-                WebUtilities.LoggedInUsersPrivilegesDict = list.ToDictionary(x => x.Name, StringComparer.InvariantCultureIgnoreCase);
-                defaultPrivs = null;
+                user.RoleNames = roleNames.Substring(0, roleNames.Length - 3);
+                privilege = null;
+                theUserRoles = null;
             }
+            var defaultPrivs = privilegesInDb.Values.Where(x => x.IsDefault);
+            if (!string.IsNullOrWhiteSpace(instCode)) // If Tenant
+            {
+                defaultPrivs = defaultPrivs.Where(x => x.Scope != AccessScope.CentralOnly);
+            }
+            else
+            {
+                defaultPrivs = defaultPrivs.Where(x => x.Scope != AccessScope.TenantsOnly);
+            }
+            foreach (var priv in defaultPrivs)
+            {
+                list.Add(priv);
+            }
+
+            if (manager.SupportsUserRole)
+            {
+                foreach (var role in list)
+                {
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name, "http://www.w3.org/2001/XMLSchema#string"));
+                }
+            }
+            WebUtilities.LoggedInUsersPrivilegesDict = list.ToDictionary(x => x.Name, StringComparer.InvariantCultureIgnoreCase);
+            defaultPrivs = null;
+
             if (manager.SupportsUserClaim)
             {
                 claimsIdentity.AddClaims(await manager.GetClaimsAsync(user.Id));

@@ -10,12 +10,13 @@ using System.Web.Mvc;
 
 namespace WebTests.Controllers
 {
-    [AllowAnonymous]
     public class HomeController : CoreController
     {
         // GET: Home
+        [AllowAnonymous]
         public ActionResult Index()
         {
+            throw new ArgumentOutOfRangeException();
             var dao = new MultiTenancyFramework.Logic.UserRoleLogic("Core");
             dao.RetrieveAll();
 

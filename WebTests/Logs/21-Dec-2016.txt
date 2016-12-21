@@ -1,0 +1,159 @@
+﻿
+[21-Dec-2016 03:19:13.908223-08:00 AM]
+ Message: 	Testing stuffs in Index
+
+ Method Called: 	. [Source - ] Request From: ::1 | Url: /
+
+[21-Dec-2016 03:27:12.829016-08:00 AM]
+ Message: 	The controller for path '/WebTests/Core/Account/Login' was not found or does not implement IController.
+
+EXCEPTION TYPE: System.Web.HttpException; STACK TRACE:    at System.Web.Mvc.DefaultControllerFactory.GetControllerInstance(RequestContext requestContext, Type controllerType)
+   at System.Web.Mvc.DefaultControllerFactory.CreateController(RequestContext requestContext, String controllerName)
+   at System.Web.Mvc.MvcHandler.ProcessRequestInit(HttpContextBase httpContext, IController& controller, IControllerFactory& factory)
+   at System.Web.Mvc.MvcHandler.BeginProcessRequest(HttpContextBase httpContext, AsyncCallback callback, Object state)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+ Method Called: 	GetControllerInstance
+
+[21-Dec-2016 03:27:13.221796-08:00 AM]
+ Message: 	Crash from Core/Error/Index because Value cannot be null or empty.
+Parameter name: controllerName
+
+EXCEPTION TYPE: System.ArgumentException; STACK TRACE:    at System.Web.Mvc.HandleErrorInfo..ctor(Exception exception, String controllerName, String actionName)
+   at MultiTenancyFramework.Mvc.ErrorMessageModel..ctor(String errorMsg, String controllerName, String actionName, Boolean renderErrorPageFully) in C:\SOMA\Deeds\OpenSourceProjs\MultiTenancyFramework\MVC5\MultiTenancyFramework.Mvc\MvcUtils\ErrorMessageModel.cs:line 55
+   at MultiTenancyFramework.Mvc.ErrorMessageModel..ctor(String errorMsg, Boolean renderErrorPageFully) in C:\SOMA\Deeds\OpenSourceProjs\MultiTenancyFramework\MVC5\MultiTenancyFramework.Mvc\MvcUtils\ErrorMessageModel.cs:line 43
+   at MultiTenancyFramework.Mvc.ErrorMessageModel..ctor(Boolean renderErrorPageFully) in C:\SOMA\Deeds\OpenSourceProjs\MultiTenancyFramework\MVC5\MultiTenancyFramework.Mvc\MvcUtils\ErrorMessageModel.cs:line 33
+   at MultiTenancyFramework.Mvc.ErrorController.ErrorView(Boolean showFully) in C:\SOMA\Deeds\OpenSourceProjs\MultiTenancyFramework\MVC5\MultiTenancyFramework.Mvc\MvcUtils\ErrorController.cs:line 38
+   at MultiTenancyFramework.Mvc.ErrorController.Index() in C:\SOMA\Deeds\OpenSourceProjs\MultiTenancyFramework\MVC5\MultiTenancyFramework.Mvc\MvcUtils\ErrorController.cs:line 16
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult) 
+
+ Method Called: 	. [Source - ] Request From: ::1 | Url: /WebTests/Core/Error/?gl=1
+
+[21-Dec-2016 03:27:13.520476-08:00 AM]
+ Message: 	Crash from Core/Error/Index because The view 'Error' or its master was not found or no view engine supports the searched locations. The following locations were searched:
+~/Views/Error/Error.cshtml
+~/Views/Error/Error.vbhtml
+~/Views/Shared/Error.cshtml
+~/Views/Shared/Error.vbhtml
+
+EXCEPTION TYPE: System.InvalidOperationException; STACK TRACE:    at System.Web.Mvc.ViewResult.FindView(ControllerContext context)
+   at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultWithFilters(ControllerContext controllerContext, IList`1 filters, ActionResult actionResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult) 
+
+ Method Called: 	. [Source - ] Request From: ::1 | Url: /WebTests/Error
+
+[21-Dec-2016 03:27:13.570512-08:00 AM]
+ Message: 	Crash from Core/Error/Index because The view 'Error' or its master was not found or no view engine supports the searched locations. The following locations were searched:
+~/Views/Error/Error.cshtml
+~/Views/Error/Error.vbhtml
+~/Views/Shared/Error.cshtml
+~/Views/Shared/Error.vbhtml
+
+EXCEPTION TYPE: System.InvalidOperationException; STACK TRACE:    at System.Web.Mvc.ViewResult.FindView(ControllerContext context)
+   at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultWithFilters(ControllerContext controllerContext, IList`1 filters, ActionResult actionResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult) 
+
+ Method Called: 	 [Source - ]
+
+[21-Dec-2016 03:27:13.605537-08:00 AM]
+ Message: 	Crash from Core/Error/Index because The view 'Error' or its master was not found or no view engine supports the searched locations. The following locations were searched:
+~/Views/Error/Error.cshtml
+~/Views/Error/Error.vbhtml
+~/Views/Shared/Error.cshtml
+~/Views/Shared/Error.vbhtml
+
+EXCEPTION TYPE: System.InvalidOperationException; STACK TRACE:    at System.Web.Mvc.ViewResult.FindView(ControllerContext context)
+   at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultWithFilters(ControllerContext controllerContext, IList`1 filters, ActionResult actionResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult) 
+
+ Method Called: 	 [Source - ]
+
+[21-Dec-2016 03:27:13.639561-08:00 AM]
+ Message: 	Crash from Core/Error/Index because The view 'Error' or its master was not found or no view engine supports the searched locations. The following locations were searched:
+~/Views/Error/Error.cshtml
+~/Views/Error/Error.vbhtml
+~/Views/Shared/Error.cshtml
+~/Views/Shared/Error.vbhtml
+
+EXCEPTION TYPE: System.InvalidOperationException; STACK TRACE:    at System.Web.Mvc.ViewResult.FindView(ControllerContext context)
+   at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultWithFilters(ControllerContext controllerContext, IList`1 filters, ActionResult actionResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult) 
+
+ Method Called: 	 [Source - ]
+
+[21-Dec-2016 03:27:13.676589-08:00 AM]
+ Message: 	Crash from Core/Error/Index because The view 'Error' or its master was not found or no view engine supports the searched locations. The following locations were searched:
+~/Views/Error/Error.cshtml
+~/Views/Error/Error.vbhtml
+~/Views/Shared/Error.cshtml
+~/Views/Shared/Error.vbhtml
+
+EXCEPTION TYPE: System.InvalidOperationException; STACK TRACE:    at System.Web.Mvc.ViewResult.FindView(ControllerContext context)
+   at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultWithFilters(ControllerContext controllerContext, IList`1 filters, ActionResult actionResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult) 
+
+ Method Called: 	 [Source - ]
+
+[21-Dec-2016 03:27:13.530985-08:00 AM]
+ Message: 	Crash from Core/Error/Index because The view 'Error' or its master was not found or no view engine supports the searched locations. The following locations were searched:
+~/Views/Error/Error.cshtml
+~/Views/Error/Error.vbhtml
+~/Views/Shared/Error.cshtml
+~/Views/Shared/Error.vbhtml
+
+EXCEPTION TYPE: System.InvalidOperationException; STACK TRACE:    at System.Web.Mvc.ViewResult.FindView(ControllerContext context)
+   at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultWithFilters(ControllerContext controllerContext, IList`1 filters, ActionResult actionResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult) 
+
+ Method Called: 	. [Source - ] Request From: ::1 | Url: /WebTests/Error
+
+[21-Dec-2016 04:04:54.332786-08:00 AM]
+ Message: 	Crash from Core/Home/Index because Specified argument was out of the range of valid values.
+
+EXCEPTION TYPE: System.ArgumentOutOfRangeException; STACK TRACE:    at WebTests.Controllers.HomeController.Index() in C:\SOMA\Deeds\OpenSourceProjs\MultiTenancyFramework\WebTests\Controllers\HomeController.cs:line 19
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ActionMethodDispatcher.Execute(ControllerBase controller, Object[] parameters)
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass33.<BeginInvokeActionMethodWithFilters>b__32(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult) 
+
+ Method Called: 	. [Source - ] Request From: ::1 | Url: /
