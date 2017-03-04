@@ -11,6 +11,14 @@ namespace MultiTenancyFramework
 {
     public static class MvcExtensions
     {
+        /// <summary>
+        /// Export data table as file
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <param name="exportType"></param>
+        /// <param name="entityName"></param>
+        /// <param name="headerItems"></param>
+        /// <returns></returns>
         public static async Task<FileContentResult> ExportFile(this MyDataTable dataTable, string exportType, string entityName, IDictionary<string, object> headerItems = null)
         {
             byte[] theBytes = null;

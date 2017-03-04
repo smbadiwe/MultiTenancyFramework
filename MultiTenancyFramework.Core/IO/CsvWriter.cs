@@ -65,7 +65,7 @@ namespace MultiTenancyFramework.IO
             if (doColumnNames)
             {
                 // The Column Titles
-                string[] columnNames = dataTable.Columns.Cast<MyDataColumn>().Select(column => column.ColumnName).ToArray();
+                string[] columnNames = dataTable.Columns.Keys.ToArray();
                 sw.WriteLine(string.Join(delimiter, columnNames));
                 sw.Flush();
             }
