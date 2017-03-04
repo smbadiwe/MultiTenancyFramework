@@ -17,7 +17,7 @@ namespace ConsoleTests
             var baseContainer = new BaseContainer();
             MyServiceLocator.SetIoCContainer(baseContainer.Container);
         }
-
+        
         static void Main(string[] args)
         {
             Init();

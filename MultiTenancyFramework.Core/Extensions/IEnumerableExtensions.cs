@@ -31,25 +31,26 @@ namespace MultiTenancyFramework
         /// This is currently designed to only work for primitive types as I am only using it for
         /// generic export. It can be made better.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">This may be a type generated at runtime</typeparam>
         /// <param name="items"></param>
         /// <param name="validColumns">NB: No need to put S/No column. It's added automatically</param>
+        /// <param name="generatedType">If null, it defaults to typeof(T). If <paramref name="T"/> is a generated type, supply the type here to aid in the resolution, because it will read as Object.</param>
         /// <returns></returns>
-        public static MyDataTable ToDataTable<T>(this IList<T> items, IList<MyDataColumn> validColumns)
+        public static MyDataTable ToDataTable<T>(this IList<T> items, IList<MyDataColumn> validColumns, Type generatedType = null)
         {
-            var dt = new MyDataTable(typeof(T).Name);
+            if (generatedType == null) generatedType = typeof(T);
+            var dt = new MyDataTable(generatedType.Name);
             dt.Columns.Add("No", new MyDataColumn("No", typeof(int)));
             foreach (var item in validColumns)
             {
                 dt.Columns.Add(item.ColumnName, new MyDataColumn(item.ColumnName, item.DataType));
             }
             var validColumnsDict = validColumns.ToDictionary(x => x.ColumnName);
-            int i = 1; Type type = typeof(T);
             string propName;
-            foreach (var item in items)
+            for (int i = 0; i < items.Count; i++)
             {
                 var row = dt.NewRow();
-                row["No"] = i;
+                row["No"] = i + 1;
                 foreach (var col in dt.Columns)
                 {
                     if (col.Key == "No") continue;
@@ -58,7 +59,7 @@ namespace MultiTenancyFramework
                     object theVal = null;
                     try
                     {
-                        theVal = type.GetProperty(propName).GetValue(item, null);
+                        theVal = generatedType.GetProperty(propName).GetValue(items[i], null);
                     }
                     catch (TargetException)
                     {
