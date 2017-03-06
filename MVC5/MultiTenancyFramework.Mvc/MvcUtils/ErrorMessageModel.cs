@@ -39,8 +39,7 @@ namespace MultiTenancyFramework.Mvc
         /// </summary>
         /// <param name="errorMsg"></param>
         /// <param name="renderErrorPageFully"></param>
-        public ErrorMessageModel(string errorMsg, bool renderErrorPageFully = false)
-            : this(errorMsg, "", "", renderErrorPageFully)
+        public ErrorMessageModel(string errorMsg, bool renderErrorPageFully = false) : this(errorMsg, "", "", renderErrorPageFully)
         {
         }
 
@@ -52,12 +51,8 @@ namespace MultiTenancyFramework.Mvc
         /// <param name="actionName"></param>
         /// <param name="renderErrorPageFully"></param>
         public ErrorMessageModel(string errorMsg, string controllerName, string actionName, bool renderErrorPageFully = false)
-            : base(new GeneralException("", MultiTenancyFramework.ExceptionType.DoNothing), controllerName, actionName)
+            : this(new GeneralException(errorMsg, MultiTenancyFramework.ExceptionType.InvalidUserActionOrInput), controllerName, actionName, renderErrorPageFully)
         {
-            if (string.IsNullOrWhiteSpace(errorMsg)) errorMsg = "An error occurred while processing your request.";
-            ErrorMessage = WebUtility.HtmlDecode(errorMsg);
-            RenderErrorPageFully = renderErrorPageFully;
-            ErrorType = MultiTenancyFramework.ExceptionType.InvalidUserActionOrInput;
         }
 
         /// <summary>
@@ -65,31 +60,40 @@ namespace MultiTenancyFramework.Mvc
         /// </summary>
         /// <param name="ex"></param>
         /// <param name="renderErrorPageFully"></param>
-        public ErrorMessageModel(Exception ex, bool renderErrorPageFully = false) 
-            : base(ex, "", "")
+        public ErrorMessageModel(Exception ex, bool renderErrorPageFully = false)
+            : this(ex, "", "", renderErrorPageFully)
         {
-            ErrorMessage = ex.GetFullExceptionMessage();
-            StackTrace = ex.StackTrace;
-            RenderErrorPageFully = renderErrorPageFully;
-            ExceptionType = ex.GetType();
-            if (ExceptionType == typeof(GeneralException))
-            {
-                ErrorType = (ex as GeneralException).ExceptionType;
-            }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="exception"></param>
+        /// <param name="ex"></param>
         /// <param name="controllerName"></param>
         /// <param name="actionName"></param>
         /// <param name="renderErrorPageFully"></param>
-        public ErrorMessageModel(Exception exception, string controllerName, string actionName, bool renderErrorPageFully = false)
-            : base(exception, controllerName, actionName)
+        public ErrorMessageModel(Exception ex, string controllerName, string actionName, bool renderErrorPageFully = false)
+            : base(ex, controllerName, actionName)
         {
-
+            RenderErrorPageFully = renderErrorPageFully;
+            ExceptionType = ex.GetType();
+            StackTrace = ex.StackTrace;
+            if (string.IsNullOrWhiteSpace(StackTrace))
+            {
+                ErrorMessage = WebUtility.HtmlDecode(ex.GetFullExceptionMessage());
+            }
+            else
+            {
+                ErrorMessage = ex.GetFullExceptionMessage();
+            }
+            if (ExceptionType == typeof(GeneralException))
+            {
+                ErrorType = (ex as GeneralException).ExceptionType;
+            }
+            else
+            {
+                ErrorType = MultiTenancyFramework.ExceptionType.DoNothing;
+            }
         }
     }
-
 }
