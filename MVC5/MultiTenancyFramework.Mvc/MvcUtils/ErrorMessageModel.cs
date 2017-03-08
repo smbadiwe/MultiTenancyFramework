@@ -39,7 +39,7 @@ namespace MultiTenancyFramework.Mvc
         /// </summary>
         /// <param name="errorMsg"></param>
         /// <param name="renderErrorPageFully"></param>
-        public ErrorMessageModel(string errorMsg, bool renderErrorPageFully = false) : this(errorMsg, "", "", renderErrorPageFully)
+        public ErrorMessageModel(string errorMsg, bool renderErrorPageFully = false) : this(errorMsg, "Error", "Index", renderErrorPageFully)
         {
         }
 
