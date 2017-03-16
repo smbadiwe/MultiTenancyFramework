@@ -169,7 +169,8 @@ namespace MultiTenancyFramework
         }
 
         /// <summary>
-        /// Useful when you want to convert a string in PascalCase to human-meaningful form. In essence, splitting at capital letters
+        /// Useful when you want to convert a string in PascalCase to human-meaningful form. In essence, splitting at capital letters.
+        /// It guarantees that the returned string must start with upper-case letter. Acronyms and numbers are also rendered properly.
         /// </summary>
         /// <param name="stringToSplit"></param>
         /// <returns></returns>
@@ -179,27 +180,40 @@ namespace MultiTenancyFramework
 
             if (finalString.Length == 0) return finalString;
 
-            finalString = string.Format("{0}{1}", finalString.Substring(0, 1).ToUpper(), finalString.Substring(1, finalString.Length - 1));
+            if (char.IsLower(finalString[0]))
+            {
+                finalString = string.Format("{0}{1}", finalString.Substring(0, 1).ToUpper(), finalString.Substring(1, finalString.Length - 1));
+            }
 
-            StringBuilder result = new StringBuilder();
             //This part is responsible for joining the ONE-LETTER strings.
-            string[] moreCheck = finalString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] moreCheck = finalString.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (moreCheck.Length == 1)
             {
                 return finalString;
             }
-            result.Append(moreCheck[0].Trim());
-            bool addSpace = moreCheck[0].Trim().Length > 1;
+
+            StringBuilder result = new StringBuilder(moreCheck[0]);
+            bool addSpace = moreCheck[0].Length > 1;
 
             for (int i = 1; i < moreCheck.Length; i++)
             {
-                if (moreCheck[i].Trim().Length == 1)
+                if (moreCheck[i].Length == 1)
                 {
-                    result.AppendFormat("{0}{1}", addSpace == true && i == 1 ? " " : "", moreCheck[i].Trim());
+                    result.AppendFormat("{0}{1}", addSpace == true && i == 1 ? " " : "", moreCheck[i]);
                 }
                 else
                 {
-                    result.AppendFormat(" {0}", moreCheck[i].Trim());
+                    //Sometimes we may have numbers within the mix. Eg: "GL11Version" should give "GL 11 Version"
+                    var subs = moreCheck[i].Substring(1);
+                    int intg;
+                    if (int.TryParse(subs, out intg))
+                    {
+                        result.AppendFormat("{0} {1}", moreCheck[i][0], subs);
+                    }
+                    else
+                    {
+                        result.AppendFormat(" {0}", moreCheck[i]);
+                    }
                 }
             }
             return result.ToString();
