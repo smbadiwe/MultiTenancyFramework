@@ -20,9 +20,9 @@ namespace MultiTenancyFramework
             return new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
         }
 
-        public static string FormatDate(this DateTime date, string format = null)
+        public static string FormatDate(this DateTime date, string format = "dd MMM yyyy")
         {
-            return date.ToString(format ?? "dd MMM yyyy");
+            return date.ToString(format);
         }
 
         public static bool IsBefore(this DateTime date, DateTime dateToCompare)

@@ -17,7 +17,7 @@ namespace MultiTenancyFramework
             StringBuilder sbStackTraces = new StringBuilder();
             if (includeStackTrace && !string.IsNullOrWhiteSpace(ex.StackTrace))
             {
-                sbStackTraces.AppendLine().AppendFormat("EXCEPTION TYPE: {0}; STACK TRACE: {1}", ex.GetType().FullName, ex.StackTrace);
+                sbStackTraces.AppendFormat("\nEXCEPTION TYPE: {0}; STACK TRACE: {1}", ex.GetType().FullName, ex.StackTrace);
             }
             sbMessages.Append(ex.Message);
             var aggEx = ex as AggregateException;
@@ -39,8 +39,7 @@ namespace MultiTenancyFramework
                         sbMessages.AppendLine(" \nSQL CLIENT ERRORS: ");
                         for (int i = 0; i < sqlClientExErrors.Count; i++)
                         {
-                            var err = sqlClientExErrors[i];
-                            sbMessages.AppendFormat("\t{0}: Message - {1};\n", (i + 1), err);
+                            sbMessages.AppendFormat("\t{0}: Message - {1};\n", (i + 1), sqlClientExErrors[i]);
                         }
                     }
                 }
