@@ -55,8 +55,8 @@ namespace MultiTenancyFramework.Mvc
                 }
             }
         }
-        
-        public static void SetCurrentlyLoggedInUser(AppUser user)
+
+        public static void SetCurrentlyLoggedInUser(IdentityUser user)
         {
             HttpContext.Current.Session[SS_CURRENT_USER] = user;
         }
@@ -65,37 +65,21 @@ namespace MultiTenancyFramework.Mvc
         {
             try
             {
-                //if (HttpContext.Current != null && HttpContext.Current.User != null &&
-                //    HttpContext.Current.User.Identity != null && !string.IsNullOrWhiteSpace(HttpContext.Current.User.Identity.Name))
                 if (HttpContext.Current != null && HttpContext.Current.Session != null)
                 {
-                    try
+                    // string key = SS_CURRENT_USER + InstitutionShortName;
+                    IdentityUser user = HttpContext.Current.Session[SS_CURRENT_USER] as IdentityUser;
+                    if (user == null)
                     {
-                        // string key = SS_CURRENT_USER + InstitutionShortName;
-                        var user = HttpContext.Current.Session[SS_CURRENT_USER] as IdentityUser;
-                        if (user == null)
-                        {
-                            IdentityUserDAO.InstitutionCode = InstitutionCode;
-                            user = IdentityUserDAO.Retrieve(HttpContext.Current.User.Identity.GetUserId<long>());
-                        }
+                        IdentityUserDAO.InstitutionCode = InstitutionCode;
+                        user = IdentityUserDAO.Retrieve(HttpContext.Current.User.Identity.GetUserId<long>());
                         if (user == null) throw new LogOutUserException();
+
+                        user.InstitutionCode = IdentityUserDAO.InstitutionCode; //Needful? Maybe not.
                         HttpContext.Current.Session[SS_CURRENT_USER] = user;
-                        return user;
                     }
-                    catch (Exception ex)
-                    {
-                        Utilities.Logger.Log(ex);
-                        throw new LogOutUserException();
-                    }
+                    return user;
                 }
-                //var sb = new System.Text.StringBuilder();
-                //sb.AppendFormat("HttpContext.Current != null: {0}\n", HttpContext.Current != null);
-                //sb.AppendFormat("HttpContext.Current.User != null: {0}\n", HttpContext.Current.User != null);
-                //sb.AppendFormat("HttpContext.Current.User.Identity != null: {0}\n", HttpContext.Current.User.Identity != null);
-                //sb.AppendFormat("Should NOT be null:- HttpContext.Current.User.Identity.Name: {0}\n", HttpContext.Current.User.Identity.Name);
-                //sb.AppendFormat("Should NOT be null:- HttpContext.Current.User.Identity.GetUserName(): {0}\n", HttpContext.Current.User.Identity.GetUserName());
-                //sb.AppendFormat("Should NOT be zero:- HttpContext.Current.User.Identity.GetUserId<long>(): {0}\n", HttpContext.Current.User.Identity.GetUserId<long>());
-                //Utilities.Logger.Log(sb.ToString());
                 return null;
             }
             catch (LogOutUserException) { throw; }

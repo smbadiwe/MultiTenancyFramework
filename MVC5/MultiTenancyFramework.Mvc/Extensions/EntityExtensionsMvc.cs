@@ -42,6 +42,7 @@ namespace MultiTenancyFramework
                 {
                     Code = instCode,
                 };
+                user.InstitutionCode = instCode;
                 user.InstitutionShortName = queryProcessor.Process(query)?.ShortName;
                 claimsIdentity.AddClaim(new Claim("ic", instCode));
             }
@@ -53,8 +54,29 @@ namespace MultiTenancyFramework
             {
                 claimsIdentity.AddClaim(new Claim(Constants.DefaultSecurityStampClaimType, user.SecurityStamp, "http://www.w3.org/2001/XMLSchema#string"));
             }
+
+            var list = SetLoggedInUsersPrivileges(user);
+            if (manager.SupportsUserRole)
+            {
+                foreach (var role in list)
+                {
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name, "http://www.w3.org/2001/XMLSchema#string"));
+                }
+            }
+
+            if (manager.SupportsUserClaim)
+            {
+                claimsIdentity.AddClaims(await manager.GetClaimsAsync(user.Id));
+            }
+            WebUtilities.SetCurrentlyLoggedInUser(user);
+            return claimsIdentity;
+        }
+
+        public static HashSet<ActionAccessPrivilege> SetLoggedInUsersPrivileges(this AppUser user)
+        {
             HashSet<ActionAccessPrivilege> list = new HashSet<ActionAccessPrivilege>();
             var _userRoleEngine = MyServiceLocator.GetInstance<ICoreDAO<UserRole>>();
+            string instCode = user.InstitutionCode;
             _userRoleEngine.InstitutionCode = instCode;
 
             var theUserRoles = _userRoleEngine.RetrieveByIDs(user.UserRoleIDs.ToArray());
@@ -93,22 +115,8 @@ namespace MultiTenancyFramework
                 list.Add(priv);
             }
 
-            if (manager.SupportsUserRole)
-            {
-                foreach (var role in list)
-                {
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name, "http://www.w3.org/2001/XMLSchema#string"));
-                }
-            }
             WebUtilities.LoggedInUsersPrivilegesDict = list.ToDictionary(x => x.Name, StringComparer.InvariantCultureIgnoreCase);
-            defaultPrivs = null;
-
-            if (manager.SupportsUserClaim)
-            {
-                claimsIdentity.AddClaims(await manager.GetClaimsAsync(user.Id));
-            }
-            WebUtilities.SetCurrentlyLoggedInUser(user);
-            return claimsIdentity;
+            return list;
         }
 
         /// <summary>
