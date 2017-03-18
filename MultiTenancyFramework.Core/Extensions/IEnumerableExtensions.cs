@@ -131,7 +131,7 @@ namespace MultiTenancyFramework
         }
 
         /// <summary>
-        /// Gets all the items in the collection that are duplicated
+        /// Gets all the items in <paramref name="source"/> that are duplicated
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
         /// <typeparam name="TKey"></typeparam>
@@ -170,6 +170,15 @@ namespace MultiTenancyFramework
             return source.GetDuplicates(selector, null);
         }
 
+        /// <summary>
+        /// Removes all duplicates from <paramref name="source"/> and returns the distinct values
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <param name="comparer"></param>
+        /// <returns></returns>
         public static IEnumerable<TSource> GetDistinct<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector, IEqualityComparer<TKey> comparer)
         {
             var hash = new HashSet<TKey>(comparer);
