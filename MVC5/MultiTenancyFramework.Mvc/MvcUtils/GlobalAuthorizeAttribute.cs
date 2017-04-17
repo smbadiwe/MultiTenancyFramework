@@ -9,12 +9,6 @@ namespace MultiTenancyFramework.Mvc
     /// </summary>
     public class GlobalAuthorizeAttribute : AuthorizeAttribute
     {
-        //private readonly ILogger Logger;
-        //public GlobalAuthorizeAttribute()
-        //{
-        //    Logger = Utilities.Logger;
-        //}
-
         /// <summary>
         /// 
         /// </summary>
@@ -26,9 +20,8 @@ namespace MultiTenancyFramework.Mvc
             #region Check whether it's an anonymous action
 
             // check if AllowAnonymous is on the controller
-            var anonymous = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
-                    .Cast<AllowAnonymousAttribute>();
-            if (anonymous.Any())
+            var anonymous = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true);
+            if (anonymous.Length > 0)
             {
                 //Allow Anonymous
                 anonymous = null;
@@ -36,9 +29,8 @@ namespace MultiTenancyFramework.Mvc
             }
 
             // It's not; so check if AllowAnonymous is on the action
-            anonymous = actionDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true)
-                    .Cast<AllowAnonymousAttribute>();
-            if (anonymous.Any())
+            anonymous = actionDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true);
+            if (anonymous.Length > 0)
             {
                 //Allow Anonymous
                 anonymous = null;
@@ -95,7 +87,7 @@ namespace MultiTenancyFramework.Mvc
                         }
                     }
                 }
-                filterContext.Result = MvcUtility.GetPageResult("DenyAccess", "Error", "", instCode);
+                filterContext.Result = MvcUtility.GetPageResult("DenyAccess", "Error", "", instCode, new System.Collections.Generic.Dictionary<string, object> { { "actionAttempted", privilegeName } });
                 return;
             }
 

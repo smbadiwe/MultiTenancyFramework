@@ -60,7 +60,7 @@ namespace MultiTenancyFramework.NHibernate
         /// <param name="totalCount"></param>
         /// <returns></returns>
         public RetrievedData<TTransform> RetrieveUsingPaging<TTransform>(IQueryOver<T, T> theQueryOver, int startIndex, int maxRows, bool hasOrderBy = false)
-            where TTransform : class, IEntity<idT>
+            where TTransform : class //, IEntity<idT>
         {
             IEnumerable<TTransform> result;
             int totalCount = 0;
