@@ -1,19 +1,18 @@
 ﻿using Microsoft.AspNet.Identity;
-using MultiTenancyFramework.Data;
-using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.Mvc.Logic;
 using System.Collections.Generic;
-using System.Runtime.Caching;
-using System.Web;
 using System.Web.Mvc;
 
 namespace MultiTenancyFramework.Mvc {
     public static class MvcUtility {
         public const string _TRUE_ICON = "<i class='text-info fa fa-check'></i>";
         public const string _FALSE_ICON = "<i class='text-danger fa fa-close'></i>";
-        public static ContentResult GetLoginPageResult(string instCode) {
+        public static ContentResult GetLoginPageResult(string instCode, string returnUrl = null) {
             var baseUrl = ConfigurationHelper.GetSiteUrl();
             var url = string.Format("{0}{1}{2}", baseUrl, instCode, DataCacheMVC.MultiTenancyFrameworkSettings.LoginPath);
+            if (!string.IsNullOrWhiteSpace(returnUrl)) {
+                url += $"?returnUrl={returnUrl}";
+            }
             return new ContentResult {
                 Content = "<html><script>window.top.location.href = '" + url + "'; </script></html>",
                 ContentType = "text/html"
