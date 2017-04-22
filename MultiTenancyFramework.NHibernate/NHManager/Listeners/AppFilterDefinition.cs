@@ -1,6 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
 using NHibernate;
-using System;
 
 namespace MultiTenancyFramework.NHibernate.NHManager.Listeners {
     internal class AppFilterDefinition : FilterDefinition {

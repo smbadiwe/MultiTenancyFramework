@@ -358,8 +358,6 @@ namespace MultiTenancyFramework.NHibernate.NHManager {
                 if (dbConn.IsDisabled) {
                     throw new GeneralException($"The requested database for '{institution.Name}' no longer exists. Please contact administrator");
                 }
-                var logger = Utilities.Logger;
-                logger.Log($"Gotten dbConn for institution code '{instCode}'. Deleted? {dbConn.IsDeleted}. n Disabled? {dbConn.IsDisabled}");
 
                 // Sometimes, you just want to use the same DB for all the tenants. In that case, simply use one session factory
                 if (string.Equals(dbConn.ConnectionString, GetConnectionString(), StringComparison.InvariantCultureIgnoreCase)) {
