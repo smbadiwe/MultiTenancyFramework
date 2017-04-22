@@ -22,7 +22,8 @@ namespace ConsoleTests
         static void Main(string[] args)
         {
             testSplitCamelCase();
-
+            var dao = new MultiTenancyFramework.NHibernate.CoreDAO<Institution>();
+            var school = dao.RetrieveAll();
             Console.ReadKey();
         }
 

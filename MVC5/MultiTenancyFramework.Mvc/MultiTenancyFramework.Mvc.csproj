@@ -140,7 +140,6 @@
     <Compile Include="Logic\AuditLogLogic.cs" />
     <Compile Include="Logic\DataCacheMVC.cs" />
     <Compile Include="Logic\ActionAccessPrivilegeLogic.cs" />
-    <Compile Include="Logic\SystemSettingLogic.cs" />
     <Compile Include="MvcUtils\Alert.cs" />
     <Compile Include="MvcUtils\AppStartInitializer.cs" />
     <Compile Include="MvcUtils\CoreController.cs" />

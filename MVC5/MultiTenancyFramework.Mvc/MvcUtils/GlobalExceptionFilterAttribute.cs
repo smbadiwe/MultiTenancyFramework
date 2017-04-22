@@ -22,19 +22,23 @@ namespace MultiTenancyFramework.Mvc {
                 filterContext.ExceptionHandled = true;
                 var values = filterContext.RouteData.Values;
                 string instCode = Convert.ToString(values["institution"]);
-                var urlAccessed = string.Format("{0}/{1}/{2}", instCode, values["controller"], values["action"]);
+                var urlAccessed = string.Format("{0}/{1}/{2}/{3}", instCode, values["area"], values["controller"], values["action"]);
                 Logger.Log(new GeneralException(string.Format("Crash from {0}", urlAccessed), filterContext.Exception));
 
                 var genEx = filterContext.Exception as GeneralException;
                 if (genEx != null) {
                     if (genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode) {
-                        filterContext.Result = MvcUtility.GetPageResult("InvalidUrl", "Error", "", instCode);
+                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("Invalid Url. Please cross-check.", Convert.ToString(values["controller"]), Convert.ToString(values["action"])) {
+                            AreaName = Convert.ToString(values["area"]),
+                            FromUrl = urlAccessed
+                        };
                     } else if (genEx.ExceptionType == ExceptionType.DatabaseRelated) {
                         filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("A database error has occurred. Contact the administrator", Convert.ToString(values["controller"]), Convert.ToString(values["action"])) {
-                            AreaName = Convert.ToString(values["area"])
+                            AreaName = Convert.ToString(values["area"]),
+                            FromUrl = urlAccessed
                         };
-                        filterContext.Result = MvcUtility.GetPageResult("Index", "Error", "", instCode);
                     }
+                    filterContext.Result = MvcUtility.GetPageResult("Index", "Error", "", instCode);
                     genEx = null;
                     return;
                 }
@@ -51,15 +55,18 @@ namespace MultiTenancyFramework.Mvc {
                 } else {
                     if (filterContext.Exception is System.Data.Common.DbException) {
                         filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("A database error has occurred. Contact the administrator", Convert.ToString(values["controller"]), Convert.ToString(values["action"])) {
-                            AreaName = Convert.ToString(values["area"])
+                            AreaName = Convert.ToString(values["area"]),
+                            FromUrl = urlAccessed
                         };
                     } else if (filterContext.Exception is HttpAntiForgeryException) {
                         filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception.Message, Convert.ToString(values["controller"]), Convert.ToString(values["action"])) {
-                            AreaName = Convert.ToString(values["area"])
+                            AreaName = Convert.ToString(values["area"]),
+                            FromUrl = urlAccessed
                         };
                     } else {
                         filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception, Convert.ToString(values["controller"]), Convert.ToString(values["action"])) {
-                            AreaName = Convert.ToString(values["area"])
+                            AreaName = Convert.ToString(values["area"]),
+                            FromUrl = urlAccessed
                         };
                     }
                     filterContext.Result = MvcUtility.GetPageResult("Index", "Error", "", instCode);

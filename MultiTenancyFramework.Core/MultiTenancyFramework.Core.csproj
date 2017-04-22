@@ -130,6 +130,7 @@
     <Compile Include="Logic\IAuditTrailLogger.cs" />
     <Compile Include="Logic\AppUserLogic.cs" />
     <Compile Include="Data\Queries\GetAppUsersByGridSearchParamsQuery.cs" />
+    <Compile Include="Logic\SystemSettingLogic.cs" />
     <Compile Include="Logic\UserClaimLogic.cs" />
     <Compile Include="Logic\UserLoginLogic.cs" />
     <Compile Include="Logic\UserRoleLogic.cs" />

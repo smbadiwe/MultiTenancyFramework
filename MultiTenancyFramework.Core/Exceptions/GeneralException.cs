@@ -35,6 +35,10 @@ namespace MultiTenancyFramework
         UnidentifiedInstitutionCode,
         DatabaseRelated,
         AccessDeniedInstitution,
+        /// <summary>
+        /// When all data required fro the app to run is not yet setup in the DB, or when the DB itself is not available
+        /// </summary>
+        SetupFailure,
         DoNothing = 99,
     }
 }

@@ -50,6 +50,7 @@ namespace MultiTenancyFramework.Mvc.Identity
         /// <returns></returns>
         public override async Task<SignInStatus> PasswordSignInAsync(string userName, string password, bool isPersistent, bool shouldLockout)
         {
+            var logger = Utilities.Logger;
             if (UserManager == null)
             {
                 return SignInStatus.Failure;

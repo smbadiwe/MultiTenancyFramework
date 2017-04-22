@@ -1,6 +1,5 @@
 ﻿using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
-using MultiTenancyFramework.Mvc;
 
 namespace MultiTenancyFramework.Logic
 {
@@ -17,8 +16,8 @@ namespace MultiTenancyFramework.Logic
 
         public override void OnAfterCommittingChanges(SystemSetting e)
         {
-            Utilities.SystemSettings = e;
             base.OnAfterCommittingChanges(e);
+            Utilities.SystemSettings = e;
         }
     }
 }

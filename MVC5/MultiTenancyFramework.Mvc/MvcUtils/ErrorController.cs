@@ -14,6 +14,7 @@ namespace MultiTenancyFramework.Mvc {
         }
 
         public virtual ActionResult DenyInstitutionAccess() {
+            WebUtilities.LogOut();
             return ErrorView(true);
         }
 
@@ -23,8 +24,8 @@ namespace MultiTenancyFramework.Mvc {
         /// <param name="actionAttempted">The action for which we're denying access</param>
         /// <returns></returns>
         public virtual ActionResult DenyAccess(string actionAttempted = null) {
-
-            return View(SharedErrorViewName, new ErrorMessageModel(string.Format("You are not authorized to access this page.{0}", !string.IsNullOrWhiteSpace(actionAttempted) ? $" [You need to be given the privilege: {actionAttempted}]" : "")));
+            WebUtilities.LogOut();
+            return View(SharedErrorViewName, new ErrorMessageModel(string.Format("You are not authorized to access this page.{0}", !string.IsNullOrWhiteSpace(actionAttempted) ? $" [You need to be given the privilege: {actionAttempted}]" : ""), true));
         }
 
         private ViewResult ErrorView(bool showFully = false) {
