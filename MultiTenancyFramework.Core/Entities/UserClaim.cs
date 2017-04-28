@@ -31,5 +31,10 @@ namespace MultiTenancyFramework.Entities
         public virtual bool IsEnabled { get { return !IsDisabled; } }
 
         public virtual long CreatedBy { get; set; }
+
+        public virtual string GetTableName()
+        {
+            return GetType().Name.ToPlural();
+        }
     }
 }

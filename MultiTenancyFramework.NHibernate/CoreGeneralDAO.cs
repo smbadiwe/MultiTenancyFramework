@@ -74,7 +74,11 @@ namespace MultiTenancyFramework.NHibernate
             session.CreateSQLQuery(query);
         }
 
-        public void RunDirectQueryADODotNET(string query, bool closeConnection = false)
+        /// <summary>
+        /// Run a query using ADO.NET. Default implementation supports SQL Server and MySql
+        /// </summary>
+        /// <param name="query">The query to run.</param>
+        public virtual void RunDirectQueryADODotNET(string query, bool closeConnection = false)
         {
             var session = BuildSession();
             var connection = session.Connection;

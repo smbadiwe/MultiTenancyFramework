@@ -250,5 +250,32 @@ namespace MultiTenancyFramework.Logic
             _dao.Refresh(entity);
         }
 
+        /// <summary>
+        /// This uses direct non-NHibernate query to set an entity to enabled or disabled
+        /// </summary>
+        /// <param name="entityId">The entity id.</param>
+        /// <param name="disabled">If true, entity.IsDisabled will be set to true; otherwise, false</param>
+        /// <param name="tableName">The table name. If not supplied, the plural of the class name will be used</param>
+        /// <returns>True if action is successful. Otherwise, false</returns>
+        public bool SetDisabled(long entityId, bool disabled, string tableName = null)
+        {
+            _dao.InstitutionCode = _institutionCode;
+            _dao.EntityName = EntityName;
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                tableName = typeof(T).Name.ToPlural();
+            }
+            try
+            {
+                _dao.RunDirectQueryADODotNET(string.Format("UPDATE {0} SET IsDisabled = {1}, LastDateModified = CURRENT_TIMESTAMP WHERE Id = {2}", tableName, disabled, entityId));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Utilities.Logger.Log(new GeneralException($"Failed updating record {entityId} in table: {tableName}", ex, ExceptionType.DatabaseRelated));
+                return false;
+            }
+        }
+
     }
 }

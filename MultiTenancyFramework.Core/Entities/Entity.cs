@@ -39,6 +39,15 @@ namespace MultiTenancyFramework.Entities
 
         public virtual bool IsEnabled { get { return !IsDisabled; } }
 
+        /// <summary>
+        /// This default implementation returns the plural of the type name using the string extension method .ToPlural() in MultiTenancyFramework namespace
+        /// </summary>
+        /// <returns></returns>
+        public virtual string GetTableName()
+        {
+            return GetType().Name.ToPlural();
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;

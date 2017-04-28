@@ -30,5 +30,11 @@ namespace MultiTenancyFramework.Entities
         /// The user ID of the user that saved the entity
         /// </summary>
         idT CreatedBy { get; set; }
+
+        /// <summary>
+        /// The default implementation returns the plural of the type name using the string extension method .ToPlural() in MultiTenancyFramework namespace
+        /// </summary>
+        /// <returns></returns>
+        string GetTableName();
     }
 }

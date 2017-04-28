@@ -1,4 +1,6 @@
 ﻿using MultiTenancyFramework.Data;
+using MultiTenancyFramework.Entities;
+using System;
 using System.Linq;
 
 namespace MultiTenancyFramework

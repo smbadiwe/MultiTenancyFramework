@@ -35,7 +35,7 @@ namespace MultiTenancyFramework.Data
         void RunDirectQuery(string query, bool clearSession = false);
 
         /// <summary>
-        /// Run a query using ADO.NET
+        /// Run a query using ADO.NET.
         /// </summary>
         /// <param name="query">The query to run.</param>
         void RunDirectQueryADODotNET(string query, bool closeConnection = false);

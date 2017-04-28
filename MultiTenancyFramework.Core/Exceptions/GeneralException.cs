@@ -15,6 +15,10 @@ namespace MultiTenancyFramework
                 return base.Message;
             }
         }
+        public override Exception GetBaseException()
+        {
+            return this;
+        }
 
         public ExceptionType ExceptionType { get; set; }
         public GeneralException(string message, ExceptionType exceptionType = ExceptionType.InvalidUserActionOrInput) : base(message)
