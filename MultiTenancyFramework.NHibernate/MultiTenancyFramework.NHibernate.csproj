@@ -139,8 +139,6 @@
     <None Include="MultiTenancyFramework.NHibernate.nuspec" />
     <None Include="packages.config" />
     <None Include="web.config.transform" />
-    <None Include="web.config.install.xdt" />
-    <None Include="web.config.uninstall.xdt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
