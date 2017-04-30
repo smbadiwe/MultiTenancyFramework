@@ -66,6 +66,14 @@
       <Project>{85d5d252-5629-45e1-a83e-2187b8877806}</Project>
       <Name>MultiTenancyFramework.NHibernate</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MVC5\MultiTenancyFramework.Mvc.NHibernate\MultiTenancyFramework.Mvc.NHibernate.csproj">
+      <Project>{ec2f859b-110c-4e6a-9506-d917906991d2}</Project>
+      <Name>MultiTenancyFramework.Mvc.NHibernate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MVC5\MultiTenancyFramework.Mvc\MultiTenancyFramework.Mvc.csproj">
+      <Project>{8da996ff-242d-41eb-b139-a73165874abb}</Project>
+      <Name>MultiTenancyFramework.Mvc</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

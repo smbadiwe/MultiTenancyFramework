@@ -1,7 +1,6 @@
 ﻿using Microsoft.CSharp.RuntimeBinder;
 using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
-using MultiTenancyFramework.IO;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections;
@@ -128,7 +127,7 @@ namespace MultiTenancyFramework.NHibernate
                 string fieldTerminator = "\t";
                 string lineTerminator = "\r\n";
                 //Generate csv file from where data read
-                CsvWriter.CreateCSVfile(dt, theFile, true, fieldTerminator);
+                IO.CsvWriter.CreateCSVfile(dt, theFile, true, fieldTerminator);
                 try
                 {
                     RunMySqlCommand(con, "SET FOREIGN_KEY_CHECKS=0");

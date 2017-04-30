@@ -1,4 +1,5 @@
 ﻿using MultiTenancyFramework.Data;
+using MultiTenancyFramework.IO;
 using MultiTenancyFramework.Mvc.Identity;
 using MultiTenancyFramework.Mvc.Logic;
 using Owin;
@@ -12,20 +13,26 @@ namespace MultiTenancyFramework
     public static class MvcExtensions
     {
         /// <summary>
-        /// Export data table as file
+        /// Export data table as file. Only CSV for now
         /// </summary>
         /// <param name="dataTable"></param>
         /// <param name="exportType"></param>
         /// <param name="entityName"></param>
         /// <param name="headerItems"></param>
         /// <returns></returns>
-        public static async Task<FileContentResult> ExportFile(this MyDataTable dataTable, string exportType, string entityName, IDictionary<string, object> headerItems = null)
+        public static async Task<FileContentResult> ExportFile(this MyDataTable dataTable, string exportType, string entityName, IDictionary<string, string> headerItems = null)
         {
             byte[] theBytes = null;
             string fileName = DateTime.Now.GetLocalTime().ToString("yyyy-MM-dd hh:mm:ss") + "_" + entityName;
             string mimeType = "";
             switch (exportType)
             {
+                case "xls":
+                case "xlsx":
+                    theBytes = await dataTable.ToExcel(headerItems);
+                    mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; // "application/ms-excel"; //
+                    fileName += ".xlsx";
+                    break;
                 //case "pdf":
                 //    mimeType = "application/pdf";
                 //    fileName += ".pdf";
@@ -33,15 +40,10 @@ namespace MultiTenancyFramework
                 //    break;
                 case "csv":
                 default:
+                    theBytes = await dataTable.ToCSV(headerItems);
                     mimeType = "text/csv";
                     fileName += ".csv";
-                    theBytes = await dataTable.ToCSV(headerItems);
                     break;
-                    //default:
-                    //    mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; // "application/ms-excel"; //
-                    //    fileName += ".xlsx";
-                    //    theBytes = ToExcel(dataTable, headerItems);
-                    //    break;
             }
             return new FileContentResult(theBytes, mimeType) { FileDownloadName = fileName };
         }

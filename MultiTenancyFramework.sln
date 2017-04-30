@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiTest", "WebApiTest\We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.WebAPI", "WebAPI\MultiTenancyFramework.WebAPI\MultiTenancyFramework.WebAPI.csproj", "{BDCB0B4B-19F6-4449-844A-58BC15E6FA1F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenancyFramework.CoreTests", "MultiTenancyFramework.CoreTests\MultiTenancyFramework.CoreTests.csproj", "{5FA34575-B1AE-487A-BE03-2098DA083A6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +104,12 @@ Global
 		{BDCB0B4B-19F6-4449-844A-58BC15E6FA1F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BDCB0B4B-19F6-4449-844A-58BC15E6FA1F}.ReleasePackage|Any CPU.ActiveCfg = Release|Any CPU
 		{BDCB0B4B-19F6-4449-844A-58BC15E6FA1F}.ReleasePackage|Any CPU.Build.0 = Release|Any CPU
+		{5FA34575-B1AE-487A-BE03-2098DA083A6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FA34575-B1AE-487A-BE03-2098DA083A6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FA34575-B1AE-487A-BE03-2098DA083A6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FA34575-B1AE-487A-BE03-2098DA083A6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FA34575-B1AE-487A-BE03-2098DA083A6B}.ReleasePackage|Any CPU.ActiveCfg = Release|Any CPU
+		{5FA34575-B1AE-487A-BE03-2098DA083A6B}.ReleasePackage|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

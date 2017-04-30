@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MultiTenancyFramework.Data;
+using System.Threading.Tasks;
 
 namespace WebTests.Controllers
 {
@@ -14,11 +16,47 @@ namespace WebTests.Controllers
     {
         // GET: Home
         [AllowAnonymous]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            throw new ArgumentOutOfRangeException();
-            var dao = new MultiTenancyFramework.Logic.UserRoleLogic("Core");
-            dao.RetrieveAll();
+            var roles = new List<UserRole>
+            {
+                new UserRole
+                {
+                    Name = "UserRole Web 3",
+                    Description = "Go Away",
+                    DateCreated = DateTime.UtcNow,
+                    IsDeleted = false,
+                },
+                new UserRole
+                {
+                    Name = "UserRole Web 33",
+                    Description = "Go Away 4 3",
+                    DateCreated = DateTime.UtcNow,
+                    IsDeleted = true,
+                },
+                new UserRole
+                {
+                    Name = "UserRole Web 13",
+                    Description = "Go Away",
+                    DateCreated = DateTime.UtcNow,
+                    IsDeleted = false,
+                },
+                new UserRole
+                {
+                    Name = "UserRole Web 73",
+                    Description = "Go gfe Away",
+                    DateCreated = DateTime.UtcNow,
+                    IsDeleted = true,
+                },
+            };
+            return await roles.ToDataTable(new[] { new MyDataColumn<UserRole>(x => x.Name),
+                new MyDataColumn<UserRole>(x => x.Description),
+                new MyDataColumn<UserRole>(x => x.DateCreated),
+                new MyDataColumn<UserRole>(x => x.IsDeleted),
+                new MyDataColumn<UserRole>(x => x.IsDisabled)
+            })
+            .ExportFile("xlsx", "UserRoles");
+
 
             //var login = new UserRole
             //{
@@ -37,8 +75,8 @@ namespace WebTests.Controllers
             //    }
             //}
             //dao.Update(thatLogin);
-            Logger.Log("Testing stuffs in Index");
-            return View();
+            //Logger.Log("Testing stuffs in Index");
+            //return View();
         }
 
         public ActionResult Welcome()

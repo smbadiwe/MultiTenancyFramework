@@ -70,7 +70,6 @@
     <Compile Include="Entities\UserLogin.cs" />
     <Compile Include="Extensions\EntityExtensions.cs" />
     <Compile Include="IoC\IoCUtility.cs" />
-    <Compile Include="IO\CsvWriter.cs" />
     <Compile Include="Data\Queries\DbPagingQuery.cs" />
     <Compile Include="Data\Queries\DbQueryProcessor.cs" />
     <Compile Include="Data\IAppUserDAO.cs" />
@@ -125,6 +124,8 @@
     <Compile Include="Exceptions\GeneralException.cs" />
     <Compile Include="Commands\BaseCommand.cs" />
     <Compile Include="Commands\ICommandHandler.cs" />
+    <Compile Include="IO\CsvWriter.cs" />
+    <Compile Include="IO\IOManager.cs" />
     <Compile Include="Logic\CoreBaseLogic.cs" />
     <Compile Include="Logic\CoreLogic.cs" />
     <Compile Include="Logic\IAuditTrailLogger.cs" />

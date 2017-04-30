@@ -1,4 +1,5 @@
 ﻿using MultiTenancyFramework;
+using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.Logic;
 using MultiTenancyFramework.SimpleInjector;
@@ -18,12 +19,57 @@ namespace ConsoleTests
             var baseContainer = new BaseContainer();
             MyServiceLocator.SetIoCContainer(baseContainer.Container);
         }
+        
+        public static async Task<byte[]> Index()
+        {
+            var roles = new List<UserRole>
+            {
+                new UserRole
+                {
+                    Name = "UserRole Web 3",
+                    Description = "Go Away",
+                    DateCreated = DateTime.UtcNow,
+                    IsDeleted = false,
+                },
+                new UserRole
+                {
+                    Name = "UserRole Web 33",
+                    Description = "Go Away 4 3",
+                    DateCreated = DateTime.UtcNow,
+                    IsDeleted = true,
+                },
+                new UserRole
+                {
+                    Name = "UserRole Web 13",
+                    Description = "Go Away",
+                    DateCreated = DateTime.UtcNow,
+                    IsDeleted = false,
+                },
+                new UserRole
+                {
+                    Name = "UserRole Web 73",
+                    Description = "Go gfe Away",
+                    DateCreated = DateTime.UtcNow,
+                    IsDeleted = true,
+                },
+            };
+            return await roles.ToDataTable(new[] {
+                new MyDataColumn<UserRole>(x => x.DateCreated),
+                new MyDataColumn<UserRole>(x => x.IsDeleted),
+                new MyDataColumn<UserRole>(x => x.IsDisabled),
+                new MyDataColumn<UserRole>(x => x.Name),
+                new MyDataColumn<UserRole>(x => x.Description),
+            })
+            .ToExcel(new Dictionary<string, string> { { "Title", "Test Sheet" }, { "For", "FGC Okigwe" }, { "Date Done", DateTime.Now.ToString() } });
+        }
+
 
         static void Main(string[] args)
         {
-            testSplitCamelCase();
-            var dao = new MultiTenancyFramework.NHibernate.CoreDAO<Institution>();
-            var school = dao.RetrieveAll();
+           var rslt =  Index().Result;
+            //testSplitCamelCase();
+            //var dao = new MultiTenancyFramework.NHibernate.CoreDAO<Institution>();
+            //var school = dao.RetrieveAll();
             Console.ReadKey();
         }
 
@@ -43,7 +89,7 @@ namespace ConsoleTests
         {
             return AsSplitPascalCasedString(v);
         }
-        
+
         private static string AsSplitPascalCasedString(string stringToSplit)
         {
             string finalString = Regex.Replace(stringToSplit, "([A-Z])", " $1", RegexOptions.Compiled).Trim();
@@ -88,7 +134,7 @@ namespace ConsoleTests
             }
             return result.ToString();
         }
-        
+
         private static void assertEquals(string v, string p)
         {
             var str = string.Format("Are equal: {0}.", v == p);

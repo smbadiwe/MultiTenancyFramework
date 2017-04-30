@@ -77,6 +77,54 @@ namespace MultiTenancyFramework
         }
 
         /// <summary>
+        /// This is currently designed to only work for primitive types as I am only using it for
+        /// generic export. It can be made better.
+        /// </summary>
+        /// <typeparam name="T">This may be a type generated at runtime</typeparam>
+        /// <param name="items"></param>
+        /// <param name="validColumns">NB: No need to put S/No column. It's added automatically</param>
+        /// <returns></returns>
+        public static MyDataTable ToDataTable<T>(this IList<T> items, MyDataColumn<T>[] validColumns)
+        {
+            var generatedType = typeof(T);
+            var dt = new MyDataTable(generatedType.Name);
+            dt.Columns.Add("No", new MyDataColumn("No", typeof(int)));
+            foreach (var item in validColumns)
+            {
+                dt.Columns.Add(item.ColumnName, new MyDataColumn(item.ColumnName, item.DataType));
+            }
+            var validColumnsDict = validColumns.ToDictionary(x => x.ColumnName);
+            string propName;
+            for (int i = 0; i < items.Count; i++)
+            {
+                var row = dt.NewRow();
+                row["No"] = i + 1;
+                foreach (var col in dt.Columns)
+                {
+                    if (col.Key == "No") continue;
+
+                    propName = validColumnsDict[col.Key].PropertyName;
+                    object theVal = null;
+                    try
+                    {
+                        theVal = generatedType.GetProperty(propName).GetValue(items[i], null);
+                    }
+                    catch (TargetException)
+                    {
+                        theVal = null;
+                    }
+                    catch (RuntimeBinderException)
+                    {
+                        theVal = null;
+                    }
+                    row[col.Key] = theVal;
+                }
+                dt.Rows.Add(row);
+            }
+            return dt;
+        }
+
+        /// <summary>
         /// divides a given 'enumerable' (eg List) into 'chunkSize' slammer lists
         /// <para>USAGE</para>
         /// <para>var src = new[] { 1, 2, 3, 4, 5, 6 };</para>

@@ -1,7 +1,33 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace MultiTenancyFramework.Data
 {
+    /// <summary>
+    /// Represents a field (column) in the DB; or a field entity in data to be exported
+    /// </summary>
+    public class MyDataColumn<T> : MyDataColumn
+    {
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="func">Feature property access</param>
+        public MyDataColumn(Expression<Func<T, object>> func)
+            : this(func, null)
+        {
+        }
+
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="func">Feature property access</param>
+        /// <param name="columnName">Property name</param>
+        public MyDataColumn(Expression<Func<T, object>> func, string columnName)
+            : base(propertyName: func.GetName(), columnName: columnName, dataType: func.ReturnType)
+        {
+        }
+    }
+
     /// <summary>
     /// Represents a field (column) in the DB; or a field entity in data to be exported
     /// </summary>
@@ -20,7 +46,7 @@ namespace MultiTenancyFramework.Data
         /// </summary>
         public Type DataType { get; set; }
         public string ColumnName { get; set; }
-
+        
         /// <summary>
         /// Use this when coming from the UI; e.g. when you're trying to export data to Excel of CSV
         /// </summary>
@@ -31,7 +57,7 @@ namespace MultiTenancyFramework.Data
         {
             if (string.IsNullOrWhiteSpace(propertyName)) throw new ArgumentNullException("propertyName");
             if (dataType == null) dataType = typeof(string);
-            if (string.IsNullOrWhiteSpace(columnName)) columnName = propertyName;
+            if (string.IsNullOrWhiteSpace(columnName)) columnName = propertyName.AsSplitPascalCasedString();
 
             PropertyName = propertyName;
             ColumnName = columnName;

@@ -40,6 +40,10 @@
     <DocumentationFile>bin\Release Package\MultiTenancyFramework.Mvc.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
@@ -83,6 +87,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -128,6 +133,7 @@
     <Compile Include="Extensions\EntityExtensionsMvc.cs" />
     <Compile Include="Extensions\IIdentityExtensions.cs" />
     <Compile Include="Extensions\HtmlHelperExtensions.cs" />
+    <Compile Include="Extensions\IOExtensions.cs" />
     <Compile Include="Extensions\RouteCollectionExtensions.cs" />
     <Compile Include="Extensions\UrlHelperExtensions.cs" />
     <Compile Include="Extensions\MvcExtensions.cs" />
@@ -136,6 +142,9 @@
     <Compile Include="Entities\IdentityUser.cs" />
     <Compile Include="Identity\MultiTenancyFrameworkSettings.cs" />
     <Compile Include="Identity\UserStore.cs" />
+    <Compile Include="IO\ExcelWriter.cs" />
+    <Compile Include="IO\PropertyByName.cs" />
+    <Compile Include="IO\PropertyManager.cs" />
     <Compile Include="IPResolver.cs" />
     <Compile Include="Logic\AuditLogLogic.cs" />
     <Compile Include="Logic\DataCacheMVC.cs" />

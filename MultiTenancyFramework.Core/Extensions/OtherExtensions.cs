@@ -1,21 +1,14 @@
-﻿using MultiTenancyFramework.Data;
-using MultiTenancyFramework.IO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace MultiTenancyFramework
 {
     public static class OtherExtensions
     {
-        public static async Task<byte[]> ToCSV(this MyDataTable dtable, IDictionary<string, object> headerItems = null, bool replaceNullsWithDefaultValue = false, string delimiter = ",")
-        {
-            return await CsvWriter.CreateCSVfile(dtable, headerItems, replaceNullsWithDefaultValue, delimiter);
-        }
-
         /// <summary>
         /// Determines whether the specified item is in the given list (IEnumerable).
         /// </summary>
@@ -93,5 +86,40 @@ namespace MultiTenancyFramework
             }
         }
 
+        public static TResult Return<TInput, TResult>(this TInput o, Func<TInput, TResult> evaluator, TResult failureValue)
+            where TInput : class
+        {
+            return o == null ? failureValue : evaluator(o);
+        }
+
+        /// <summary>
+        /// Returns the (Property) name of the output value
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        public static string GetName<TIn, TOut>(this Expression<Func<TIn, TOut>> exp)
+        {
+            var type = exp.ReturnType;
+            MemberExpression body = exp.Body as MemberExpression;
+
+            if (body == null)
+            {
+                if (exp.Body.NodeType == ExpressionType.Convert)
+                {
+                    body = ((UnaryExpression)exp.Body).Operand as MemberExpression;
+                }
+                else if (exp.Body.NodeType == ExpressionType.Constant)
+                {
+                    return exp.Body.ToString();
+                }
+            }
+
+            if (body == null)
+                throw new ArgumentException(string.Format(
+                    "Expression '{0}' refers to a field, not a property.",
+                    exp.ToString()));
+
+            return body.Member.Name;
+        }
     }
 }
