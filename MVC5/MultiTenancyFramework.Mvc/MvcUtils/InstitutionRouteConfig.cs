@@ -44,6 +44,14 @@ namespace MultiTenancyFramework.Mvc
                 constraints: new { id = @"\d*" }
             );
 
+            // Added this case so it does not fall to the route: 'ControllerAndActionOnly' below
+            routes.MapRoute( //LowerCase(
+                name: "TenantHome",
+                url: "{institution}/Home",
+                defaults: new { area = "", controller = "Home", action = "Index", id = UrlParameter.Optional },
+                constraints: new { id = @"\d*" }
+            );
+
             routes.MapRoute( //LowerCase(
                 name: "InstitutionOnly",
                 url: "{institution}",

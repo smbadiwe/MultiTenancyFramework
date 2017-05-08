@@ -84,7 +84,7 @@ namespace MultiTenancyFramework
         /// <param name="items"></param>
         /// <param name="validColumns">NB: No need to put S/No column. It's added automatically</param>
         /// <returns></returns>
-        public static MyDataTable ToDataTable<T>(this IList<T> items, MyDataColumn<T>[] validColumns)
+        public static MyDataTable ToDataTable<T>(this IList<T> items, IList<MyDataColumn<T>> validColumns)
         {
             var generatedType = typeof(T);
             var dt = new MyDataTable(generatedType.Name);

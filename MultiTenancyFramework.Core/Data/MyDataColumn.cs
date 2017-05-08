@@ -48,9 +48,12 @@ namespace MultiTenancyFramework.Data
         public string ColumnName { get; set; }
         
         /// <summary>
-        /// Use this when coming from the UI; e.g. when you're trying to export data to Excel of CSV
+        /// Use this when coming from the UI; e.g. when you're trying to export data to Excel or CSV.
+        /// <para>Thanks to C# 6, you can now use the nameof(...) to supply the <paramref name="propertyName"/>. If you 
+        /// do not supply <paramref name="dataType"/>, then we assume string. 
+        /// The generic version of this constructor will infer the type.</para>
         /// </summary>
-        /// <param name="propertyName">The name of the property in the class</param>
+        /// <param name="propertyName">The name of the property in the class. If using C# 6, use nameof to avoid magic strings</param>
         /// <param name="columnName">The name of the column being represented by this property. Defaults to <paramref name="propertyName"/>
         /// <param name="dataType">The data type of the <paramref name="propertyName"/> specified. Default is String</param>
         public MyDataColumn(string propertyName, string columnName = null, Type dataType = null)

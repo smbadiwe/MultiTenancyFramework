@@ -24,6 +24,7 @@ namespace MultiTenancyFramework.SimpleInjector
             Container = container ?? new Container();
             Container.Register(typeof(ICommandHandler<>), assemblies);
             Container.Register(typeof(IDbQueryHandler<,>), assemblies);
+            Container.Register(typeof(ICommandHandler<>), assemblies);
 
             var exportedTypes = assemblies.SelectMany(x => x.ExportedTypes);
 

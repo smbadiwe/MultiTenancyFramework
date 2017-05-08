@@ -53,12 +53,16 @@ namespace ConsoleTests
                     IsDeleted = true,
                 },
             };
+            UserRole x;
             return await roles.ToDataTable(new[] {
-                new MyDataColumn<UserRole>(x => x.DateCreated),
-                new MyDataColumn<UserRole>(x => x.IsDeleted),
-                new MyDataColumn<UserRole>(x => x.IsDisabled),
-                new MyDataColumn<UserRole>(x => x.Name),
-                new MyDataColumn<UserRole>(x => x.Description),
+                new MyDataColumn<UserRole>(c => c.DateCreated),
+                //new MyDataColumn(nameof(x.DateCreated)),
+                //new MyDataColumn(nameof(x.IsDeleted)),
+                //new MyDataColumn(nameof(x.IsDisabled)),
+                new MyDataColumn<UserRole>(c => c.IsDeleted),
+                new MyDataColumn<UserRole>(c => c.IsDisabled),
+                new MyDataColumn(nameof(x.Name)),
+                new MyDataColumn(nameof(x.Description)),
             })
             .ToExcel(new Dictionary<string, string> { { "Title", "Test Sheet" }, { "For", "FGC Okigwe" }, { "Date Done", DateTime.Now.ToString() } });
         }

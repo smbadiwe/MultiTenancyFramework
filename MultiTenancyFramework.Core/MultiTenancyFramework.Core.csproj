@@ -57,9 +57,13 @@
     <Compile Include="Attributes\EnumDescriptionAttribute.cs" />
     <Compile Include="Attributes\IgnoreInAuditLogAttribute.cs" />
     <Compile Include="Attributes\ValidateUsingPrivilegeForActionAttribute.cs" />
+    <Compile Include="Caching\MemoryCacheManager.cs" />
+    <Compile Include="Caching\NopNullCache.cs" />
+    <Compile Include="Caching\PerRequestCacheManager.cs" />
     <Compile Include="Commands\CommandProcessor.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandProcessor.cs" />
+    <Compile Include="Caching\ICacheManager.cs" />
     <Compile Include="Data\IDataInitializer.cs" />
     <Compile Include="Data\IPrivilegeDAO.cs" />
     <Compile Include="Data\Queries\GetPhotosByOwnerIdAndImageTypeQuery.cs" />
@@ -68,6 +72,7 @@
     <Compile Include="Entities\Privilege.cs" />
     <Compile Include="Entities\UserClaim.cs" />
     <Compile Include="Entities\UserLogin.cs" />
+    <Compile Include="Extensions\CacheExtensions.cs" />
     <Compile Include="Extensions\EntityExtensions.cs" />
     <Compile Include="IoC\IoCUtility.cs" />
     <Compile Include="Data\Queries\DbPagingQuery.cs" />

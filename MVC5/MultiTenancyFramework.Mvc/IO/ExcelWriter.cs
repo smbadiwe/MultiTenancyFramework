@@ -116,13 +116,10 @@ namespace MultiTenancyFramework.IO
                         {
                             WriteToXlsx(worksheet, item, row++, UseDropdownlistsForAssociatedEntities);
                         }
-
-                        var file = new FileInfo(@"C:\SOMA\Deeds\OpenSourceProjs\MultiTenancyFramework\MyTestExcel.xlsx");
                         
-                        xlPackage.SaveAs(file); 
-                        //xlPackage..Save();
+                        xlPackage.Save();
                     }
-                    return new byte[0]; // stream.ToArray();
+                    return stream.ToArray();
                 }
             });
         }

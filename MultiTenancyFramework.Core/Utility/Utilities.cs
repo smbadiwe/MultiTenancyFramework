@@ -1,12 +1,15 @@
-﻿using MultiTenancyFramework.Commands;
+﻿using MultiTenancyFramework.Caching;
+using MultiTenancyFramework.Commands;
 using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
 using System;
 using System.Runtime.Caching;
 
-namespace MultiTenancyFramework {
-    public class Utilities {
+namespace MultiTenancyFramework
+{
+    public class Utilities
+    {
         /// <summary>
         /// Default Institution Code
         /// </summary>
@@ -18,10 +21,12 @@ namespace MultiTenancyFramework {
 
         private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         private static Random random = new Random();
-        public static string GenerateRandomAlphanumericText(int length) {
+        public static string GenerateRandomAlphanumericText(int length)
+        {
             var stringChars = new char[length];
 
-            for (int i = 0; i < stringChars.Length; i++) {
+            for (int i = 0; i < stringChars.Length; i++)
+            {
                 stringChars[i] = chars[random.Next(chars.Length)];
             }
 
@@ -42,8 +47,10 @@ namespace MultiTenancyFramework {
         /// The default value is "Password@1". To change it, add key: 'DefaultPassword' to your appSettings in your config file.
         /// <para>When changing, stick to the password rules setup</para>para>
         /// </summary>
-        public static string DefaultPassword {
-            get {
+        public static string DefaultPassword
+        {
+            get
+            {
                 return System.Configuration.ConfigurationManager.AppSettings["DefaultPassword"] ?? "Password@1";
             }
         }
@@ -51,8 +58,10 @@ namespace MultiTenancyFramework {
         /// <summary>
         /// To set it, add key: 'EntityAssemblies' to your appSettings in your config file. If value is more than one items, use comma-separated list
         /// </summary>
-        public static string[] EntityAssemblies {
-            get {
+        public static string[] EntityAssemblies
+        {
+            get
+            {
                 var items = ConfigurationHelper.AppSettingsItem<string>("EntityAssemblies")?.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
                 if (items == null) return new string[0];
 
@@ -60,8 +69,10 @@ namespace MultiTenancyFramework {
             }
         }
 
-        public static ILogger Logger {
-            get {
+        public static ILogger Logger
+        {
+            get
+            {
                 return MyServiceLocator.GetInstance<ILogger>();
             }
         }
@@ -72,27 +83,34 @@ namespace MultiTenancyFramework {
 
         private const string SS_SYS_SETTINGS = "::SystemSettings::";
 
-        public static SystemSetting SystemSettings {
-            get {
-                if (MemoryCache.Default != null) {
-                    var item = MemoryCache.Default[SS_SYS_SETTINGS] as SystemSetting;
-                    if (item == null) {
-                        var dao = MyServiceLocator.GetInstance<ICoreDAO<SystemSetting>>();
-                        try {
-                            item = dao.RetrieveOne();
-                            if (item == null) return new SystemSetting();
-                        } catch (Exception ex) {
-                            Logger.Log(ex);
-                            return new SystemSetting();
-                        }
-                        MemoryCache.Default[SS_SYS_SETTINGS] = item;
+        public static SystemSetting SystemSettings
+        {
+            get
+            {
+                var cache = MyServiceLocator.GetInstance<ICacheManager>();
+
+                var item = cache.Get<SystemSetting>(SS_SYS_SETTINGS);
+                if (item == null)
+                {
+                    var dao = MyServiceLocator.GetInstance<ICoreDAO<SystemSetting>>();
+                    try
+                    {
+                        item = dao.RetrieveOne();
+                        if (item == null) return new SystemSetting();
                     }
-                    return item;
+                    catch (Exception ex)
+                    {
+                        Logger.Log(ex);
+                        return new SystemSetting();
+                    }
+                    cache.Set(SS_SYS_SETTINGS, item);
                 }
-                return null;
+                return item;
             }
-            set {
-                if (MemoryCache.Default != null) {
+            set
+            {
+                if (MemoryCache.Default != null)
+                {
                     MemoryCache.Default[SS_SYS_SETTINGS] = value;
                 }
             }
