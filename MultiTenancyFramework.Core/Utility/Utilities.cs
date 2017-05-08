@@ -4,7 +4,6 @@ using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
 using System;
-using System.Runtime.Caching;
 
 namespace MultiTenancyFramework
 {
@@ -103,16 +102,15 @@ namespace MultiTenancyFramework
                         Logger.Log(ex);
                         return new SystemSetting();
                     }
-                    cache.Set(SS_SYS_SETTINGS, item);
+                    cache.Set(SS_SYS_SETTINGS, item, 1440); // 24 hrs
                 }
                 return item;
             }
             set
             {
-                if (MemoryCache.Default != null)
-                {
-                    MemoryCache.Default[SS_SYS_SETTINGS] = value;
-                }
+                var cache = MyServiceLocator.GetInstance<ICacheManager>();
+
+                cache.Set(SS_SYS_SETTINGS, value, 1440);  // 24 hrs
             }
         }
 

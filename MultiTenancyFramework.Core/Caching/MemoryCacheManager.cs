@@ -36,14 +36,14 @@ namespace MultiTenancyFramework.Caching
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="data">Data</param>
-        /// <param name="cacheTime">Cache time</param>
+        /// <param name="cacheTime">Cache time in minutes</param>
         public virtual void Set(string key, object data, int cacheTime)
         {
             if (data == null)
                 return;
 
             var policy = new CacheItemPolicy();
-            policy.AbsoluteExpiration = DateTime.Now + TimeSpan.FromMinutes(cacheTime);
+            policy.AbsoluteExpiration = DateTime.UtcNow + TimeSpan.FromMinutes(cacheTime);
             Cache.Add(new CacheItem(key, data), policy);
         }
 
@@ -54,7 +54,7 @@ namespace MultiTenancyFramework.Caching
         /// <returns>Result</returns>
         public virtual bool IsSet(string key)
         {
-            return (Cache.Contains(key));
+            return Cache.Contains(key);
         }
 
         /// <summary>
@@ -89,6 +89,7 @@ namespace MultiTenancyFramework.Caching
         /// </summary>
         public virtual void Dispose()
         {
+            MemoryCache.Default.Dispose();
         }
     }
 }

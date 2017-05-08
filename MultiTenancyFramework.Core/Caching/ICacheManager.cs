@@ -20,7 +20,7 @@ namespace MultiTenancyFramework.Caching
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="data">Data</param>
-        /// <param name="cacheTime">Cache time</param>
+        /// <param name="cacheTime">Cache time in minutes</param>
         void Set(string key, object data, int cacheTime);
 
         /// <summary>

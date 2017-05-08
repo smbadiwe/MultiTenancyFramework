@@ -1,4 +1,5 @@
-﻿using MultiTenancyFramework.Commands;
+﻿using MultiTenancyFramework.Caching;
+using MultiTenancyFramework.Commands;
 using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.IoC;
@@ -19,28 +20,31 @@ namespace MultiTenancyFramework.SimpleInjector
         /// <param name="container">The Simple Injector container</param>
         public BaseContainer(string[] assembliesToScan = null, Container container = null)
         {
+            if (container == null)
+            {
+                container = new Container();
+            }
+
             var assemblies = IoCUtility.GetAssembliesForRegistration("MultiTenancyFramework.SimpleInjector", assembliesToScan);
 
-            Container = container ?? new Container();
-            Container.Register(typeof(ICommandHandler<>), assemblies);
-            Container.Register(typeof(IDbQueryHandler<,>), assemblies);
-            Container.Register(typeof(ICommandHandler<>), assemblies);
+            container.Register(typeof(ICommandHandler<>), assemblies);
+            container.Register(typeof(IDbQueryHandler<,>), assemblies);
 
             var exportedTypes = assemblies.SelectMany(x => x.ExportedTypes);
 
             #region Known Cases. This part is made necessary due to a limitation of Simple Injector
             var types = exportedTypes.Where(x => x.IsGenericType && x.Name.StartsWith("CoreDAO")).ToArray();
-            Container.Register(typeof(ICoreDAO<,>), types.First(x => x.Name.EndsWith("2")));
-            Container.Register(typeof(ICoreDAO<>), types.First(x => x.Name.EndsWith("1")));
+            container.Register(typeof(ICoreDAO<,>), types.First(x => x.Name.EndsWith("2")));
+            container.Register(typeof(ICoreDAO<>), types.First(x => x.Name.EndsWith("1")));
 
             types = exportedTypes.Where(x => x.IsGenericType && x.Name.StartsWith("PrivilegeDAO")).ToArray();
-            Container.Register(typeof(IPrivilegeDAO<>), types.First(x => x.Name.EndsWith("1")));
+            container.Register(typeof(IPrivilegeDAO<>), types.First(x => x.Name.EndsWith("1")));
 
             types = exportedTypes.Where(x => x.IsGenericType && x.Name.StartsWith("AppUserDAO")).ToArray();
-            Container.Register(typeof(IAppUserDAO<>), types.First(x => x.Name.EndsWith("1")));
+            container.Register(typeof(IAppUserDAO<>), types.First(x => x.Name.EndsWith("1")));
 
             types = exportedTypes.Where(x => x.IsGenericType && x.Name.StartsWith("InstitutionDAO")).ToArray();
-            Container.Register(typeof(IInstitutionDAO<>), types.First(x => x.Name.EndsWith("1")));
+            container.Register(typeof(IInstitutionDAO<>), types.First(x => x.Name.EndsWith("1")));
             #endregion
 
             // This is for convention-based registrations. Convention is IService/Service
@@ -55,11 +59,16 @@ namespace MultiTenancyFramework.SimpleInjector
             registrations = registrations.ToArray();
             foreach (var reg in registrations)
             {
-                Container.Register(reg.Service, reg.Implementation);
+                container.Register(reg.Service, reg.Implementation);
             }
 
+            // Cache Manager
+            container.Register<ICacheManager, MemoryCacheManager>(Lifestyle.Singleton);
+
             // Finally...
-            Container.Register(typeof(IServiceProvider), () => Container);
+            container.Register(typeof(IServiceProvider), () => container);
+
+            Container = container;
         }
     }
 }

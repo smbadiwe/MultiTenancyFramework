@@ -94,7 +94,8 @@ namespace MultiTenancyFramework.Mvc
         {
             get
             {
-                return string.IsNullOrWhiteSpace(InstitutionCode) || InstitutionCode == Utilities.INST_DEFAULT_CODE;
+                var instCode = InstitutionCode;
+                return string.IsNullOrWhiteSpace(instCode) || instCode == Utilities.INST_DEFAULT_CODE;
             }
         }
 
@@ -126,7 +127,30 @@ namespace MultiTenancyFramework.Mvc
 
                     return inst.Code;
                 }
-                throw new LogOutUserException(); // Code should never reach here.
+                else
+                {
+                    var toLog = "Why are we being logged out?\n";
+                    if (HttpContext.Current == null)
+                    {
+                        toLog += "HttpContext.Current is null.";
+                    }
+                    else
+                    {
+                        if (HttpContext.Current.Request == null)
+                        {
+                            toLog += "HttpContext.Current.Request is null.";
+                        }
+                        else
+                        {
+                            if (HttpContext.Current.Request.RequestContext == null)
+                            {
+                                toLog += "HttpContext.Current.Request.RequestContext is null.";
+                            }
+                        }
+                    }
+                    Utilities.Logger.Log(toLog);
+                    throw new LogOutUserException(); // Code should never reach here.
+                }
             }
             set
             {

@@ -7,21 +7,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
-namespace MultiTenancyFramework.Mvc {
+namespace MultiTenancyFramework.Mvc
+{
     /// <summary>
     /// Provides core functionalities for the framework, especially authorization and exception handling
     /// </summary>
-    public abstract class CoreController : Controller {
+    public abstract class CoreController : Controller
+    {
         private IDbQueryProcessor _queryProcessor;
 
         /// <summary>
         /// Query Processor to process queries
         /// </summary>
-        protected IDbQueryProcessor QueryProcessor {
-            get {
+        protected IDbQueryProcessor QueryProcessor
+        {
+            get
+            {
                 if (_queryProcessor == null) _queryProcessor = Utilities.QueryProcessor;
 
-                _queryProcessor.InstitutionCode = WebUtilities.InstitutionCode;
+                _queryProcessor.InstitutionCode = InstitutionCode;
                 return _queryProcessor;
             }
         }
@@ -31,21 +35,32 @@ namespace MultiTenancyFramework.Mvc {
         /// <summary>
         /// Command Processor to execute commands
         /// </summary>
-        protected ICommandProcessor CommandProcessor {
-            get {
+        protected ICommandProcessor CommandProcessor
+        {
+            get
+            {
                 if (_commandProcessor == null) _commandProcessor = Utilities.CommandProcessor;
                 return _commandProcessor;
             }
         }
 
         /// <summary>
-        /// = RouteData.Values["institution"]. It's appearing in too many controllers now.
+        /// = Request.RequestContext.RouteData.Values["institution"]. It's appearing in too many controllers now.
         /// BTW, there is also WebUtilities.InstitutionCode which essentially same, just that that one
         /// will force logout if Session has expired, unlike this one. So, use with caution
         /// </summary>
-        protected string InstitutionCode {
-            get {
-                return Convert.ToString(RouteData.Values["institution"]);
+        protected string InstitutionCode
+        {
+            get
+            {
+                try
+                {
+                    return Convert.ToString(Request.RequestContext.RouteData.Values["institution"]);
+                }
+                catch (Exception)
+                {
+                    return WebUtilities.InstitutionCode;
+                }
             }
         }
 
@@ -53,8 +68,10 @@ namespace MultiTenancyFramework.Mvc {
         /// <summary>
         /// Logger to log errors and/or messages
         /// </summary>
-        protected ILogger Logger {
-            get {
+        protected ILogger Logger
+        {
+            get
+            {
                 if (_logger == null) _logger = Utilities.Logger;
                 return _logger;
             }
@@ -71,7 +88,8 @@ namespace MultiTenancyFramework.Mvc {
         /// Current datetime
         /// </summary>
         /// <returns></returns>
-        protected DateTime Now() {
+        protected DateTime Now()
+        {
             return DateTime.Now.GetLocalTime();
         }
 
@@ -80,14 +98,18 @@ namespace MultiTenancyFramework.Mvc {
         /// <summary>
         /// The name of the folder where the views for this controller are. This will usually be (and is defauletd to) the controller name
         /// </summary>
-        public virtual string ViewFolder {
-            get {
-                if (string.IsNullOrWhiteSpace(_viewFolder)) {
+        public virtual string ViewFolder
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_viewFolder))
+                {
                     _viewFolder = this.GetType().Name.Replace("Controller", "");
                 }
                 return _viewFolder;
             }
-            set {
+            set
+            {
                 _viewFolder = value;
             }
         }
@@ -96,11 +118,16 @@ namespace MultiTenancyFramework.Mvc {
         /// The area name. Unless overridden, value is Request.RequestContext.RouteData.Values["area"].
         /// However, we recommend you override it since you know what it is at design time.
         /// </summary>
-        public virtual string AreaName {
-            get {
-                try {
+        public virtual string AreaName
+        {
+            get
+            {
+                try
+                {
                     return Convert.ToString(Request.RequestContext.RouteData.Values["area"]);
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
                     return string.Empty;
                 }
             }
@@ -111,10 +138,12 @@ namespace MultiTenancyFramework.Mvc {
         /// <para>We know where the views are, and there's a convention - ~/Views/{ViewFolder}/{viewName}.cshtml OR ~/Areas/{AreaName}/Views/{ViewFolder}/{viewName}.cshtml</para>
         /// </summary>
         /// <param name="viewName"></param>
-        protected virtual string GetViewName(string viewName = "Index") {
+        protected virtual string GetViewName(string viewName = "Index")
+        {
             if (string.IsNullOrWhiteSpace(ViewFolder)) return viewName;
 
-            if (string.IsNullOrWhiteSpace(AreaName)) {
+            if (string.IsNullOrWhiteSpace(AreaName))
+            {
                 return $"~/Views/{ViewFolder}/{viewName}.cshtml";
             }
             return $"~/Areas/{AreaName}/Views/{ViewFolder}/{viewName}.cshtml";
@@ -127,7 +156,8 @@ namespace MultiTenancyFramework.Mvc {
         /// <param name="controllerName"></param>
         /// <param name="institutionCode"></param>
         /// <returns></returns>
-        protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string institutionCode) {
+        protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string institutionCode)
+        {
             return RedirectToAction(actionName, controllerName, "", institutionCode);
         }
 
@@ -139,20 +169,27 @@ namespace MultiTenancyFramework.Mvc {
         /// <param name="areaName"></param>
         /// <param name="institutionCode"></param>
         /// <returns></returns>
-        protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string areaName, string institutionCode) {
+        protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string areaName, string institutionCode)
+        {
             if (string.IsNullOrWhiteSpace(actionName)) throw new ArgumentNullException("action");
             var routes = new System.Web.Routing.RouteValueDictionary();
-            if (!string.IsNullOrWhiteSpace(controllerName)) {
+            if (!string.IsNullOrWhiteSpace(controllerName))
+            {
                 routes.Add("controller", controllerName);
             }
-            if (!string.IsNullOrWhiteSpace(areaName)) {
+            if (!string.IsNullOrWhiteSpace(areaName))
+            {
                 routes.Add("area", areaName);
-            } else {
-                if (controllerName == "Error") {
+            }
+            else
+            {
+                if (controllerName == "Error")
+                {
                     routes.Add("area", "");
                 }
             }
-            if (!string.IsNullOrWhiteSpace(institutionCode)) {
+            if (!string.IsNullOrWhiteSpace(institutionCode))
+            {
                 routes.Add("institution", institutionCode);
             }
             return RedirectToAction(actionName, routes);
@@ -162,12 +199,14 @@ namespace MultiTenancyFramework.Mvc {
         /// Redirects to \Error
         /// </summary>
         /// <returns></returns>
-        protected RedirectToRouteResult HttpAccessDenied() {
+        protected RedirectToRouteResult HttpAccessDenied()
+        {
 
             var values = RouteData.Values;
             string actionAttempted = Convert.ToString(values["action"]);
             var urlAccessed = string.Format("{0}/{1}/{2}/{3}", InstitutionCode, values["area"], values["controller"], actionAttempted);
-            TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel((string.Format("You are not authorized to access this page.{0} Contact administrator.", !string.IsNullOrWhiteSpace(actionAttempted) ? $" [Endpoint: '{actionAttempted}']." : ""))) {
+            TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel((string.Format("You are not authorized to access this page.{0} Contact administrator.", !string.IsNullOrWhiteSpace(actionAttempted) ? $" [Endpoint: '{actionAttempted}']." : "")))
+            {
                 AreaName = Convert.ToString(values["area"]),
                 FromUrl = urlAccessed,
                 RenderErrorPageFully = true
@@ -181,7 +220,8 @@ namespace MultiTenancyFramework.Mvc {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        protected ViewResult ErrorView(ErrorMessageModel model) {
+        protected ViewResult ErrorView(ErrorMessageModel model)
+        {
             return View("Error", model);
         }
 
@@ -190,37 +230,45 @@ namespace MultiTenancyFramework.Mvc {
         /// </summary>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        protected ViewResult ErrorView(string errorMessage) {
+        protected ViewResult ErrorView(string errorMessage)
+        {
             return View("Error", new ErrorMessageModel(errorMessage));
         }
 
-        protected void AlertSuccess(string message, bool dismissable = true, bool clearModel = true) {
+        protected void AlertSuccess(string message, bool dismissable = true, bool clearModel = true)
+        {
             AddAlert(AlertStyles.Success, message, dismissable);
             if (clearModel) ModelState.Clear();
         }
 
-        protected void AlertInformation(string message, bool dismissable = true) {
+        protected void AlertInformation(string message, bool dismissable = true)
+        {
             AddAlert(AlertStyles.Information, message, dismissable);
         }
 
-        protected void AlertWarning(string message, bool dismissable = false) {
+        protected void AlertWarning(string message, bool dismissable = false)
+        {
             AddAlert(AlertStyles.Warning, message, dismissable);
         }
 
-        protected void AlertFailure(string message = "Failure processing request", bool dismissable = false) {
+        protected void AlertFailure(string message = "Failure processing request", bool dismissable = false)
+        {
             AddAlert(AlertStyles.Danger, message, dismissable);
         }
 
-        protected void AlertFailureInvalidModel(bool dismissable = false) {
+        protected void AlertFailureInvalidModel(bool dismissable = false)
+        {
             AddAlert(AlertStyles.Danger, "One or more data items received is invalid", dismissable);
         }
 
-        private void AddAlert(string alertStyle, string message, bool dismissable) {
+        private void AddAlert(string alertStyle, string message, bool dismissable)
+        {
             var alerts = TempData.ContainsKey(Alert.TempDataKey)
                 ? (List<Alert>)TempData[Alert.TempDataKey]
                 : new List<Alert>();
 
-            alerts.Add(new Alert {
+            alerts.Add(new Alert
+            {
                 AlertStyle = alertStyle,
                 Message = message,
                 Dismissable = dismissable
