@@ -10,7 +10,7 @@ namespace MultiTenancyFramework.Entities
     public abstract class Entity<idT> : IEntity<idT> where idT : IEquatable<idT>
     {
         //[IgnoreInAuditLog]
-        public virtual DateTime DateCreated { get; set; } = DateTime.Now;
+        public virtual DateTime DateCreated { get; set; } = DateTime.Now.GetLocalTime();
         public virtual idT Id { get; set; }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace MultiTenancyFramework.Entities
         //[IgnoreInAuditLog]
         public virtual string InstitutionCode { get; set; } = string.Empty; //This is important for our DB sake
         //[IgnoreInAuditLog]
-        public virtual DateTime LastDateModified { get; set; } = DateTime.Now;
+        public virtual DateTime LastDateModified { get; set; } = DateTime.Now.GetLocalTime();
         public virtual string Name { get; set; }
         public virtual bool IsDisabled { get; set; }
         public virtual bool IsDeleted { get; set; }

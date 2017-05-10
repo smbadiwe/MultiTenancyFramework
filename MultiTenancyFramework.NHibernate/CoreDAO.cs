@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace MultiTenancyFramework.NHibernate
 {
@@ -334,7 +335,16 @@ namespace MultiTenancyFramework.NHibernate
             {
                 item.InstitutionCode = InstitutionCode;
             }
-            SqlManipulations.SqlBulkInsert<T, idT>(items, connection, tableName, EntityName, isDataMigration, schema);
+            try
+            {
+                Task.Run(() => SqlManipulations.SqlBulkInsert<T, idT>(items, connection, tableName, EntityName, isDataMigration, schema))
+                        .Wait();
+            }
+            catch (AggregateException ex)
+            {
+                Utilities.Logger.Log(ex);
+                throw new GeneralException("Could not (bulk-)insert the requested items.");
+            }
         }
 
         public void SqlBulkInsert(Type TType, IList items, bool isDataMigration = false, string schema = "dbo")

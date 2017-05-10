@@ -81,8 +81,9 @@ namespace MultiTenancyFramework.IO
                 i = 0;
                 foreach (var cell in drow)
                 {
-                    IOManager.GetExportString(cell, dataTable.Columns[cell.Key], replaceNullsWithDefaultValue);
-                    
+                    var exportStr = IOManager.GetExportString(cell, dataTable.Columns[cell.Key], replaceNullsWithDefaultValue);
+
+                    sw.Write(exportStr);
                     if (i < icolcount - 1)
                     {
                         sw.Write(delimiter);

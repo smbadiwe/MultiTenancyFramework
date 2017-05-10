@@ -12,6 +12,16 @@ using System.Threading.Tasks;
 
 namespace ConsoleTests
 {
+    public class TeacherSubjectClass : Entity
+    {
+        public virtual long TeacherId { get; set; }
+
+        public virtual long ClassId { get; set; }
+
+        public virtual long SubjectId { get; set; }
+
+    }
+
     class Program
     {
         static void Init()
@@ -70,10 +80,31 @@ namespace ConsoleTests
 
         static void Main(string[] args)
         {
-           var rslt =  Index().Result;
+            Init();
+            var list = new List<TeacherSubjectClass>();
+            list.Add(new TeacherSubjectClass
+            {
+                TeacherId = 99,
+                ClassId = 199,
+                SubjectId = 299
+            });
+            list.Add(new TeacherSubjectClass
+            {
+                TeacherId = 99,
+                ClassId = 199,
+                SubjectId = 399
+            });
+            list.Add(new TeacherSubjectClass
+            {
+                TeacherId = 99,
+                ClassId = 199,
+                SubjectId = 499
+            });
             //testSplitCamelCase();
-            //var dao = new MultiTenancyFramework.NHibernate.CoreDAO<Institution>();
-            //var school = dao.RetrieveAll();
+            var dao = new MultiTenancyFramework.NHibernate.CoreDAO<TeacherSubjectClass>();
+            dao.InstitutionCode = "ME2LQ";
+            //dao.SqlBulkInsert(list);
+
             Console.ReadKey();
         }
 

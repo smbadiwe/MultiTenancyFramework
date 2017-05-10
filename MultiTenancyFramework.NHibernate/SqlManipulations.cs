@@ -12,6 +12,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace MultiTenancyFramework.NHibernate
@@ -70,7 +71,7 @@ namespace MultiTenancyFramework.NHibernate
         /// <param name="entityName"></param>
         /// <param name="isDataMigration">For SQL Server: if true, then we need to Keep Identity</param>
         /// <param name="schema">For SQL Server: To be appended to the table name</param>
-        public static void SqlBulkInsert<T, idT>(IList<T> items, IDbConnection connection, string tableName, string entityName = null, bool isDataMigration = false, string schema = "dbo") where T : class, IEntity<idT> where idT : IEquatable<idT>
+        public static async Task SqlBulkInsert<T, idT>(IList<T> items, IDbConnection connection, string tableName, string entityName = null, bool isDataMigration = false, string schema = "dbo") where T : class, IEntity<idT> where idT : IEquatable<idT>
         {
             if (items == null) return;
             if (items.Count == 0)
@@ -95,10 +96,10 @@ namespace MultiTenancyFramework.NHibernate
             }
 
             //Finally...
-            DoBulkInsert(dt, connection, tableName, isDataMigration, schema);
+            await DoBulkInsert(dt, connection, tableName, isDataMigration, schema);
         }
 
-        private static void DoBulkInsert(MyDataTable dt, IDbConnection connection, string tableName, bool isDataMigration = false, string schema = "dbo")
+        private static async Task DoBulkInsert(MyDataTable dt, IDbConnection connection, string tableName, bool isDataMigration = false, string schema = "dbo")
         {
             if (connection.State == ConnectionState.Open)
             {
@@ -127,7 +128,7 @@ namespace MultiTenancyFramework.NHibernate
                 string fieldTerminator = "\t";
                 string lineTerminator = "\r\n";
                 //Generate csv file from where data read
-                IO.CsvWriter.CreateCSVfile(dt, theFile, true, fieldTerminator);
+                await IO.CsvWriter.CreateCSVfile(dt, theFile, true, fieldTerminator);
                 try
                 {
                     RunMySqlCommand(con, "SET FOREIGN_KEY_CHECKS=0");
