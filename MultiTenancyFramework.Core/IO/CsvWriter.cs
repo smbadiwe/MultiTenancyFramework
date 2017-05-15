@@ -84,7 +84,7 @@ namespace MultiTenancyFramework.IO
                     var exportStr = IOManager.GetExportString(cell, dataTable.Columns[cell.Key], replaceNullsWithDefaultValue);
 
                     sw.Write(exportStr);
-                    if (i < icolcount - 1)
+                    if (i < icolcount - 1) // which will be at the last item in this inner loop
                     {
                         sw.Write(delimiter);
                     }

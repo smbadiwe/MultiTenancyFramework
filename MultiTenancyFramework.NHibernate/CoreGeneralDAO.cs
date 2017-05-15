@@ -27,7 +27,7 @@ namespace MultiTenancyFramework.NHibernate
                 _institutionCode = value;
             }
         }
-        
+
         public string EntityName { get; set; }
 
         public CoreGeneralDAO()
@@ -75,7 +75,8 @@ namespace MultiTenancyFramework.NHibernate
         }
 
         /// <summary>
-        /// Run a query using ADO.NET. Default implementation supports SQL Server and MySql
+        /// Run a query using ADO.NET. Default implementation supports SQL Server and MySql.
+        /// This uses command.ExecuteNonQuery();, so is fit for non-select queries
         /// </summary>
         /// <param name="query">The query to run.</param>
         public virtual void RunDirectQueryADODotNET(string query, bool closeConnection = false)
@@ -83,19 +84,16 @@ namespace MultiTenancyFramework.NHibernate
             var session = BuildSession();
             var connection = session.Connection;
 
-            if (connection.State != ConnectionState.Open) connection.Open();
-            DbCommand command;
-            if (connection is MySqlConnection)
+            if (connection.State != ConnectionState.Open)
             {
-                command = new MySqlCommand(query, connection as MySqlConnection);
+                connection.Open();
             }
-            else
+            using (var command = connection.CreateCommand())
             {
-                command = new SqlCommand(query, connection as SqlConnection);
-            }
-            using (command)
-            {
-                command.ExecuteScalar();
+                command.CommandTimeout = 120;
+                command.CommandText = query;
+                int rows = command.ExecuteNonQuery();
+                Utilities.Logger.Log($"Query Ran:\n{query}.\nRows Affected: {rows}. Database: {connection.Database}");
             }
             if (closeConnection)
             {
