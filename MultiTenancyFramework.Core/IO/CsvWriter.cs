@@ -51,7 +51,7 @@ namespace MultiTenancyFramework.IO
                 return theByte;
             });
         }
-
+        
         private static void WriteFile(StreamWriter sw, MyDataTable dataTable, IDictionary<string, string> headerItems = null,
             bool replaceNullsWithDefaultValue = false, string delimiter = ",", bool doColumnNames = false)
         {
@@ -83,6 +83,10 @@ namespace MultiTenancyFramework.IO
                 {
                     var exportStr = IOManager.GetExportString(cell, dataTable.Columns[cell.Key], replaceNullsWithDefaultValue);
 
+                    if (exportStr.Contains(delimiter))
+                    {
+                        exportStr = "\"" + exportStr + "\"";
+                    }
                     sw.Write(exportStr);
                     if (i < icolcount - 1) // which will be at the last item in this inner loop
                     {
@@ -93,6 +97,50 @@ namespace MultiTenancyFramework.IO
                 sw.Write(sw.NewLine);
             }
         }
+
+
+        //private static void WriteFile_CSVHelper(StreamWriter sw, MyDataTable dataTable, IDictionary<string, string> headerItems = null,
+        //    bool replaceNullsWithDefaultValue = false, string delimiter = ",", bool doColumnNames = false)
+        //{
+        //    using (var csv = new CsvHelper.CsvWriter(sw))
+        //    {
+        //        // General Titles
+        //        if (headerItems != null && headerItems.Count > 0)
+        //        {
+        //            foreach (var item in headerItems)
+        //            {
+        //                csv.WriteField(item.Key);
+        //                csv.WriteField(item.Value);
+        //                csv.NextRecord();
+        //            }
+        //        }
+
+        //        if (doColumnNames)
+        //        {
+        //            // The Column Titles
+        //            foreach (var col in dataTable.Columns.Keys)
+        //            {
+        //                csv.WriteField(col);
+        //            }
+        //            csv.NextRecord();
+        //        }
+                
+        //        // The rows
+        //        int icolcount = dataTable.Columns.Count;
+        //        int i;
+        //        foreach (MyDataRow drow in dataTable.Rows)
+        //        {
+        //            i = 0;
+        //            foreach (var cell in drow)
+        //            {
+        //                var exportStr = IOManager.GetExportString(cell, dataTable.Columns[cell.Key], replaceNullsWithDefaultValue);
+        //                csv.WriteField(exportStr);
+        //            }
+        //            csv.NextRecord();
+        //        }
+        //    }
+
+        //}
 
     }
 }

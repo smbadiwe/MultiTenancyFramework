@@ -9,11 +9,16 @@ namespace MultiTenancyFramework.IO
         public static string GetExportString(KeyValuePair<string, object> column, MyDataColumn dataCol, bool replaceNullsWithDefaultValue)
         {
             #region Write cell data
-            object valueToWrite = null;
             if (!Convert.IsDBNull(column.Value))
             {
-                valueToWrite = column.Value;
-                if (dataCol.DataType == typeof(DateTime))
+                object valueToWrite = column.Value;
+                Type t = typeof(decimal), objType = valueToWrite.GetType();
+                if (dataCol.DataType == t || objType == t)
+                {
+                    return Convert.ToDecimal(valueToWrite).ToMoney();
+                }
+                t = typeof(DateTime);
+                if (dataCol.DataType == t || objType == t)
                 {
                     return Convert.ToDateTime(valueToWrite).ToString("yyyy-MM-dd HH:mm:ss");
                 }
@@ -27,7 +32,11 @@ namespace MultiTenancyFramework.IO
                     {
                         return new DateTime(1900, 1, 1).ToString("yyyy-MM-dd HH:mm:ss");
                     }
-                    else if (dataCol.DataType == typeof(bool))
+                    if (dataCol.DataType == typeof(decimal))
+                    {
+                        return "0.00";
+                    }
+                    if (dataCol.DataType == typeof(bool))
                     {
                         return "False";
                     }

@@ -84,16 +84,19 @@ namespace MultiTenancyFramework.NHibernate
             var session = BuildSession();
             var connection = session.Connection;
 
-            if (connection.State != ConnectionState.Open)
+            if (connection.State == ConnectionState.Open)
             {
-                connection.Open();
+                // For some reason I can't tell, if you use the already open conection, the query does not run.
+                // So I close it and re-open it.
+                connection.Close();
             }
+            connection.Open();
             using (var command = connection.CreateCommand())
             {
                 command.CommandTimeout = 120;
                 command.CommandText = query;
                 int rows = command.ExecuteNonQuery();
-                Utilities.Logger.Log($"Query Ran:\n{query}.\nRows Affected: {rows}. Database: {connection.Database}");
+                Utilities.Logger.Log($"Query Ran:\n{query}\nRows Affected: {rows}. Database: {connection.Database}");
             }
             if (closeConnection)
             {
