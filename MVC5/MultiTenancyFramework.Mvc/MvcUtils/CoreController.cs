@@ -172,27 +172,37 @@ namespace MultiTenancyFramework.Mvc
         protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string areaName, string institutionCode)
         {
             if (string.IsNullOrWhiteSpace(actionName)) throw new ArgumentNullException("action");
-            var routes = new System.Web.Routing.RouteValueDictionary();
+            var routeValues = new System.Web.Routing.RouteValueDictionary();
+            routeValues.Add("action", actionName);
             if (!string.IsNullOrWhiteSpace(controllerName))
             {
-                routes.Add("controller", controllerName);
+                routeValues.Add("controller", controllerName);
             }
             if (!string.IsNullOrWhiteSpace(areaName))
             {
-                routes.Add("area", areaName);
+                routeValues.Add("area", areaName);
             }
             else
             {
                 if (controllerName == "Error")
                 {
-                    routes.Add("area", "");
+                    routeValues.Add("area", "");
                 }
             }
             if (!string.IsNullOrWhiteSpace(institutionCode))
             {
-                routes.Add("institution", institutionCode);
+                routeValues.Add("institution", institutionCode);
             }
-            return RedirectToAction(actionName, routes);
+            else
+            {
+                routeValues.Add("institution", Utilities.INST_DEFAULT_CODE);
+            }
+
+            if (!string.IsNullOrWhiteSpace(areaName))
+            {
+                return RedirectToRoute(MvcUtility.GetRouteNameForArea(areaName), routeValues);
+            }
+            return RedirectToRoute(routeValues);
         }
 
         /// <summary>

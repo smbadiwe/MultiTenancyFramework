@@ -71,7 +71,7 @@ namespace System.Web.Mvc
                 routes = new RouteValueDictionary(routeValues);
             }
             routes["institution"] = HttpContext.Current.Request.RequestContext.RouteData.Values["institution"];
-            if (areaName != null)
+            if (areaName != null) // don't do 'if (!string.IsNullOrWhiteSpace(areaName))'
             {
                 routes["area"] = areaName;
             }
@@ -79,11 +79,18 @@ namespace System.Web.Mvc
             {
                 actionName = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["action"]);
             }
-            if (string.IsNullOrWhiteSpace(controllerName))
+            routes["action"] = actionName;
+            if (!string.IsNullOrWhiteSpace(controllerName))
             {
-                return url.Action(actionName, routes);
+                routes["controller"] = controllerName;
             }
-            return url.Action(actionName, controllerName, routes);
+
+            // Some performance optimization here: .RouteUrl instead of .Action
+            if (!string.IsNullOrWhiteSpace(areaName))
+            {
+                return url.RouteUrl(MultiTenancyFramework.Mvc.MvcUtility.GetRouteNameForArea(areaName), routes);
+            }
+            return url.RouteUrl(routes);
         }
 
     }

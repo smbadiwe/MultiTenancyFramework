@@ -39,9 +39,14 @@ namespace MultiTenancyFramework.Mvc {
             return new RedirectToRouteResult(new System.Web.Routing.RouteValueDictionary(others));
         }
 
+        public static string GetRouteNameForArea(string areaName)
+        {
+            return $"{areaName}_MultiTenant";
+        }
+
         public static void RegisterArea(string areaName, AreaRegistrationContext context) {
             context.MapRoute( //LowerCase(
-                name: $"{areaName}_MultiTenant",
+                name: GetRouteNameForArea(areaName),
                 url: "{institution}/" + areaName + "/{controller}/{action}/{id}",
                 defaults: new { area = areaName, id = UrlParameter.Optional },
                 constraints: new { id = @"\d*" }
