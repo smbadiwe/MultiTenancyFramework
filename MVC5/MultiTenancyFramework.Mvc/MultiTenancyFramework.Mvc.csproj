@@ -141,6 +141,7 @@
     <Compile Include="Identity\ApplicationUserManager.cs" />
     <Compile Include="Entities\IdentityUser.cs" />
     <Compile Include="Identity\MultiTenancyFrameworkSettings.cs" />
+    <Compile Include="Identity\SystemWebCookieManager.cs" />
     <Compile Include="Identity\UserStore.cs" />
     <Compile Include="IO\ExcelWriter.cs" />
     <Compile Include="IO\PropertyByName.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="MvcUtils\MvcUtility.cs" />
     <Compile Include="MvcUtils\MyModelMetadataProvider.cs" />
     <Compile Include="MvcUtils\ValidateUsingPrivilegeForActionAttribute.cs" />
+    <Compile Include="MyMvcServiceLocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SmsService.cs" />
     <Compile Include="WebUtilities.cs" />

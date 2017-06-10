@@ -1,7 +1,8 @@
 ﻿using FluentNHibernate.Mapping;
 using NHibernate;
 
-namespace MultiTenancyFramework.NHibernate.NHManager.Listeners {
+namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
+{
     internal class AppFilterDefinition : FilterDefinition {
         public AppFilterDefinition() {
             //Where IsDeleted != true AND InstitutionCode = :instCode

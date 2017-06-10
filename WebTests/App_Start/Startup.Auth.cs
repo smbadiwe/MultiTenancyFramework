@@ -1,12 +1,12 @@
-﻿using System;
-using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
-using Owin;
 using MultiTenancyFramework;
-using MultiTenancyFramework.Mvc.Identity;
 using MultiTenancyFramework.Entities;
+using MultiTenancyFramework.Mvc.Identity;
+using Owin;
+using System;
 
 namespace SchoolSoul.Web
 {

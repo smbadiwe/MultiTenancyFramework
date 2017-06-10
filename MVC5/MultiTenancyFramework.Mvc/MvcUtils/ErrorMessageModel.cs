@@ -2,7 +2,8 @@
 using System.Net;
 using System.Web.Mvc;
 
-namespace MultiTenancyFramework.Mvc {
+namespace MultiTenancyFramework.Mvc
+{
     public class ErrorMessageModel : HandleErrorInfo {
         public const string ErrorMessageKey = "ErrorMessageKey";
         /// <summary>

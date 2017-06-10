@@ -1,10 +1,8 @@
-﻿using MultiTenancyFramework.Entities;
-using MultiTenancyFramework.Mvc;
-using MultiTenancyFramework.Mvc.Identity;
+﻿using MultiTenancyFramework.Mvc;
+using System;
+using System.Security.Principal;
 using System.Web;
 using System.Web.Routing;
-using System.Security.Principal;
-using System;
 
 namespace MultiTenancyFramework
 {

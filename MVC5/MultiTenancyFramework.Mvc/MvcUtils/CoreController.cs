@@ -1,10 +1,8 @@
 ﻿using MultiTenancyFramework.Commands;
 using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
-using MultiTenancyFramework.Mvc.Logic;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Mvc;
 
 namespace MultiTenancyFramework.Mvc

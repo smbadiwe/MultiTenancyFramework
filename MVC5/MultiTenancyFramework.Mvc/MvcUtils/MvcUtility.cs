@@ -3,7 +3,8 @@ using MultiTenancyFramework.Mvc.Logic;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace MultiTenancyFramework.Mvc {
+namespace MultiTenancyFramework.Mvc
+{
     public static class MvcUtility {
         public const string _TRUE_ICON = "<i class='text-info fa fa-check'></i>";
         public const string _FALSE_ICON = "<i class='text-danger fa fa-close'></i>";

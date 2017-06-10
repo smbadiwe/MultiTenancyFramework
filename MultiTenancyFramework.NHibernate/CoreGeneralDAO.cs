@@ -1,11 +1,7 @@
 ﻿using MultiTenancyFramework.Data;
 using MultiTenancyFramework.NHibernate.NHManager;
-using MySql.Data.MySqlClient;
 using NHibernate;
 using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System;
 
 namespace MultiTenancyFramework.NHibernate
 {

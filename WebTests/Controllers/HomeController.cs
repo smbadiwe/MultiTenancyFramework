@@ -1,14 +1,11 @@
-﻿using MultiTenancyFramework.Mvc;
-using MultiTenancyFramework;
+﻿using MultiTenancyFramework;
+using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
-using MultiTenancyFramework.SimpleInjector;
+using MultiTenancyFramework.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using MultiTenancyFramework.Data;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace WebTests.Controllers
 {

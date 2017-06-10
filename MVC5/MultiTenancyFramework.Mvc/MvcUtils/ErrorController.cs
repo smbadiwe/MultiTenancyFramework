@@ -1,6 +1,7 @@
 ﻿using System.Web.Mvc;
 
-namespace MultiTenancyFramework.Mvc {
+namespace MultiTenancyFramework.Mvc
+{
     [AllowAnonymous]
     public class ErrorController : Controller {
         /// <summary>

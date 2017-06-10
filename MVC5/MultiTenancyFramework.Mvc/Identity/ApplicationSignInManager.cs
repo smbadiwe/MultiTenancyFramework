@@ -5,7 +5,6 @@ using Microsoft.Owin.Security;
 using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.Mvc.Logic;
 using System;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 

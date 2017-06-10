@@ -1,8 +1,8 @@
-﻿using System.Web.Mvc;
-using System.Linq;
-using System;
+﻿using System;
+using System.Web.Mvc;
 
-namespace MultiTenancyFramework.Mvc {
+namespace MultiTenancyFramework.Mvc
+{
     /// <summary>
     /// Our custom Authorize attribute
     /// </summary>

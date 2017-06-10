@@ -1,5 +1,4 @@
 ﻿using MultiTenancyFramework.NHibernate.NHManager;
-using System;
 using System.Web;
 
 namespace MultiTenancyFramework.Mvc.NHibernate

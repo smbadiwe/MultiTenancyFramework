@@ -1,17 +1,13 @@
 ﻿using MultiTenancyFramework;
+using MultiTenancyFramework.Mvc;
 using MultiTenancyFramework.Mvc.MvcUtils;
 using MultiTenancyFramework.NHibernate.NHManager;
 using MultiTenancyFramework.SimpleInjector;
 using SimpleInjector;
 using SimpleInjector.Integration.Web;
 using SimpleInjector.Integration.Web.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
 
 namespace WebTests
 {
@@ -29,10 +25,12 @@ namespace WebTests
             // Simple Injector - other services
             var baseContainer = new BaseContainer(container: container);
 
-            DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(baseContainer.Container));
+            var resolver = new SimpleInjectorDependencyResolver(baseContainer.Container);
+            DependencyResolver.SetResolver(resolver);
 
             // Very Important
             MyServiceLocator.SetIoCContainer(baseContainer.Container);
+            MyMvcServiceLocator.SetIoCContainer(resolver);
 
             // Initialize MVC settings
             AppStartInitializer.Initialize();
