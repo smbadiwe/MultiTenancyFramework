@@ -46,6 +46,8 @@ namespace MultiTenancyFramework.Mvc
             if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
             {
                 // It's not anonymous, so force user to login
+                var error = $"User is not authenticated. Logging out...";
+                Utilities.Logger.Log(error);
                 WebUtilities.LogOut();
                 filterContext.Result = MvcUtility.GetLoginPageResult(instCode);
                 return;
@@ -59,6 +61,8 @@ namespace MultiTenancyFramework.Mvc
             // should have at least one user privllege
             if (userPrivList == null)
             {
+                var error = $"userPrivList is null for user: {filterContext.HttpContext.User.Identity.Name}. Logging out...";
+                Utilities.Logger.Log(error);
                 WebUtilities.LogOut();
                 filterContext.Result = MvcUtility.GetLoginPageResult(instCode);
                 return;

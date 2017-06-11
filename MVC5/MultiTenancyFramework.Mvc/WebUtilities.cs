@@ -38,8 +38,9 @@ namespace MultiTenancyFramework.Mvc
 
                     return privs;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Utilities.Logger.Log(new GeneralException("Called WebUtilities.LoggedInUsersPrivilegesDict: Error getting LoggedInUsersPrivileges from session", ex));
                     throw new LogOutUserException();
                 }
             }
@@ -47,10 +48,12 @@ namespace MultiTenancyFramework.Mvc
             {
                 try
                 {
+                    if (value == null) value = new Dictionary<string, ActionAccessPrivilege>();
                     HttpContext.Current.Session["::LoggedInUsersPrivileges::"] = value;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Utilities.Logger.Log(new GeneralException("Called WebUtilities.LoggedInUsersPrivilegesDict: Error setting LoggedInUsersPrivileges in session", ex));
                     throw new LogOutUserException();
                 }
             }
@@ -67,13 +70,13 @@ namespace MultiTenancyFramework.Mvc
             {
                 if (HttpContext.Current != null && HttpContext.Current.Session != null)
                 {
-                    // string key = SS_CURRENT_USER + InstitutionShortName;
                     IdentityUser user = HttpContext.Current.Session[SS_CURRENT_USER] as IdentityUser;
                     if (user == null)
                     {
                         IdentityUserDAO.InstitutionCode = InstitutionCode;
-                        user = IdentityUserDAO.Retrieve(HttpContext.Current.User.Identity.GetUserId<long>());
-                        if (user == null) throw new LogOutUserException();
+                        var userId = HttpContext.Current.User.Identity.GetUserId<long>();
+                        user = IdentityUserDAO.Retrieve(userId);
+                        if (user == null) throw new LogOutUserException("Called WebUtilities.GetCurrentlyLoggedInUser(): Failed to get user [id: {userId}. instCode: {IdentityUserDAO.InstitutionCode}]");
 
                         user.InstitutionCode = IdentityUserDAO.InstitutionCode; //Needful? Maybe not.
                         HttpContext.Current.Session[SS_CURRENT_USER] = user;
@@ -82,8 +85,12 @@ namespace MultiTenancyFramework.Mvc
                 }
                 return null;
             }
-            catch (LogOutUserException) { throw; }
-            catch (Exception ex)
+            catch (LogOutUserException ex)
+            {
+                Utilities.Logger.Log(ex);
+                throw ex;
+            }
+            catch (Exception ex) when (!(ex is LogOutUserException))
             {
                 Utilities.Logger.Log(ex);
                 return null;
@@ -112,10 +119,17 @@ namespace MultiTenancyFramework.Mvc
                     var instCode = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["institution"]) ?? Utilities.INST_DEFAULT_CODE;
                     if (instCode == Utilities.INST_DEFAULT_CODE) return null;
 
+                    // Thr request may be from a non-existent institution, so we check if we have it in session
                     if (HttpContext.Current.Session != null && HttpContext.Current.Session[SS_CODE] != null)
                     {
                         var codeInSession = Convert.ToString(HttpContext.Current.Session[SS_CODE]);
-                        if (codeInSession != instCode) throw new LogOutUserException();
+                        if (codeInSession != instCode)
+                        {
+                            var error = $"codeInSession ({codeInSession}) != instCode ({instCode}).";
+                            var ex = new LogOutUserException(error);
+                            Utilities.Logger.Log(ex);
+                            throw ex;
+                        }
                         return codeInSession;
                     }
                     var query = new GetInstitutionByCodeQuery
