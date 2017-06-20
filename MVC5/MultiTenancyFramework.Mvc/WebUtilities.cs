@@ -75,7 +75,7 @@ namespace MultiTenancyFramework.Mvc
                     {
                         IdentityUserDAO.InstitutionCode = InstitutionCode;
                         var userId = HttpContext.Current.User.Identity.GetUserId<long>();
-                        user = IdentityUserDAO.Retrieve(userId);
+                        if (userId > 0) user = IdentityUserDAO.Retrieve(userId);
                         if (user == null) throw new LogOutUserException("Called WebUtilities.GetCurrentlyLoggedInUser(): Failed to get user [id: {userId}. instCode: {IdentityUserDAO.InstitutionCode}]");
 
                         user.InstitutionCode = IdentityUserDAO.InstitutionCode; //Needful? Maybe not.

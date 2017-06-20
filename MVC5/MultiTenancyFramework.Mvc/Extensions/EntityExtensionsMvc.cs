@@ -55,14 +55,15 @@ namespace MultiTenancyFramework
                 claimsIdentity.AddClaim(new Claim(Constants.DefaultSecurityStampClaimType, user.SecurityStamp, "http://www.w3.org/2001/XMLSchema#string"));
             }
 
-            var list = SetLoggedInUsersPrivileges(user);
-            if (manager.SupportsUserRole)
-            {
-                foreach (var role in list)
-                {
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name, "http://www.w3.org/2001/XMLSchema#string"));
-                }
-            }
+            SetLoggedInUsersPrivileges(user);
+            //var list = SetLoggedInUsersPrivileges(user);
+            //if (manager.SupportsUserRole)
+            //{
+            //    foreach (var role in list)
+            //    {
+            //        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name, "http://www.w3.org/2001/XMLSchema#string"));
+            //    }
+            //}
 
             if (manager.SupportsUserClaim)
             {
@@ -113,7 +114,7 @@ namespace MultiTenancyFramework
                 list.Add(priv);
             }
 
-            WebUtilities.LoggedInUsersPrivilegesDict = list.ToDictionary(x => x.Name, StringComparer.InvariantCultureIgnoreCase);
+            WebUtilities.LoggedInUsersPrivilegesDict = list.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
             return list;
         }
 
