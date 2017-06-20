@@ -42,15 +42,35 @@ namespace MultiTenancyFramework.Mvc
 
             var values = filterContext.RouteData.Values;
             var instCode = Convert.ToString(values["institution"]);
+
             // If user is not logged in (authenticated) yet, 
             if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
             {
                 // It's not anonymous, so force user to login
-                var error = $"User is not authenticated. Logging out...";
+                var error = $"User '{filterContext.HttpContext.User.Identity.Name}' is not authenticated.";
+
+                try
+                {
+                    var session = filterContext.HttpContext.Session;
+                    if (session != null)
+                    {
+                        error += " But session is still available";
+                    }
+                    else
+                    {
+                        error += " And session is null";
+                    }
+                }
+                catch { }
                 Utilities.Logger.Log(error);
-                WebUtilities.LogOut();
-                filterContext.Result = MvcUtility.GetLoginPageResult(instCode);
-                return;
+
+                //NB: This 'if' test appears it's giving false positives, logging guys out unnecessarily.
+                // Now we use session to test - in that if a user is not authenticated, either
+                // HttpContext.Session or WebUtilities.LoggedInUsersPrivilegesDict will be null. 
+                
+                //WebUtilities.LogOut();
+                //filterContext.Result = MvcUtility.GetLoginPageResult(instCode);
+                //return;
             }
 
             // At this point, we have established that we have a logged-in user. So...

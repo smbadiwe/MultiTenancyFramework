@@ -34,13 +34,13 @@ namespace MultiTenancyFramework.Mvc
                 try
                 {
                     var privs = HttpContext.Current.Session["::LoggedInUsersPrivileges::"] as Dictionary<string, ActionAccessPrivilege>;
-                    if (privs == null) throw new LogOutUserException();
+                    if (privs == null) throw new GeneralException("Called WebUtilities.LoggedInUsersPrivilegesDict: Error getting LoggedInUsersPrivileges from session");
 
                     return privs;
                 }
                 catch (Exception ex)
                 {
-                    Utilities.Logger.Log(new GeneralException("Called WebUtilities.LoggedInUsersPrivilegesDict: Error getting LoggedInUsersPrivileges from session", ex));
+                    Utilities.Logger.Log(ex);
                     throw new LogOutUserException();
                 }
             }
@@ -51,7 +51,7 @@ namespace MultiTenancyFramework.Mvc
                     if (value == null) value = new Dictionary<string, ActionAccessPrivilege>();
                     HttpContext.Current.Session["::LoggedInUsersPrivileges::"] = value;
                 }
-                catch (Exception ex)
+                catch (Exception ex) // paranoia
                 {
                     Utilities.Logger.Log(new GeneralException("Called WebUtilities.LoggedInUsersPrivilegesDict: Error setting LoggedInUsersPrivileges in session", ex));
                     throw new LogOutUserException();

@@ -30,7 +30,7 @@ namespace MultiTenancyFramework.SimpleInjector
             container.Register(typeof(ICommandHandler<>), assemblies);
             container.Register(typeof(IDbQueryHandler<,>), assemblies);
 
-            var exportedTypes = assemblies.SelectMany(x => x.ExportedTypes);
+            var exportedTypes = assemblies.SelectMany(x => x.ExportedTypes).Where(x => !x.IsAbstract);
 
             #region Known Cases. This part is made necessary due to a limitation of Simple Injector
             var types = exportedTypes.Where(x => x.IsGenericType && x.Name.StartsWith("CoreDAO")).ToArray();
@@ -50,7 +50,7 @@ namespace MultiTenancyFramework.SimpleInjector
             // This is for convention-based registrations. Convention is IService/Service
             var registrations =
                 from type in exportedTypes
-                where !type.IsAbstract
+                //where !type.IsAbstract
                 where !type.IsGenericType
                 where type.GetInterfaces().Any(x => x.Name.EndsWith(type.Name))
                 select new { Service = type.GetInterfaces().Single(x => x.Name.EndsWith(type.Name)), Implementation = type }

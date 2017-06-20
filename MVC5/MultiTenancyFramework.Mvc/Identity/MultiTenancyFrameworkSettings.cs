@@ -17,9 +17,9 @@ namespace MultiTenancyFramework.Mvc.Identity
         /// </summary>
         public string LoginPath { get; set; } = "/Account/Login";
         /// <summary>
-        /// Default: 30. Time in minutes for CookieAuthenticationOptions.ExpireTimeSpan
+        /// Default: 14. number of days for CookieAuthenticationOptions.ExpireTimeSpan
         /// </summary>
-        public double CookieAuthExpireTime { get; set; } = 30;
+        public double CookieAuthExpireTime { get; set; } = 14;
         /// <summary>
         /// Default: 30. Time in minutes for CookieAuthenticationOptions.Provider's OnValidateIdentity (=== (SecurityStampValidator.OnValidateIdentity)'s validateInterval
         /// </summary>
@@ -33,7 +33,7 @@ namespace MultiTenancyFramework.Mvc.Identity
         {
             return new CookieAuthenticationOptions
             {
-                ExpireTimeSpan = TimeSpan.FromMinutes(this.CookieAuthExpireTime),
+                ExpireTimeSpan = TimeSpan.FromDays(this.CookieAuthExpireTime),
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString(this.LoginPath),
                 Provider = new CookieAuthenticationProvider

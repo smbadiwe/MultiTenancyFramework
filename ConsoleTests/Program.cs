@@ -78,30 +78,33 @@ namespace ConsoleTests
 
         static void Main(string[] args)
         {
-            Init();
-            var list = new List<TeacherSubjectClass>();
-            list.Add(new TeacherSubjectClass
-            {
-                TeacherId = 99,
-                ClassId = 199,
-                SubjectId = 299
-            });
-            list.Add(new TeacherSubjectClass
-            {
-                TeacherId = 99,
-                ClassId = 199,
-                SubjectId = 399
-            });
-            list.Add(new TeacherSubjectClass
-            {
-                TeacherId = 99,
-                ClassId = 199,
-                SubjectId = 499
-            });
-            //testSplitCamelCase();
-            var dao = new MultiTenancyFramework.NHibernate.CoreDAO<TeacherSubjectClass>();
-            dao.InstitutionCode = "ME2LQ";
-            //dao.SqlBulkInsert(list);
+            object a = 2;
+            object b = 2;
+            Console.WriteLine(a.ToString() == b.ToString());
+            //Init();
+            //var list = new List<TeacherSubjectClass>();
+            //list.Add(new TeacherSubjectClass
+            //{
+            //    TeacherId = 99,
+            //    ClassId = 199,
+            //    SubjectId = 299
+            //});
+            //list.Add(new TeacherSubjectClass
+            //{
+            //    TeacherId = 99,
+            //    ClassId = 199,
+            //    SubjectId = 399
+            //});
+            //list.Add(new TeacherSubjectClass
+            //{
+            //    TeacherId = 99,
+            //    ClassId = 199,
+            //    SubjectId = 499
+            //});
+            ////testSplitCamelCase();
+            //var dao = new MultiTenancyFramework.NHibernate.CoreDAO<TeacherSubjectClass>();
+            //dao.InstitutionCode = "ME2LQ";
+            ////dao.SqlBulkInsert(list);
 
             Console.ReadKey();
         }

@@ -98,8 +98,6 @@ namespace MultiTenancyFramework
                     }
                 }
                 user.RoleNames = roleNames.Substring(0, roleNames.Length - 3);
-                privilege = null;
-                theUserRoles = null;
             }
             var defaultPrivs = privilegesInDb.Values.Where(x => x.IsDefault);
             if (!string.IsNullOrWhiteSpace(instCode)) // If Tenant
