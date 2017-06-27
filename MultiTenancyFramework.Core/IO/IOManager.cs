@@ -8,10 +8,12 @@ namespace MultiTenancyFramework.IO
     {
         public static string GetExportString(KeyValuePair<string, object> column, MyDataColumn dataCol, bool replaceNullsWithDefaultValue)
         {
+            if (dataCol == null) throw new ArgumentNullException("dataCol", $"dataCol is null for column {column.Key} -> {column.Value}");
+
+            object valueToWrite = column.Value;
             #region Write cell data
-            if (!Convert.IsDBNull(column.Value))
+            if (valueToWrite != null && !Convert.IsDBNull(valueToWrite))
             {
-                object valueToWrite = column.Value;
                 Type t = typeof(decimal), objType = valueToWrite.GetType();
                 if (dataCol.DataType == t || objType == t)
                 {
@@ -26,6 +28,10 @@ namespace MultiTenancyFramework.IO
             }
             else
             {
+                if (dataCol.DataType == typeof(string))
+                {
+                    return "";
+                }
                 if (replaceNullsWithDefaultValue)
                 {
                     if (dataCol.DataType == typeof(DateTime))
@@ -43,10 +49,10 @@ namespace MultiTenancyFramework.IO
                 }
                 else
                 {
-                    return "NULL";
+                    return "";
                 }
             }
-            return dataCol.DataType.IsValueType ? dataCol.DataType.GetDefaultValue().ToString() : "NULL";
+            return dataCol.DataType.IsValueType ? dataCol.DataType.GetDefaultValue().ToString() : "";
             #endregion
         }
 

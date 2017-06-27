@@ -78,6 +78,13 @@ namespace MultiTenancyFramework.Data
             DataType = dataType;
         }
 
+        public MyDataColumn(System.Reflection.PropertyInfo property)
+        {
+            PropertyName = property.Name;
+            ColumnName = property.Name.AsSplitPascalCasedString();
+            DataType = property.PropertyType;
+        }
+
         public MyDataColumn() { }
     }
 }

@@ -43,9 +43,8 @@ namespace MultiTenancyFramework
             dt.Columns.Add("No", new MyDataColumn("No", typeof(int)));
             foreach (var item in validColumns)
             {
-                dt.Columns.Add(item.ColumnName, new MyDataColumn(item.ColumnName, item.DataType));
+                dt.Columns.Add(item.ColumnName, item);
             }
-            var validColumnsDict = validColumns.ToDictionary(x => x.ColumnName);
             string propName;
             for (int i = 0; i < items.Count; i++)
             {
@@ -55,7 +54,7 @@ namespace MultiTenancyFramework
                 {
                     if (col.Key == "No") continue;
 
-                    propName = validColumnsDict[col.Key].PropertyName;
+                    propName = col.Value.PropertyName;
                     object theVal = null;
                     try
                     {
@@ -91,9 +90,9 @@ namespace MultiTenancyFramework
             dt.Columns.Add("No", new MyDataColumn("No", typeof(int)));
             foreach (var item in validColumns)
             {
-                dt.Columns.Add(item.ColumnName, new MyDataColumn(item.ColumnName, item.DataType));
+                dt.Columns.Add(item.ColumnName, item);
             }
-            var validColumnsDict = validColumns.ToDictionary(x => x.ColumnName);
+
             string propName;
             for (int i = 0; i < items.Count; i++)
             {
@@ -103,7 +102,7 @@ namespace MultiTenancyFramework
                 {
                     if (col.Key == "No") continue;
 
-                    propName = validColumnsDict[col.Key].PropertyName;
+                    propName = col.Value.PropertyName;
                     object theVal = null;
                     try
                     {

@@ -6,6 +6,7 @@ using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.Logic;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Web;
 
 namespace MultiTenancyFramework.Mvc
@@ -122,7 +123,7 @@ namespace MultiTenancyFramework.Mvc
                     // Thr request may be from a non-existent institution, so we check if we have it in session
                     if (HttpContext.Current.Session != null && HttpContext.Current.Session[SS_CODE] != null)
                     {
-                        var codeInSession = Convert.ToString(HttpContext.Current.Session[SS_CODE]);
+                        var codeInSession = Convert.ToString(HttpContext.Current.Session[SS_CODE]); //ClaimsPrincipal.Current.FindFirst("ic")?.Value; // 
                         if (codeInSession != instCode)
                         {
                             var error = $"codeInSession ({codeInSession}) != instCode ({instCode}).";
