@@ -4,7 +4,8 @@ using System.Web.Mvc;
 
 namespace MultiTenancyFramework.Mvc
 {
-    public class ErrorMessageModel : HandleErrorInfo {
+    public class ErrorMessageModel : HandleErrorInfo
+    {
         public const string ErrorMessageKey = "ErrorMessageKey";
         /// <summary>
         /// The (MVC) area name
@@ -33,7 +34,8 @@ namespace MultiTenancyFramework.Mvc
         /// 
         /// </summary>
         /// <param name="renderErrorPageFully"></param>
-        public ErrorMessageModel(bool renderErrorPageFully = false) : this(string.Empty, renderErrorPageFully) {
+        public ErrorMessageModel(bool renderErrorPageFully = false) : this(string.Empty, renderErrorPageFully)
+        {
         }
 
         /// <summary>
@@ -41,7 +43,8 @@ namespace MultiTenancyFramework.Mvc
         /// </summary>
         /// <param name="errorMsg"></param>
         /// <param name="renderErrorPageFully"></param>
-        public ErrorMessageModel(string errorMsg, bool renderErrorPageFully = false) : this(errorMsg, "Error", "Index", renderErrorPageFully) {
+        public ErrorMessageModel(string errorMsg, bool renderErrorPageFully = false) : this(errorMsg, "Error", "Index", renderErrorPageFully)
+        {
         }
 
         /// <summary>
@@ -52,7 +55,8 @@ namespace MultiTenancyFramework.Mvc
         /// <param name="actionName"></param>
         /// <param name="renderErrorPageFully"></param>
         public ErrorMessageModel(string errorMsg, string controllerName, string actionName, bool renderErrorPageFully = false)
-            : this(new GeneralException(errorMsg, MultiTenancyFramework.ExceptionType.InvalidUserActionOrInput), controllerName, actionName, renderErrorPageFully) {
+            : this(new GeneralException(errorMsg, MultiTenancyFramework.ExceptionType.InvalidUserActionOrInput), controllerName, actionName, renderErrorPageFully)
+        {
         }
 
         /// <summary>
@@ -61,7 +65,8 @@ namespace MultiTenancyFramework.Mvc
         /// <param name="ex"></param>
         /// <param name="renderErrorPageFully"></param>
         public ErrorMessageModel(Exception ex, bool renderErrorPageFully = false)
-            : this(ex, "Error", "Index", renderErrorPageFully) {
+            : this(ex, "Error", "Index", renderErrorPageFully)
+        {
         }
 
         /// <summary>
@@ -72,24 +77,34 @@ namespace MultiTenancyFramework.Mvc
         /// <param name="actionName"></param>
         /// <param name="renderErrorPageFully"></param>
         public ErrorMessageModel(Exception ex, string controllerName, string actionName, bool renderErrorPageFully = false)
-            : base(ex, controllerName, actionName) {
-            if (string.IsNullOrWhiteSpace(FromUrl)) {
+            : base(ex, controllerName, actionName)
+        {
+            if (string.IsNullOrWhiteSpace(FromUrl))
+            {
                 var routes = System.Web.HttpContext.Current.Request.RequestContext.RouteData.Values;
                 FromUrl = $"/{routes["institution"]}/{routes["area"]}/{routes["controller"]}/{routes["action"]}";
             }
             RenderErrorPageFully = renderErrorPageFully;
             ExceptionType = ex.GetType();
             StackTrace = ex.StackTrace;
-            if (string.IsNullOrWhiteSpace(StackTrace)) {
+            if (string.IsNullOrWhiteSpace(StackTrace))
+            {
                 ErrorMessage = WebUtility.HtmlDecode(ex.GetFullExceptionMessage());
-            } else {
+            }
+            else
+            {
                 ErrorMessage = ex.GetFullExceptionMessage();
             }
-            if (ExceptionType == typeof(GeneralException)) {
+            if (ExceptionType == typeof(GeneralException))
+            {
                 ErrorType = (ex as GeneralException).ExceptionType;
-            } else if (typeof(System.Data.Common.DbException).IsAssignableFrom(ExceptionType)) {
+            }
+            else if (typeof(System.Data.Common.DbException).IsAssignableFrom(ExceptionType))
+            {
                 ErrorType = MultiTenancyFramework.ExceptionType.DatabaseRelated;
-            } else {
+            }
+            else
+            {
                 ErrorType = MultiTenancyFramework.ExceptionType.DoNothing;
             }
         }

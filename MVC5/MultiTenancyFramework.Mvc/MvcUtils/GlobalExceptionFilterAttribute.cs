@@ -47,6 +47,14 @@ namespace MultiTenancyFramework.Mvc
                             FromUrl = urlAccessed
                         };
                     }
+                    else
+                    {
+                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(genEx, Convert.ToString(values["controller"]), Convert.ToString(values["action"]))
+                        {
+                            AreaName = Convert.ToString(values["area"]),
+                            FromUrl = urlAccessed
+                        };
+                    }
                     filterContext.Result = MvcUtility.GetPageResult("Index", "Error", "", instCode);
                     return;
                 }
