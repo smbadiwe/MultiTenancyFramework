@@ -241,6 +241,7 @@ namespace MultiTenancyFramework.NHibernate
                 {
                     if (col.EndsWith("Id")) //=> we may be dealing with a reference mapping
                     {
+                        #region we may be dealing with a reference mapping
                         foreach (var comp in nonCompositeClasses)
                         {
                             if (type != null) break;
@@ -286,10 +287,12 @@ namespace MultiTenancyFramework.NHibernate
                         {
                             // let it be Int64.
                             type = typeof(long);
-                        }
+                        } 
+                        #endregion
                     }
                     else //=> we may be dealing with a composite mapping
                     {
+                        #region MyRegion
                         foreach (var comp in compositeClasses)
                         {
                             if (type != null) break;
@@ -312,7 +315,8 @@ namespace MultiTenancyFramework.NHibernate
                                 type = innerProp.IsTypeNullable() ? Nullable.GetUnderlyingType(innerProp.PropertyType) : innerProp.PropertyType;
                                 break;
                             }
-                        }
+                        } 
+                        #endregion
                     }
                 }
                 try
@@ -495,6 +499,7 @@ namespace MultiTenancyFramework.NHibernate
                     //DO NOT use Enum.Parse(prop.PropertyType, theValue.ToString()); since we store enums as integers conventionally
                     theValue = (int)theValue;
                 }
+
                 row[prop.GetPropertyName()] = theValue;
             }
 

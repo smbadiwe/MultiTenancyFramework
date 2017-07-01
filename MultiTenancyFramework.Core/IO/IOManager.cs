@@ -14,12 +14,8 @@ namespace MultiTenancyFramework.IO
             #region Write cell data
             if (valueToWrite != null && !Convert.IsDBNull(valueToWrite))
             {
-                Type t = typeof(decimal), objType = valueToWrite.GetType();
-                if (dataCol.DataType == t || objType == t)
-                {
-                    return Convert.ToDecimal(valueToWrite).ToMoney();
-                }
-                t = typeof(DateTime);
+                var objType = valueToWrite.GetType();
+                Type t = typeof(DateTime);
                 if (dataCol.DataType == t || objType == t)
                 {
                     return Convert.ToDateTime(valueToWrite).ToString("yyyy-MM-dd HH:mm:ss");

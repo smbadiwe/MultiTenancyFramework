@@ -30,8 +30,7 @@ namespace MultiTenancyFramework
 
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(DefaultAuthenticationTypes.ApplicationCookie, ClaimTypes.Name, ClaimTypes.Role);
             claimsIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToStringLookup(), "http://www.w3.org/2001/XMLSchema#string"));
-            claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, user.UserName, "http://www.w3.org/2001/XMLSchema#string"));
-            //claimsIdentity.AddClaim(new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity", "http://www.w3.org/2001/XMLSchema#string"));
+            claimsIdentity.AddClaim(new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity", "http://www.w3.org/2001/XMLSchema#string"));
 
             var instCode = WebUtilities.InstitutionCode;
 
@@ -44,26 +43,19 @@ namespace MultiTenancyFramework
                 };
                 user.InstitutionCode = instCode;
                 user.InstitutionShortName = queryProcessor.Process(query)?.ShortName;
-                claimsIdentity.AddClaim(new Claim("ic", instCode));
             }
             else
             {
-                claimsIdentity.AddClaim(new Claim("ic", Utilities.INST_DEFAULT_CODE));
+                instCode = Utilities.INST_DEFAULT_CODE;
             }
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, $"{user.UserName}:{instCode}", "http://www.w3.org/2001/XMLSchema#string"));
+            
             if (manager.SupportsUserSecurityStamp && !string.IsNullOrWhiteSpace(user.SecurityStamp))
             {
                 claimsIdentity.AddClaim(new Claim(Constants.DefaultSecurityStampClaimType, user.SecurityStamp, "http://www.w3.org/2001/XMLSchema#string"));
             }
 
             SetLoggedInUsersPrivileges(user);
-            //var list = SetLoggedInUsersPrivileges(user);
-            //if (manager.SupportsUserRole)
-            //{
-            //    foreach (var role in list)
-            //    {
-            //        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name, "http://www.w3.org/2001/XMLSchema#string"));
-            //    }
-            //}
 
             if (manager.SupportsUserClaim)
             {

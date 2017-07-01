@@ -11,7 +11,7 @@ namespace MultiTenancyFramework.Data
             if (table.Columns.Count == 0) throw new InvalidOperationException("The given table has no columns.");
             foreach (var col in table.Columns)
             {
-                Add(col.Key, null);
+                Add(col.Key, col.Value.DataType?.GetDefaultValue());
             }
             Table = table;
         }
