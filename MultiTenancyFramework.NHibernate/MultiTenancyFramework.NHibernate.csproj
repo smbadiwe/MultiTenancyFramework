@@ -74,8 +74,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Maps\DatabaseConnectionMap.cs" />
+    <Compile Include="Maps\EntityAutoMap.cs" />
     <Compile Include="Maps\PhotoMap.cs" />
     <Compile Include="Maps\PrivilegeMap.cs" />
+    <Compile Include="NHManager\AutomappingConfiguration.cs" />
+    <Compile Include="NHManager\Conventions\InstitutionCodePropertyConvention.cs" />
     <Compile Include="PrivilegeDAO.cs" />
     <Compile Include="AppUserDAO.cs" />
     <Compile Include="Audit\GlobalTrackingConfig.cs" />
@@ -89,7 +93,6 @@
     <Compile Include="DataInitializer.cs" />
     <Compile Include="InstitutionDAO.cs" />
     <Compile Include="Maps\AuditLogMap.cs" />
-    <Compile Include="Maps\DatabaseConnectionMap.cs" />
     <Compile Include="Maps\EntityMap.cs" />
     <Compile Include="Maps\IdentityUserMap.cs" />
     <Compile Include="Maps\InstitutionMap.cs" />

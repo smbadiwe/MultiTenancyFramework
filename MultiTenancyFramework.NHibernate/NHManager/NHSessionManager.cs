@@ -316,26 +316,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
             return session;
         }
-
-        ///// <summary>
-        ///// Sometimes, a logged in tenant user moves between her space and the landlord's. So, this set will usually be not more than two entries
-        ///// </summary>
-        //internal static Dictionary<string, WebSessionStorage> CurrentSessions
-        //{
-        //    get
-        //    {
-        //        if (!HttpContext.Current.Items.Contains(WebSessionStorage.CurrentSessionKey))
-        //        {
-        //            HttpContext.Current.Items[WebSessionStorage.CurrentSessionKey] = new Dictionary<string, WebSessionStorage>();
-        //        }
-        //        return HttpContext.Current.Items[WebSessionStorage.CurrentSessionKey] as Dictionary<string, WebSessionStorage>;
-        //    }
-        //    set
-        //    {
-        //        HttpContext.Current.Items[WebSessionStorage.CurrentSessionKey] = value;
-        //    }
-        //}
-
+        
         /// <summary>
         /// Whether or not the DB we're using is MySql
         /// </summary>
@@ -370,13 +351,15 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         {
             Configuration cfg = ConfigureNHibernate(cfgFile, cfgProperties);
 
-            var autoPersistenceModel = new AutoPersistenceModel();
+            string instCode = sessionKey.Split('_')[0];
+            AutoPersistenceModel autoPersistenceModel = AddMappingAssembliesTo(instCode, cfg);
+
             autoPersistenceModel.Conventions.Add<ClassMappingConvention>();
             autoPersistenceModel.Conventions.Add<ReferencesConvention>();
             autoPersistenceModel.Conventions.Add<EnumMappingConvention>();
+            autoPersistenceModel.Conventions.Add<InstitutionCodePropertyConvention>();
 
-            string instCode = sessionKey.Split('_')[0];
-            AddMappingAssembliesTo(instCode, cfg, autoPersistenceModel);
+            cfg.AddAutoMappings(autoPersistenceModel);
 
             // Add the Listeners
             var auditLogEvent = new AuditLogEventListener();
@@ -386,6 +369,8 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
             try
             {
+                //var fluentCfg = FluentNHibernate.Cfg.Fluently.Configure(cfg)
+                //    .Mappings(val => val.AutoMappings.Add(autoPersistenceModel));
                 var factory = cfg.BuildSessionFactory();
 
                 try
@@ -461,29 +446,42 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             }
         }
 
-        private static void AddMappingAssembliesTo(string instCode, Configuration cfg, AutoPersistenceModel autoPersistenceModel)
+        private static string ThisAssembly
+        {
+            get
+            {
+                // "MultiTenancyFramework.NHibernate" == typeof(NHSessionManager).Assembly.FullName.Split(',')[0]
+                return "MultiTenancyFramework.NHibernate";
+            }
+        }
+
+        private static AutoPersistenceModel AddMappingAssembliesTo(string instCode, Configuration cfg)
         {
             var hc = System.Configuration.ConfigurationManager.GetSection(CfgXmlHelper.CfgSectionName) as HibernateConfiguration;
             if (hc == null)
             {
                 throw new HibernateConfigException("Cannot process NHibernate Section in config file.");
             }
+            /*TODO: I'm committing this knowing it's buggy: an attempt to build in automapping is still 
+             * failing with 'property 'SkipAudit' already mapped' error. We'll revisit this again.
+             */
+            AutoPersistenceModel autoPersistenceModel = new AutoPersistenceModel(); // new AutomappingConfiguration());
+
+            // Check for ClassMap<> or .hbm type mapping files
             if (hc.SessionFactory != null)
             {
                 var mappingAssemblies = new HashSet<string>(hc.SessionFactory.Mappings.Select(x => x.Assembly));
 
+                mappingAssemblies.Add(ThisAssembly); // Add yourself
+
                 //Doing this ensure framework libraries are captured without having duplicates
-                var otherMappingAssemblies = MappingAssemblies;
-                if (otherMappingAssemblies.Any())
+                if (MappingAssemblies.Any())
                 {
-                    foreach (var file in otherMappingAssemblies)
+                    foreach (var file in MappingAssemblies)
                     {
                         mappingAssemblies.Add(file);
                     }
                 }
-                mappingAssemblies.Add("MultiTenancyFramework.NHibernate"); // Add yourself
-                otherMappingAssemblies = null;
-
                 foreach (var mappingAssemblyCfg in mappingAssemblies)
                 {
                     var assembly = Assembly.Load(mappingAssemblyCfg);
@@ -491,23 +489,38 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                     // Looks for any HBMs
                     cfg.AddAssembly(assembly);
 
-                    // Looks for Fluents
-                    if (instCode == Utilities.INST_DEFAULT_CODE)
-                    {
-                        autoPersistenceModel.AddMappingsFromAssembly(assembly);
-                    }
-                    else // => Tenant, so do not map those entities marked as Hosted Centrally
-                    {
-                        autoPersistenceModel = autoPersistenceModel.AddMappingsFromAssembly(assembly)
-                            .Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
-                    }
+                    // Looks for fluent mappings
+                    autoPersistenceModel.AddMappingsFromAssembly(assembly);
                 }
 
                 cfg.BeforeBindMapping += (sender, args) => args.Mapping.autoimport = false;
             }
 
-            cfg.AddAutoMappings(autoPersistenceModel);
-            hc = null;
+            // Check entity assemblies for possible automapping in case the mapping file is not written
+            // Hey, don't forget this assembly and the 'Core' - check them too
+
+            // 'Core' first
+            autoPersistenceModel = autoPersistenceModel.AddEntityAssembly(typeof(Entity).Assembly);
+            if (instCode != Utilities.INST_DEFAULT_CODE) // => Tenant, so do not map those entities marked as Hosted Centrally
+            {
+                autoPersistenceModel = autoPersistenceModel.Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
+            }
+
+            // The rest
+            EntityAssemblies.Add(ThisAssembly);
+            foreach (var assemblyName in EntityAssemblies)
+            {
+                var assembly = Assembly.Load(assemblyName);
+                // Looks for Automapping overrides
+                autoPersistenceModel = autoPersistenceModel.AddEntityAssembly(assembly);
+
+                if (instCode != Utilities.INST_DEFAULT_CODE) // => Tenant, so do not map those entities marked as Hosted Centrally
+                {
+                    autoPersistenceModel = autoPersistenceModel.Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
+                }
+            }
+            
+            return autoPersistenceModel;
         }
 
         /// <summary>
@@ -572,4 +585,5 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         }
 
     }
+
 }

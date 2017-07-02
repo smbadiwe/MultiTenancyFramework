@@ -1,6 +1,7 @@
 ﻿using MultiTenancyFramework;
 using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
+using MultiTenancyFramework.NHibernate.NHManager;
 using MultiTenancyFramework.SimpleInjector;
 using System;
 using System.Collections.Generic;
@@ -10,24 +11,48 @@ using System.Threading.Tasks;
 
 namespace ConsoleTests
 {
-    public class TeacherSubjectClass : Entity
+    public class Chukwuka : Entity
     {
         public virtual long TeacherId { get; set; }
 
         public virtual long ClassId { get; set; }
 
         public virtual long SubjectId { get; set; }
+        public virtual bool WillCome { get { return true; } }
 
     }
+    public class NameAndVal
+    {
+        public string MyName { get; set; }
+        public DateTime MyDate { get; set; }
+        public decimal MyVal { get; set; }
+    }
+    public class Somadina : Entity
+    {
+        public virtual long TeacherId { get; set; }
 
+        public virtual long ClassId { get; set; }
+
+        public virtual long SubjectId { get; set; }
+        public virtual NameAndVal NameAndVal { get; set; }
+        public virtual NameAndVal OtherNameAndVal { get; set; }
+        public virtual bool WillCome { get { return true; } }
+
+    }
     class Program
     {
         static void Init()
         {
             var baseContainer = new BaseContainer();
             MyServiceLocator.SetIoCContainer(baseContainer.Container);
+
+            // Initialize MVC settings
+            //AppStartInitializer.Initialize();
+
+            NHSessionManager.AddEntityAssemblies(new[] { "ConsoleTests" });
+
         }
-        
+
         public static async Task<byte[]> Index()
         {
             var roles = new List<UserRole>
@@ -78,33 +103,47 @@ namespace ConsoleTests
 
         static void Main(string[] args)
         {
-            object a = 2;
-            object b = 2;
-            Console.WriteLine(a.ToString() == b.ToString());
-            //Init();
-            //var list = new List<TeacherSubjectClass>();
-            //list.Add(new TeacherSubjectClass
-            //{
-            //    TeacherId = 99,
-            //    ClassId = 199,
-            //    SubjectId = 299
-            //});
-            //list.Add(new TeacherSubjectClass
-            //{
-            //    TeacherId = 99,
-            //    ClassId = 199,
-            //    SubjectId = 399
-            //});
-            //list.Add(new TeacherSubjectClass
-            //{
-            //    TeacherId = 99,
-            //    ClassId = 199,
-            //    SubjectId = 499
-            //});
-            ////testSplitCamelCase();
-            //var dao = new MultiTenancyFramework.NHibernate.CoreDAO<TeacherSubjectClass>();
-            //dao.InstitutionCode = "ME2LQ";
-            ////dao.SqlBulkInsert(list);
+            Console.WriteLine(typeof(NHSessionManager).Assembly.FullName.Split(',')[0]);
+            Init();
+            var list = new List<Somadina>();
+            list.Add(new Somadina
+            {
+                TeacherId = 99,
+                ClassId = 199,
+                SubjectId = 299
+            });
+            list.Add(new Somadina
+            {
+                TeacherId = 99,
+                ClassId = 199,
+                SubjectId = 399
+            });
+            list.Add(new Somadina
+            {
+                TeacherId = 99,
+                ClassId = 199,
+                SubjectId = 499
+            });
+            //testSplitCamelCase();
+            var dao = new MultiTenancyFramework.NHibernate.CoreDAO<Somadina>();
+            dao.InstitutionCode = "ME2LQ";
+            try
+            {
+                foreach (var item in list)
+                {
+                    dao.Save(item);
+                }
+                dao.CommitChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                dao.RollbackChanges();
+            }
+            finally
+            {
+                dao.CloseSession();
+            }
 
             Console.ReadKey();
         }

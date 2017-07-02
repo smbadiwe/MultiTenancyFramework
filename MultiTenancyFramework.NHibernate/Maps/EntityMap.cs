@@ -13,7 +13,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
     public class EntityMap<T, idT> : ClassMap<T> where T : class, IEntity<idT> where idT : IEquatable<idT>
     {
         public EntityMap()
-        { 
+        {
             Id(x => x.Id);
             Map(x => x.InstitutionCode).Index("ind_InstitutionCode");
             Map(x => x.IsDeleted);
@@ -25,5 +25,6 @@ namespace MultiTenancyFramework.NHibernate.Maps
             //To filter queries based on what I've defined in the Tenant filter definition
             ApplyFilter<AppFilterDefinition>();
         }
+
     }
 }
