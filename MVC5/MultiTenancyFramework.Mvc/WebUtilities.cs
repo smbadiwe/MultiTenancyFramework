@@ -118,7 +118,7 @@ namespace MultiTenancyFramework.Mvc
                     && HttpContext.Current.Request.RequestContext != null)
                 {
                     var instCode = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["institution"]) ?? Utilities.INST_DEFAULT_CODE;
-                    if (instCode == Utilities.INST_DEFAULT_CODE) return null;
+                    if (string.IsNullOrWhiteSpace(instCode) || instCode == Utilities.INST_DEFAULT_CODE) return null;
 
                     // Thr request may be from a non-existent institution, so we check if we have it in session
                     if (HttpContext.Current.Session != null && HttpContext.Current.Session[SS_CODE] != null)

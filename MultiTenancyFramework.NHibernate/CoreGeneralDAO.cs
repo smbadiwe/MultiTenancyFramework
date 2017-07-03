@@ -67,7 +67,7 @@ namespace MultiTenancyFramework.NHibernate
         public void RunDirectQuery(string query, bool clearSession = false)
         {
             var session = BuildSession();
-            session.CreateSQLQuery(query);
+            session.CreateSQLQuery(query).ExecuteUpdate();
         }
 
         /// <summary>
