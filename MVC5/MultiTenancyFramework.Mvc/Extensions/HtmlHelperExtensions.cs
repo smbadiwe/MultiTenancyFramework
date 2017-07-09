@@ -41,28 +41,46 @@ namespace System.Web.Mvc.Html
         }
 
         public static MvcHtmlString MyEnumDropDownListFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TEnum>> expression)
+           where TEnum : struct, IComparable, IFormattable, IConvertible
         {
             return htmlHelper.MyEnumDropDownListFor(expression, optionalLabel: null, htmlAttributes: null);
         }
 
         public static MvcHtmlString MyEnumDropDownListFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TEnum>> expression, object htmlAttributes)
+           where TEnum : struct, IComparable, IFormattable, IConvertible
         {
             return htmlHelper.MyEnumDropDownListFor(expression, optionalLabel: null, htmlAttributes: htmlAttributes);
         }
 
         public static MvcHtmlString MyEnumDropDownListFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TEnum>> expression, string optionalLabel, object htmlAttributes)
+            where TEnum : struct, IComparable, IFormattable, IConvertible
         {
             var enumType = typeof(TEnum);
             if (enumType.IsNullable())
             {
                 enumType = Nullable.GetUnderlyingType(enumType);
             }
+            if (!enumType.IsEnum)
+            {
+                throw new NotSupportedException("TEnum must be an enumerated (enum) type");
+            }
+
             var list = MultiTenancyFramework.EnumHelper.GetEnumNames(enumType);
             return htmlHelper.MyEnumDropDownListFor(expression, list, optionalLabel, htmlAttributes);
         }
 
         public static MvcHtmlString MyEnumDropDownListFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TEnum>> expression, IEnumerable enumList, string optionalLabel, object htmlAttributes)
         {
+            var enumType = typeof(TEnum);
+            if (enumType.IsNullable())
+            {
+                enumType = Nullable.GetUnderlyingType(enumType);
+            }
+            if (!enumType.IsEnum)
+            {
+                throw new NotSupportedException("TEnum must be an enumerated (enum) type");
+            }
+
             ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, htmlHelper.ViewData);
             if (metadata == null)
             {
@@ -90,7 +108,32 @@ namespace System.Web.Mvc.Html
             {
                 optionalLabel = "Choose an item...";
             }
-            var selectList = new SelectList(enumList, "Value", "Name", currentValue);
+            bool recastToNV = false;
+            foreach (var item in enumList)
+            {
+                if (item.GetType() == typeof(MultiTenancyFramework.EnumHelper.NV))
+                {
+                    recastToNV = false;
+                }
+                else if (item.GetType() == enumType)
+                {
+                    recastToNV = true;
+                }
+                else
+                {
+                    throw new NotSupportedException("enumList must be an enumerated (enum) type OR or tyoe 'MultiTenancyFramework.EnumHelper.NV'");
+                }
+                break; // we're testing just the first; hopefully that will do.
+            }
+            SelectList selectList;
+            if (recastToNV)
+            {
+                selectList = new SelectList(MultiTenancyFramework.EnumHelper.GetEnumNames(enumType, enumList), "Value", "Name", currentValue);
+            }
+            else
+            {
+                selectList = new SelectList(enumList, "Value", "Name", currentValue);
+            }
 
             var attr = HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes);
             if (attr.ContainsKey("class"))
@@ -126,14 +169,14 @@ namespace System.Web.Mvc.Html
         {
             var enumType = typeof(TEnum);
             var items = from item in selectList
-                      select new SelectListItem
-                      {
-                          Value = item.Text,
-                          Text = MultiTenancyFramework.EnumHelper.GetEnumName(enumType, item.Text),
-                          Selected = item.Selected,
-                          Disabled = item.Disabled,
-                          Group = item.Group,
-                      };
+                        select new SelectListItem
+                        {
+                            Value = item.Text,
+                            Text = MultiTenancyFramework.EnumHelper.GetEnumName(enumType, item.Text),
+                            Selected = item.Selected,
+                            Disabled = item.Disabled,
+                            Group = item.Group,
+                        };
             return htmlHelper.DropDownListFor(expression, items, htmlAttributes);
         }
 

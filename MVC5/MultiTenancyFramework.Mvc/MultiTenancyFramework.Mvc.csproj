@@ -157,10 +157,12 @@
     <Compile Include="MvcUtils\ErrorMessageModel.cs" />
     <Compile Include="MvcUtils\GlobalExceptionFilterAttribute.cs" />
     <Compile Include="MvcUtils\GlobalAuthorizeAttribute.cs" />
+    <Compile Include="MvcUtils\IModelAttribute.cs" />
     <Compile Include="MvcUtils\InstitutionFilterConfig.cs" />
     <Compile Include="MvcUtils\InstitutionRouteConfig.cs" />
     <Compile Include="MvcUtils\LowerCaseRoute.cs" />
     <Compile Include="MvcUtils\MvcUtility.cs" />
+    <Compile Include="MvcUtils\DisplayHintAttribute.cs" />
     <Compile Include="MvcUtils\MyModelMetadataProvider.cs" />
     <Compile Include="MvcUtils\ValidateUsingPrivilegeForActionAttribute.cs" />
     <Compile Include="MyMvcServiceLocator.cs" />
