@@ -151,6 +151,7 @@
     <Compile Include="Logic\DataCacheMVC.cs" />
     <Compile Include="Logic\ActionAccessPrivilegeLogic.cs" />
     <Compile Include="MvcUtils\Alert.cs" />
+    <Compile Include="MvcUtils\AllowAccessToParentAttribute.cs" />
     <Compile Include="MvcUtils\AppStartInitializer.cs" />
     <Compile Include="MvcUtils\CoreController.cs" />
     <Compile Include="MvcUtils\ErrorController.cs" />

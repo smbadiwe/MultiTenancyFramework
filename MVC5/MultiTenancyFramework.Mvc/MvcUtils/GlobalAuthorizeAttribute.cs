@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -43,6 +44,35 @@ namespace MultiTenancyFramework.Mvc
             var values = filterContext.RouteData.Values;
             var instCode = Convert.ToString(values["institution"]);
 
+            var area = values["area"];
+            string privilegeName = string.Format("{0}-{1}-{2}",
+                   actionDescriptor.ActionName,
+                   actionDescriptor.ControllerDescriptor.ControllerName,
+                   area);
+            if (instCode == Utilities.INST_DEFAULT_CODE)
+            {
+                #region Check whether to allow Core access the action
+
+                // It's not; so check if AllowAnonymous is on the action
+                var allowParent = actionDescriptor.GetCustomAttributes(typeof(AllowAccessToParentAttribute), true);
+                if (allowParent.Length == 0)
+                {
+                    // bounce
+                    filterContext.Result = MvcUtility.GetPageResult("TenantsOnlyAllowed", "Error", "", instCode, new Dictionary<string, object> { { "actionAttempted", privilegeName } });
+                    return;
+                }
+
+                // check if AllowAnonymous is on the controller
+                allowParent = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAccessToParentAttribute), true);
+                if (allowParent.Length == 0)
+                {
+                    // bounce
+                    filterContext.Result = MvcUtility.GetPageResult("TenantsOnlyAllowed", "Error", "", instCode, new Dictionary<string, object> { { "actionAttempted", privilegeName } });
+                    return;
+                }
+
+                #endregion
+            }
             // If user is not logged in (authenticated) yet, 
             if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
             {
@@ -89,11 +119,6 @@ namespace MultiTenancyFramework.Mvc
             }
 
             // OK. So the user has some privileges. So...
-            var area = values["area"];
-            string privilegeName = string.Format("{0}-{1}-{2}",
-                   actionDescriptor.ActionName,
-                   actionDescriptor.ControllerDescriptor.ControllerName,
-                   area);
 
             if (!userPrivList.ContainsKey(privilegeName))
             {

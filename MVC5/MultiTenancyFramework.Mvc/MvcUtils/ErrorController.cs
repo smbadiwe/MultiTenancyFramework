@@ -33,6 +33,16 @@ namespace MultiTenancyFramework.Mvc
             return View(SharedErrorViewName, new ErrorMessageModel(string.Format("You are not authorized to access this page.{0}", !string.IsNullOrWhiteSpace(actionAttempted) ? $" [You need to be given the privilege: {actionAttempted}]" : ""), true));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="actionAttempted">The action for which we're denying access</param>
+        /// <returns></returns>
+        public virtual ActionResult TenantsOnlyAllowed(string actionAttempted = null)
+        {
+            return View(SharedErrorViewName, new ErrorMessageModel(string.Format("Only tenant institutions are allowed to access this page.{0}", !string.IsNullOrWhiteSpace(actionAttempted) ? $" [You need to be given the privilege: {actionAttempted}]" : ""), false));
+        }
+
         private ViewResult ErrorView(bool showFully = false)
         {
             ErrorMessageModel model;
