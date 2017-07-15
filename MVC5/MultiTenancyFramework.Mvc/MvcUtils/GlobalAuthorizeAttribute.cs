@@ -42,7 +42,9 @@ namespace MultiTenancyFramework.Mvc
             var instCode = Convert.ToString(values["institution"]);
 
             // If user is not logged in (authenticated) yet, 
-            if (!filterContext.HttpContext.Request.IsAuthenticated)
+            var IdentityUser = WebUtilities.GetCurrentlyLoggedInUser(filterContext.HttpContext.Session);
+            //if (!filterContext.HttpContext.Request.IsAuthenticated)
+            if (IdentityUser == null || filterContext.HttpContext.Session?.IsNewSession == true)
             {
                 // It's not anonymous, so force user to login
                 WebUtilities.LogOut();

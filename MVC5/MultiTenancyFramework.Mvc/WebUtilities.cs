@@ -65,23 +65,25 @@ namespace MultiTenancyFramework.Mvc
             HttpContext.Current.Session[SS_CURRENT_USER] = user;
         }
 
-        public static IdentityUser GetCurrentlyLoggedInUser()
+        public static IdentityUser GetCurrentlyLoggedInUser(HttpSessionStateBase session = null)
         {
             try
             {
-                if (HttpContext.Current != null && HttpContext.Current.Session != null)
+                if (session == null && HttpContext.Current != null && HttpContext.Current.Session != null)
+                    session = new HttpSessionStateWrapper(HttpContext.Current.Session);
+                if (session != null)
                 {
-                    IdentityUser user = HttpContext.Current.Session[SS_CURRENT_USER] as IdentityUser;
-                    if (user == null)
-                    {
-                        IdentityUserDAO.InstitutionCode = InstitutionCode;
-                        var userId = HttpContext.Current.User.Identity.GetUserId<long>();
-                        if (userId > 0) user = IdentityUserDAO.Retrieve(userId);
-                        if (user == null) throw new LogOutUserException("Called WebUtilities.GetCurrentlyLoggedInUser(): Failed to get user [id: {userId}. instCode: {IdentityUserDAO.InstitutionCode}]");
+                    IdentityUser user = session[SS_CURRENT_USER] as IdentityUser;
+                    //if (user == null)
+                    //{
+                    //    IdentityUserDAO.InstitutionCode = InstitutionCode;
+                    //    var userId = HttpContext.Current.User.Identity.GetUserId<long>();
+                    //    if (userId > 0) user = IdentityUserDAO.Retrieve(userId);
+                    //    if (user == null) throw new LogOutUserException("Called WebUtilities.GetCurrentlyLoggedInUser(): Failed to get user [id: {userId}. instCode: {IdentityUserDAO.InstitutionCode}]");
 
-                        user.InstitutionCode = IdentityUserDAO.InstitutionCode; //Needful? Maybe not.
-                        HttpContext.Current.Session[SS_CURRENT_USER] = user;
-                    }
+                    //    user.InstitutionCode = IdentityUserDAO.InstitutionCode; //Needful? Maybe not.
+                    //    HttpContext.Current.Session[SS_CURRENT_USER] = user;
+                    //}
                     return user;
                 }
                 return null;

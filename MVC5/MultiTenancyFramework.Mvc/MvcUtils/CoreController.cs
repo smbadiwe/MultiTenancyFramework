@@ -80,7 +80,7 @@ namespace MultiTenancyFramework.Mvc
         /// <code>WebUtilities.GetCurrentlyLoggedInUser();</code>
         /// <para>If you need to set the value, call <code>WebUtilities.SetCurrentlyLoggedInUser(newValue);</code></para>
         /// </summary>
-        protected IdentityUser IdentityUser { get { return WebUtilities.GetCurrentlyLoggedInUser(); } }
+        protected IdentityUser IdentityUser { get { return WebUtilities.GetCurrentlyLoggedInUser(Session); } }
 
         /// <summary>
         /// Current datetime
