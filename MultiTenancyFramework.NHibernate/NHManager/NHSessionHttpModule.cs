@@ -22,7 +22,13 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         {
             context.BeginRequest += Application_BeginRequest;
             context.Error += Application_Error;
+            context.PreSendRequestHeaders += Application_PreSendRequestHeaders;
             _context = context;
+        }
+
+        private void Application_PreSendRequestHeaders(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void Application_BeginRequest(object sender, EventArgs e)

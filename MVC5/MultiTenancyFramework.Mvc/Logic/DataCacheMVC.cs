@@ -1,6 +1,7 @@
 ﻿using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.Mvc.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
@@ -23,12 +24,12 @@ namespace MultiTenancyFramework.Mvc.Logic
                     {
                         var instDAO = MyServiceLocator.GetInstance<IInstitutionDAO<Institution>>();
                         //instDAO.SetEntityName<Institution>();
-                        allInstitutions = instDAO.RetrieveAll()?.ToDictionary(x => x.Code);
+                        allInstitutions = instDAO.RetrieveAll()?.ToDictionary(x => x.Code, StringComparer.OrdinalIgnoreCase);
                         MemoryCache.Default[ALL_INSTITUTIONS] = allInstitutions;
                     }
                     return allInstitutions;
                 }
-                return new Dictionary<string, Institution>();
+                return new Dictionary<string, Institution>(StringComparer.OrdinalIgnoreCase);
             }
         }
 

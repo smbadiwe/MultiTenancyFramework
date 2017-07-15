@@ -112,7 +112,10 @@ namespace System.Web.Mvc
                 route.DataTokens["Namespaces"] = namespaces;
             }
 
-            routes.Add(name, route);
+            if (string.IsNullOrWhiteSpace(name))
+                routes.Add(route);
+            else
+                routes.Add(name, route);
 
             return route;
         }

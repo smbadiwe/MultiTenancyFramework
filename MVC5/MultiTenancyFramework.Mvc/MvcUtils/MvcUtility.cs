@@ -53,7 +53,7 @@ namespace MultiTenancyFramework.Mvc
 
         public static void RegisterArea(string areaName, AreaRegistrationContext context)
         {
-            context.MapRoute( //LowerCase(
+            context.MapRoute(
                 name: GetRouteNameForArea(areaName),
                 url: "{institution}/" + areaName + "/{controller}/{action}/{id}",
                 defaults: new { area = areaName, id = UrlParameter.Optional },

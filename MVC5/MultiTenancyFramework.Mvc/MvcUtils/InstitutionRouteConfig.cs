@@ -16,28 +16,26 @@ namespace MultiTenancyFramework.Mvc
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("{*staticfile}", new { staticfile = @".*\.(css|less|sass|js|gif|png|jpg|jpeg|ico|svg|ttf|eot|woff|woff2|xml|csv|txt|map|json|pdf|doc|docx|xls|xlsx|dll|exe|pdb)(/.*)?" });
-
-            //routes.LowercaseUrls = true; //This worked, but caused some View rendering issues. So I'm using the extension method: .MapRouteLowerCase
-
+            
             routes.MapMvcAttributeRoutes();
 
             // From most specific to most general
 
-            routes.MapRoute( //LowerCase(
+            routes.MapRoute( 
                 name: "Default",
                 url: "",
                 defaults: new { institution = Utilities.INST_DEFAULT_CODE, area = "", controller = "Home", action = "Index", id = UrlParameter.Optional },
                 constraints: new { id = @"\d*" }
             );
 
-            routes.MapRoute( //LowerCase(
+            routes.MapRoute( 
                 name: "Error",
                 url: "Error",
                 defaults: new { institution = Utilities.INST_DEFAULT_CODE, area = "", controller = "Error", action = "Index", id = UrlParameter.Optional },
                 constraints: new { id = @"\d*" }
             );
 
-            routes.MapRoute( //LowerCase(
+            routes.MapRoute( 
                 name: "TenantError",
                 url: "{institution}/Error",
                 defaults: new { area = "", controller = "Error", action = "Index", id = UrlParameter.Optional },
@@ -45,41 +43,46 @@ namespace MultiTenancyFramework.Mvc
             );
 
             // Added this case so it does not fall to the route: 'ControllerAndActionOnly' below
-            routes.MapRoute( //LowerCase(
+            routes.MapRoute( 
                 name: "TenantHome",
                 url: "{institution}/Home",
                 defaults: new { area = "", controller = "Home", action = "Index", id = UrlParameter.Optional },
                 constraints: new { id = @"\d*" }
             );
 
-            routes.MapRoute( //LowerCase(
+            routes.MapRoute( 
                 name: "InstitutionOnly",
                 url: "{institution}",
                 defaults: new { area = "", controller = "Home", action = "Index", id = UrlParameter.Optional },
                 constraints: new { id = @"\d*" }
             );
 
-            routes.MapRoute( //LowerCase(
+            routes.MapRoute( 
                 name: "ControllerAndActionOnly",
                 url: "{controller}/{action}/{id}",
                 defaults: new { institution = Utilities.INST_DEFAULT_CODE, area = "", id = UrlParameter.Optional },
                 constraints: new { id = @"\d*" }
             );
 
-            routes.MapRoute( //LowerCase(
+            routes.MapRoute( 
                 name: "MultiTenant",
                 url: "{institution}/{controller}/{action}/{id}",
                 defaults: new { area = "", id = UrlParameter.Optional },
                 constraints: new { id = @"\d*" }
             );
 
-            routes.MapRoute( //LowerCase(
+            routes.MapRoute( 
                 name: "MultiTenantWithArea",
                 url: "{institution}/{area}/{controller}/{action}/{id}",
                 defaults: new { id = UrlParameter.Optional }, 
                 constraints: new { id = @"\d*" }
             );
 
+        }
+        public static void RegisterRoutesLowercase(RouteCollection routes)
+        {
+            routes.LowercaseUrls = true;
+            RegisterRoutes(routes);
         }
     }
 
