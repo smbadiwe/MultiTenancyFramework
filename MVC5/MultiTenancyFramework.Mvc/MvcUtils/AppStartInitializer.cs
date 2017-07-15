@@ -13,16 +13,10 @@ namespace MultiTenancyFramework.Mvc.MvcUtils
             AreaRegistration.RegisterAllAreas();
             ModelMetadataProviders.Current = new MyModelMetadataProvider();
             InstitutionFilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            if (useLowercaseRoutes)
-            {
-                InstitutionRouteConfig.RegisterRoutesLowercase(RouteTable.Routes);
-            }
-            else
-            {
-                InstitutionRouteConfig.RegisterRoutes(RouteTable.Routes);
-            }
+
+            InstitutionRouteConfig.RegisterRoutes(RouteTable.Routes, useLowercaseRoutes);
             MvcHandler.DisableMvcResponseHeader = true;
-            
+
             ViewEngines.Engines.Clear();
             ViewEngines.Engines.Add(new RazorViewEngine { FileExtensions = new[] { "cshtml" } });
         }

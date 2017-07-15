@@ -12,13 +12,14 @@ namespace MultiTenancyFramework.Mvc
         /// Routes are mapped such that urls generated are lowercase
         /// </summary>
         /// <param name="routes"></param>
-        public static void RegisterRoutes(RouteCollection routes)
+        public static void RegisterRoutes(RouteCollection routes, bool lowercaseUrls)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("{*staticfile}", new { staticfile = @".*\.(css|less|sass|js|gif|png|jpg|jpeg|ico|svg|ttf|eot|woff|woff2|xml|csv|txt|map|json|pdf|doc|docx|xls|xlsx|dll|exe|pdb)(/.*)?" });
             
             routes.MapMvcAttributeRoutes();
 
+            routes.LowercaseUrls = lowercaseUrls;
             // From most specific to most general
 
             routes.MapRoute( 
@@ -78,11 +79,6 @@ namespace MultiTenancyFramework.Mvc
                 constraints: new { id = @"\d*" }
             );
 
-        }
-        public static void RegisterRoutesLowercase(RouteCollection routes)
-        {
-            routes.LowercaseUrls = true;
-            RegisterRoutes(routes);
         }
     }
 
