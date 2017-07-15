@@ -91,7 +91,7 @@ namespace MultiTenancyFramework.Mvc
                 Utilities.Logger.Log(ex);
                 throw ex;
             }
-            catch (Exception ex) when (!(ex is LogOutUserException))
+            catch (Exception ex) // when (!(ex is LogOutUserException))
             {
                 Utilities.Logger.Log(ex);
                 return null;
