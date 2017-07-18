@@ -120,13 +120,13 @@ namespace MultiTenancyFramework.Mvc
                     && HttpContext.Current.Request.RequestContext != null)
                 {
                     var instCode = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["institution"]) ?? Utilities.INST_DEFAULT_CODE;
-                    if (string.IsNullOrWhiteSpace(instCode) || instCode == Utilities.INST_DEFAULT_CODE) return null;
+                    if (string.IsNullOrWhiteSpace(instCode) || instCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.OrdinalIgnoreCase)) return null;
 
                     // Thr request may be from a non-existent institution, so we check if we have it in session
                     if (HttpContext.Current.Session != null && HttpContext.Current.Session[SS_CODE] != null)
                     {
                         var codeInSession = Convert.ToString(HttpContext.Current.Session[SS_CODE]); //ClaimsPrincipal.Current.FindFirst("ic")?.Value; // 
-                        if (codeInSession != instCode)
+                        if (!instCode.Equals(codeInSession, StringComparison.OrdinalIgnoreCase))
                         {
                             var error = $"codeInSession ({codeInSession}) != instCode ({instCode}).";
                             var ex = new LogOutUserException(error);
@@ -142,36 +142,17 @@ namespace MultiTenancyFramework.Mvc
                     var inst = Utilities.QueryProcessor.Process(query);
                     if (inst == null) throw new GeneralException($"The code: {instCode} does not belong to any institution on our system.", ExceptionType.UnidentifiedInstitutionCode);
 
-                    return inst.Code;
+                    return instCode; // return inst.Code;
                 }
                 else
                 {
-                    var toLog = "Why are we being logged out?\n";
-                    if (HttpContext.Current == null)
-                    {
-                        toLog += "HttpContext.Current is null.";
-                    }
-                    else
-                    {
-                        if (HttpContext.Current.Request == null)
-                        {
-                            toLog += "HttpContext.Current.Request is null.";
-                        }
-                        else
-                        {
-                            if (HttpContext.Current.Request.RequestContext == null)
-                            {
-                                toLog += "HttpContext.Current.Request.RequestContext is null.";
-                            }
-                        }
-                    }
-                    Utilities.Logger.Log(toLog);
                     throw new LogOutUserException(); // Code should never reach here.
                 }
             }
             set
             {
                 if (string.IsNullOrWhiteSpace(value)) value = Utilities.INST_DEFAULT_CODE;
+                value = value.ToLower();
                 HttpContext.Current.Request.RequestContext.RouteData.Values["institution"] = value;
                 HttpContext.Current.Session[SS_CODE] = value;
             }

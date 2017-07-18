@@ -63,7 +63,7 @@ namespace MultiTenancyFramework.Mvc
             return View(SharedErrorViewName, new ErrorMessageModel("Invalid Url. Please cross-check.", true));
         }
 
-        // GET: InvalidUrl
+        // GET: DisabledInstitution
         public virtual ActionResult DisabledInstitution(string instName)
         {
             return View(SharedErrorViewName, new ErrorMessageModel(string.Format("This institution <b>{0}</b> has not been registered on our platform.", instName), true));
