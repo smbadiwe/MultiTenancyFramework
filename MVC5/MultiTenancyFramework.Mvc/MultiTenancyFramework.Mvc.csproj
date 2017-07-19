@@ -131,6 +131,7 @@
     <Compile Include="Entities\InstitutionAccessValidationResult.cs" />
     <Compile Include="Extensions\AreaRegistrationContextExtensions.cs" />
     <Compile Include="Extensions\EntityExtensionsMvc.cs" />
+    <Compile Include="Extensions\MvcFormExtension.cs" />
     <Compile Include="Extensions\IIdentityExtensions.cs" />
     <Compile Include="Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Extensions\IOExtensions.cs" />

@@ -297,7 +297,7 @@ namespace System.Web.Mvc.Html
         }
 
         #endregion
-        
+
         public static IDictionary<string, object> MergeHtmlAttributes(this HtmlHelper helper, object htmlAttributesObject, object defaultHtmlAttributesObject)
         {
             var concatKeys = new string[] { "class" };
