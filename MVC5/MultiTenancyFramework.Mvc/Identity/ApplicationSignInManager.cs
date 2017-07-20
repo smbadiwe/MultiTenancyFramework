@@ -118,7 +118,7 @@ namespace MultiTenancyFramework.Mvc.Identity
             InstitutionAccessValidationResult result;
             string instCode = Convert.ToString(System.Web.HttpContext.Current.Request.RequestContext.RouteData.Values["institution"]);
 
-            if (instCode != Utilities.INST_DEFAULT_CODE)
+            if (!Utilities.INST_DEFAULT_CODE.Equals(instCode, StringComparison.OrdinalIgnoreCase))
             {
                 Institution institution;
                 DataCacheMVC.AllInstitutions.TryGetValue(instCode, out institution);

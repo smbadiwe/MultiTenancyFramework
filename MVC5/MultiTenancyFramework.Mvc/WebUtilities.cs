@@ -105,7 +105,7 @@ namespace MultiTenancyFramework.Mvc
             get
             {
                 var instCode = InstitutionCode;
-                return string.IsNullOrWhiteSpace(instCode) || instCode == Utilities.INST_DEFAULT_CODE;
+                return string.IsNullOrWhiteSpace(instCode) || Utilities.INST_DEFAULT_CODE.Equals(instCode, StringComparison.OrdinalIgnoreCase);
             }
         }
 

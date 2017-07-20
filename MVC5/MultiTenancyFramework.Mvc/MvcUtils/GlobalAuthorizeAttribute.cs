@@ -57,26 +57,22 @@ namespace MultiTenancyFramework.Mvc
                    actionDescriptor.ActionName,
                    actionDescriptor.ControllerDescriptor.ControllerName,
                    area);
-            if (instCode == Utilities.INST_DEFAULT_CODE)
+            if (Utilities.INST_DEFAULT_CODE.Equals(instCode, StringComparison.OrdinalIgnoreCase))
             {
                 #region Check whether to allow Core access the action
-
-                // It's not; so check if AllowAnonymous is on the action
-                var allowParent = actionDescriptor.GetCustomAttributes(typeof(AllowAccessToParentAttribute), true);
-                if (allowParent.Length == 0)
-                {
-                    // bounce
-                    filterContext.Result = MvcUtility.GetPageResult("TenantsOnlyAllowed", "Error", "", instCode, new Dictionary<string, object> { { "actionAttempted", privilegeName } });
-                    return;
-                }
-
+                
                 // check if AllowAnonymous is on the controller
-                allowParent = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAccessToParentAttribute), true);
+                var allowParent = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAccessToParentAttribute), true);
                 if (allowParent.Length == 0)
                 {
-                    // bounce
-                    filterContext.Result = MvcUtility.GetPageResult("TenantsOnlyAllowed", "Error", "", instCode, new Dictionary<string, object> { { "actionAttempted", privilegeName } });
-                    return;
+                    // It's not; so check if AllowAnonymous is on the action
+                    allowParent = actionDescriptor.GetCustomAttributes(typeof(AllowAccessToParentAttribute), true);
+                    if (allowParent.Length == 0)
+                    {
+                        // bounce
+                        filterContext.Result = MvcUtility.GetPageResult("TenantsOnlyAllowed", "Error", "", instCode, new Dictionary<string, object> { { "actionAttempted", filterContext.HttpContext.Request.Url.AbsoluteUri } });
+                        return;
+                    }
                 }
 
                 #endregion

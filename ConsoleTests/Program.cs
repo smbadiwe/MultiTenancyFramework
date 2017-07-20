@@ -126,7 +126,7 @@ namespace ConsoleTests
             });
             //testSplitCamelCase();
             var dao = new MultiTenancyFramework.NHibernate.CoreDAO<Somadina>();
-            dao.InstitutionCode = "ME2LQ";
+            dao.InstitutionCode = "core";
             try
             {
                 foreach (var item in list)
