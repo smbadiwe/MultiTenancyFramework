@@ -10,9 +10,22 @@ namespace MultiTenancyFramework.NHibernate.Maps
 
     }
 
-    public class EntityMap<T, idT> : ClassMap<T> where T : class, IEntity<idT> where idT : IEquatable<idT>
+    public class EntityMap<T, idT> : BaseEntityMap<T, idT> where T : class, IEntity<idT> where idT : IEquatable<idT>
     {
         public EntityMap()
+        {
+            Map(x => x.Name);
+        }
+    }
+
+    public class BaseEntityMap<T> : BaseEntityMap<T, long> where T : class, IBaseEntity
+    {
+
+    }
+
+    public class BaseEntityMap<T, idT> : ClassMap<T> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
+    {
+        public BaseEntityMap()
         {
             Id(x => x.Id);
             Map(x => x.InstitutionCode).Index("ind_InstitutionCode");

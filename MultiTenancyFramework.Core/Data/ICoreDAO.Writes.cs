@@ -3,7 +3,7 @@ using System;
 
 namespace MultiTenancyFramework.Data
 {
-    public interface ICoreWritesDAO<T, idT> : ICoreGeneralDAO, ICoreUnitOfWorkDAO where T : IEntity<idT> where idT : IEquatable<idT>
+    public interface ICoreWritesDAO<T, idT> : ICoreGeneralDAO, ICoreUnitOfWorkDAO where T : IBaseEntity<idT> where idT : IEquatable<idT>
     {
         void Refresh(T obj);
 

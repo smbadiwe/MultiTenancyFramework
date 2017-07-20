@@ -12,7 +12,7 @@ namespace MultiTenancyFramework.NHibernate.Audit
 
         public static bool DisconnectedContext { get; set; } = false;
         
-        public static Type SoftDeletableType { get; set; } = typeof(IEntity);
+        public static Type SoftDeletableType { get; set; } = typeof(IBaseEntity);
 
         public static string SoftDeletablePropertyName { get; set; } = "IsDeleted";
 

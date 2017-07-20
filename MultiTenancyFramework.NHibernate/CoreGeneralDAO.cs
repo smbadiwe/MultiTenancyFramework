@@ -19,7 +19,7 @@ namespace MultiTenancyFramework.NHibernate
             }
             set
             {
-                if (value == null || value == Utilities.INST_DEFAULT_CODE) value = string.Empty;
+                if (value == null || value.Equals(Utilities.INST_DEFAULT_CODE, System.StringComparison.OrdinalIgnoreCase)) value = string.Empty;
                 _institutionCode = value;
             }
         }

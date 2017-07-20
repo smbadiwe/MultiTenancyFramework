@@ -6,7 +6,6 @@ namespace MultiTenancyFramework.NHibernate.Maps
     {
         public DatabaseConnectionMap()
         {
-            Map(x => x.Name);
             Map(x => x.ConnectionString);
             Map(x => x.NumberOfInstitutionsCurrentlyHosted);
             Map(x => x.MaximumNumberOfInstitutionsHosted);

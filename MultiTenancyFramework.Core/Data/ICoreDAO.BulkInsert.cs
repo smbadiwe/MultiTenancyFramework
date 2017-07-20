@@ -6,7 +6,7 @@ using System.Data;
 
 namespace MultiTenancyFramework.Data
 {
-    public interface ICoreBulkInsertDAO<T, idT> where T : IEntity<idT> where idT : IEquatable<idT>
+    public interface ICoreBulkInsertDAO<T, idT> where T : IBaseEntity<idT> where idT : IEquatable<idT>
     {
         /// <summary>
         /// Use this to insert bulk data into the db. A typical case is when you're uploading thousands of data

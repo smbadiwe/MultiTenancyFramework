@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace MultiTenancyFramework.Data
 {
-    public interface ICoreReadsDAO<T, idT> : ICoreGeneralDAO where T : IEntity<idT> where idT : IEquatable<idT>
+    public interface ICoreReadsDAO<T, idT> : ICoreGeneralDAO where T : IBaseEntity<idT> where idT : IEquatable<idT>
     {
         IList<idT> RetrieveIDs();
 
@@ -23,7 +23,7 @@ namespace MultiTenancyFramework.Data
         /// </summary>
         /// <param name="query">WARNING: Be sure to send in parametized query, else you're on your own!</param>
         /// <returns></returns>
-        IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false) where U : class, IEntity<idT>;
+        IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false) where U : class, IBaseEntity<idT>;
 
         /// <summary>
         /// This one is only for when an IList will do.

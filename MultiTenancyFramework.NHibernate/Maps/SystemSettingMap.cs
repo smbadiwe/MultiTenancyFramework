@@ -2,7 +2,7 @@
 
 namespace MultiTenancyFramework.NHibernate.Maps
 {
-    public class SystemSettingMap : EntityMap<SystemSetting>
+    public class SystemSettingMap : BaseEntityMap<SystemSetting>
     {
         public SystemSettingMap()
         {

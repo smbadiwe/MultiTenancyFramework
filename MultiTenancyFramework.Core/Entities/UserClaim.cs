@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace MultiTenancyFramework.Entities
 {
-    public class UserClaim : Claim, IEntity, IDoNotNeedAudit
+    public class UserClaim : Claim, IBaseEntity, IDoNotNeedAudit
     {
         public UserClaim() : this("default", "null") { }
         public UserClaim(string type, string value) : base(type, value)
@@ -19,15 +19,13 @@ namespace MultiTenancyFramework.Entities
         public virtual bool SkipAudit { get; set; }
 
 
-        //IEntity
+        //IBaseEntity
         public virtual DateTime DateCreated { get; set; }
         public virtual long Id { get; set; }
         public virtual string InstitutionCode { get; set; }
         public virtual DateTime LastDateModified { get; set; }
-        public virtual string Name { get; set; }
         public virtual bool IsDisabled { get; set; }
         public virtual bool IsDeleted { get; set; }
-        public virtual bool IsASystemChange { get; set; }
         public virtual bool IsEnabled { get { return !IsDisabled; } }
 
         public virtual long CreatedBy { get; set; }

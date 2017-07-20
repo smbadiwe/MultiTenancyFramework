@@ -396,7 +396,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// <param name="sessionKey"></param>
         private static ISessionFactory BuildFactory(string instCode, string sessionKey)
         {
-            if (instCode != Utilities.INST_DEFAULT_CODE)
+            if (!Utilities.INST_DEFAULT_CODE.Equals(instCode, StringComparison.OrdinalIgnoreCase))
             {
                 var institution = new GetInstitutionByCodeQueryHandler().Handle(new GetInstitutionByCodeQuery { Code = instCode });
                 if (institution == null) throw new GeneralException($"No institution with Code - {instCode}", ExceptionType.UnidentifiedInstitutionCode);
@@ -461,7 +461,8 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             // failing with 'property 'Name' already mapped' error. We'll revisit this again.
             // The issue is that 'Name' in Entity class from which other classes inherit is not mapped in EntityMap<>
             // but it's mapped in some classes.
-            AutoPersistenceModel autoPersistenceModel = new AutoPersistenceModel(new AutomappingConfiguration());
+            // UPDATE: My latest attempt was not throwing a stack-overflow exception once 'cfg.AddAutoMappings(autoPersistenceModel);' is called
+            AutoPersistenceModel autoPersistenceModel = new AutoPersistenceModel(); // new AutomappingConfiguration());
 
             // Check for ClassMap<> or .hbm type mapping files
             if (hc.SessionFactory != null)
@@ -492,27 +493,32 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 cfg.BeforeBindMapping += (sender, args) => args.Mapping.autoimport = false;
             }
 
-            // Check entity assemblies for possible automapping in case the mapping file is not written
-            // Hey, don't forget this assembly and the 'Core' - check them too
+            #region Auto-mapping
+            //// Check entity assemblies for possible automapping in case the mapping file is not written
+            //// Hey, don't forget this assembly and the 'Core' - check them too
 
-            // 'Core' first
-            autoPersistenceModel.AddEntityAssembly(typeof(Entity).Assembly);
+            //// 'Core' first
+            //var entityAssembly = typeof(Entity).Assembly;
+            //autoPersistenceModel.AddEntityAssembly(entityAssembly);
+            //// The rest
+            //EntityAssemblies.Add(ThisAssembly);
+            //var entityAssemblyName = entityAssembly.GetName().Name;
+            //foreach (var assemblyName in EntityAssemblies)
+            //{
+            //    if (assemblyName.Equals(entityAssemblyName, StringComparison.OrdinalIgnoreCase)) continue;
 
-            // The rest
-            EntityAssemblies.Add(ThisAssembly);
-            foreach (var assemblyName in EntityAssemblies)
-            {
-                // Looks for Automapping overrides
-                var assembly = Assembly.Load(assemblyName);
-                autoPersistenceModel.AddEntityAssembly(assembly);
-            }
+            //    // Looks for Automapping overrides
+            //    var assembly = Assembly.Load(assemblyName);
+            //    autoPersistenceModel.AddEntityAssembly(assembly);
+            //}
 
-            bool notCoreInst = !instCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.OrdinalIgnoreCase);
+            //bool notCoreInst = !instCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.OrdinalIgnoreCase);
 
-            if (notCoreInst) // => Tenant, so do not map those entities marked as Hosted Centrally
-            {
-                autoPersistenceModel.Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
-            }
+            //if (notCoreInst) // => Tenant, so do not map those entities marked as Hosted Centrally
+            //{
+            //    autoPersistenceModel.Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
+            //} 
+            #endregion
             return autoPersistenceModel;
         }
 

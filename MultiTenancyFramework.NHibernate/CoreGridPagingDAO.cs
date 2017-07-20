@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace MultiTenancyFramework.NHibernate
 {
-    public abstract class CoreGridPagingDAO<T, idT> : CoreGeneralDAO where T : class, IEntity<idT> where idT : IEquatable<idT>
+    public abstract class CoreGridPagingDAO<T, idT> : CoreGeneralDAO where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
     {
         /// <summary>
         /// 

@@ -16,7 +16,7 @@ namespace MultiTenancyFramework.NHibernate
     /// This holds the minimum data requirements for each entity. It does not include list retrievals and SQL bulk inserts
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class CoreDAO<T> : CoreDAO<T, long>, ICoreDAO<T> where T : class, IEntity<long>
+    public class CoreDAO<T> : CoreDAO<T, long>, ICoreDAO<T> where T : class, IBaseEntity<long>
     {
 
     }
@@ -26,7 +26,7 @@ namespace MultiTenancyFramework.NHibernate
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="idT"></typeparam>
-    public class CoreDAO<T, idT> : CoreGridPagingDAO<T, idT>, ICoreDAO<T, idT> where T : class, IEntity<idT> where idT : IEquatable<idT>
+    public class CoreDAO<T, idT> : CoreGridPagingDAO<T, idT>, ICoreDAO<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
     {
         public void CommitChanges()
         {
@@ -300,7 +300,7 @@ namespace MultiTenancyFramework.NHibernate
             return session.QueryOver<T>(EntityName).Select(x => x.Id).List<idT>();
         }
 
-        public IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false) where U : class, IEntity<idT>
+        public IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false) where U : class, IBaseEntity<idT>
         {
             var session = BuildSession();
             return session.CreateSQLQuery(query).List<U>();

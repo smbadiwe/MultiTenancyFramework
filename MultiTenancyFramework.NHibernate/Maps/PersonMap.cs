@@ -2,7 +2,7 @@
 
 namespace MultiTenancyFramework.NHibernate.Maps
 {
-    public class PersonMap<T> : EntityMap<T> where T : Person
+    public class PersonMap<T> : BaseEntityMap<T> where T : Person
     {
         public PersonMap()
         {

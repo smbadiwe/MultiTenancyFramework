@@ -133,7 +133,7 @@ namespace ConsoleTests
                 {
                     dao.Save(item);
                 }
-                dao.CommitChanges();
+                //dao.CommitChanges();
             }
             catch (Exception ex)
             {

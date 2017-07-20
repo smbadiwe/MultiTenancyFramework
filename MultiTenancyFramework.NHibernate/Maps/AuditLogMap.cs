@@ -2,7 +2,7 @@
 
 namespace MultiTenancyFramework.NHibernate.Maps
 {
-    public class AuditLogMap : EntityMap<AuditLog>
+    public class AuditLogMap : BaseEntityMap<AuditLog>
     {
         public AuditLogMap()
         {

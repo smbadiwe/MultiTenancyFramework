@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace MultiTenancyFramework.Logic
 {
-    public abstract class CoreBaseLogic<T> : CoreBaseLogic<T, long> where T : class, IEntity<long>
+    public abstract class CoreBaseLogic<T> : CoreBaseLogic<T, long> where T : class, IBaseEntity<long>
     {
         /// <summary>
         /// Use this to point to entities that are hosted centrally
@@ -27,7 +27,7 @@ namespace MultiTenancyFramework.Logic
         }
     }
 
-    public abstract class CoreBaseLogic<T, idT> where T : class, IEntity<idT> where idT : IEquatable<idT>
+    public abstract class CoreBaseLogic<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
     {
         protected ICoreDAO<T, idT> _dao;
 

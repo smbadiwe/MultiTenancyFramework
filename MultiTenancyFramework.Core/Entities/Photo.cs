@@ -5,6 +5,11 @@
     /// </summary>
     public class Photo : Entity
     {
+        public Photo()
+        {
+            SkipAudit = true;
+        }
+
         /// <summary>
         /// The ID representing the person that owns this photo record
         /// </summary>
@@ -24,10 +29,5 @@
         /// Image type
         /// </summary>
         public virtual ImageType ImageType { get; set; }
-
-        /// <summary>
-        /// Set to true by default.
-        /// </summary>
-        public override bool SkipAudit { get; set; } = true;
     }
 }

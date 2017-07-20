@@ -10,7 +10,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
     /// NOTE: When overriding Override with this, remember to call base.Override(...)
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class EntityAutoMap<T> : EntityAutoMap<T, long> where T : class, IEntity
+    public abstract class EntityAutoMap<T> : EntityAutoMap<T, long> where T : class, IBaseEntity
     {
 
     }
@@ -19,7 +19,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
     /// NOTE: When overriding Override with this, remember to call base.Override(...)
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class EntityAutoMap<T, idT> : IAutoMappingOverride<T> where T : class, IEntity<idT> where idT : IEquatable<idT>
+    public abstract class EntityAutoMap<T, idT> : IAutoMappingOverride<T> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
     {
         public virtual void Override(AutoMapping<T> mapping)
         {

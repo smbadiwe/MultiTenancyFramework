@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MultiTenancyFramework.Entities
 {
-    public class AuditLog : Entity, IDoNotNeedAudit
+    public class AuditLog : BaseEntity, IDoNotNeedAudit
     {
         /// <summary>
         /// To set it, call the extension: SetTrailItems

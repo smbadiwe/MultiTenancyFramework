@@ -2,21 +2,17 @@
 
 namespace MultiTenancyFramework.Entities
 {
-    public interface IEntity : IEntity<long>
+    public interface IBaseEntity : IBaseEntity<long>
     {
     }
 
-    public interface IEntity<idT> where idT : IEquatable<idT>
+    public interface IBaseEntity<idT> where idT : IEquatable<idT>
     {
         idT Id { get; set; }
         /// <summary>
         /// The tenant discriminator
         /// </summary>
         string InstitutionCode { get; set; }
-        /// <summary>
-        /// Most entities will have a name;so this is provided for convenience
-        /// </summary>
-        string Name { get; set; }
         bool IsDisabled { get; set; }
         bool IsDeleted { get; set; }
         bool IsEnabled { get; }
@@ -36,5 +32,17 @@ namespace MultiTenancyFramework.Entities
         /// </summary>
         /// <returns></returns>
         string GetTableName();
+    }
+
+    public interface IEntity : IEntity<long>
+    {
+    }
+
+    public interface IEntity<idT> : IBaseEntity<idT> where idT : IEquatable<idT>
+    {
+        /// <summary>
+        /// Most entities will have a name;so this is provided for convenience
+        /// </summary>
+        string Name { get; set; }
     }
 }

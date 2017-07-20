@@ -3,11 +3,24 @@
 namespace MultiTenancyFramework.Entities
 {
 
-    public abstract class Entity : Entity<long>, IEntity
+    public abstract class Entity : Entity<long>, IEntity, IBaseEntity
     {
     }
 
-    public abstract class Entity<idT> : IEntity<idT> where idT : IEquatable<idT>
+    public abstract class Entity<idT> : BaseEntity<idT>, IEntity<idT>, IBaseEntity<idT> where idT : IEquatable<idT>
+    {
+        public virtual string Name { get; set; }
+        public override string ToString()
+        {
+            return $"Name: {Name}; Id: {Id}; Institution Code: {InstitutionCode}";
+        }
+    }
+
+    public abstract class BaseEntity : BaseEntity<long>, IBaseEntity
+    {
+    }
+
+    public abstract class BaseEntity<idT> : IBaseEntity<idT> where idT : IEquatable<idT>
     {
         //[IgnoreInAuditLog]
         public virtual DateTime DateCreated { get; set; } = DateTime.Now.GetLocalTime();
@@ -28,7 +41,6 @@ namespace MultiTenancyFramework.Entities
         public virtual string InstitutionCode { get; set; } = string.Empty; //This is important for our DB sake
         //[IgnoreInAuditLog]
         public virtual DateTime LastDateModified { get; set; } = DateTime.Now.GetLocalTime();
-        public virtual string Name { get; set; }
         public virtual bool IsDisabled { get; set; }
         public virtual bool IsDeleted { get; set; }
         /// <summary>
@@ -54,7 +66,7 @@ namespace MultiTenancyFramework.Entities
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
 
-            return IsSameAs((Entity<idT>)obj);
+            return IsSameAs((BaseEntity<idT>)obj);
         }
 
         public override int GetHashCode()
@@ -66,10 +78,10 @@ namespace MultiTenancyFramework.Entities
 
         public override string ToString()
         {
-            return $"Id: {Id}; Institution Code: {InstitutionCode}; Name: {Name}";
+            return $"Id: {Id}; Institution Code: {InstitutionCode};";
         }
 
-        private bool IsSameAs(Entity<idT> other)
+        private bool IsSameAs(BaseEntity<idT> other)
         {
             return Id.Equals(other.Id) && InstitutionCode == other.InstitutionCode;
         }
