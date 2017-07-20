@@ -6,6 +6,13 @@ namespace MultiTenancyFramework.Entities
     public class UserRole : Entity
     {
         public virtual string Description { get; set; }
+        /// <summary>
+        /// Gets or sets a value indicating whether this user-role is anticipated a-priori by the developer and thus configured out-of-the-box.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is anticipated a-priori; otherwise, <c>false</c>.
+        /// </value>
+        public virtual bool IsSystemProvided { get; set; }
 
         /// <summary>
         /// Comma-separated string of Privilege IDs

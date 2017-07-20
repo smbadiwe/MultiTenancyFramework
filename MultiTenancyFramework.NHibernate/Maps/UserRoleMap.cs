@@ -8,6 +8,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
         {
             Map(x => x.Name);
             Map(x => x.Description);
+            Map(x => x.IsSystemProvided);
             Map(x => x.Privileges).VarCharMax();
         }
     }
