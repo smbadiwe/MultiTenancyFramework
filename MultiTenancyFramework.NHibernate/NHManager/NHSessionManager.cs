@@ -228,7 +228,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
         public static string GetSessionKey(string institutionCode = null, bool isWebSession = true)
         {
-            if (string.IsNullOrWhiteSpace(institutionCode)) institutionCode = Utilities.INST_DEFAULT_CODE;
+            if (string.IsNullOrWhiteSpace(institutionCode)) institutionCode = Utilities.INST_DEFAULT_CODE.ToLower();
             return institutionCode + "_" + (isWebSession ? "true" : "false");
         }
 
@@ -316,7 +316,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
             return session;
         }
-        
+
         /// <summary>
         /// Whether or not the DB we're using is MySql
         /// </summary>
@@ -387,12 +387,6 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             {
                 throw new HibernateException("Cannot create session factory; " + ex.GetFullExceptionMessage());
             }
-            finally //Trivial I guess, but GC may not happen as soon as I want it
-            {
-                cfg = null;
-                autoPersistenceModel = null;
-                auditLogEvent = null;
-            }
         }
 
         /// <summary>
@@ -462,10 +456,12 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             {
                 throw new HibernateConfigException("Cannot process NHibernate Section in config file.");
             }
-            /*TODO: I'm committing this knowing it's buggy: an attempt to build in automapping is still 
-             * failing with 'property 'SkipAudit' already mapped' error. We'll revisit this again.
-             */
-            AutoPersistenceModel autoPersistenceModel = new AutoPersistenceModel(); // new AutomappingConfiguration());
+
+            //TODO: I'm committing this knowing it's buggy: an attempt to build in automapping is still 
+            // failing with 'property 'Name' already mapped' error. We'll revisit this again.
+            // The issue is that 'Name' in Entity class from which other classes inherit is not mapped in EntityMap<>
+            // but it's mapped in some classes.
+            AutoPersistenceModel autoPersistenceModel = new AutoPersistenceModel(new AutomappingConfiguration());
 
             // Check for ClassMap<> or .hbm type mapping files
             if (hc.SessionFactory != null)
@@ -500,26 +496,23 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             // Hey, don't forget this assembly and the 'Core' - check them too
 
             // 'Core' first
-            autoPersistenceModel = autoPersistenceModel.AddEntityAssembly(typeof(Entity).Assembly);
-            if (instCode != Utilities.INST_DEFAULT_CODE) // => Tenant, so do not map those entities marked as Hosted Centrally
-            {
-                autoPersistenceModel = autoPersistenceModel.Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
-            }
+            autoPersistenceModel.AddEntityAssembly(typeof(Entity).Assembly);
 
             // The rest
             EntityAssemblies.Add(ThisAssembly);
             foreach (var assemblyName in EntityAssemblies)
             {
-                var assembly = Assembly.Load(assemblyName);
                 // Looks for Automapping overrides
-                autoPersistenceModel = autoPersistenceModel.AddEntityAssembly(assembly);
-
-                if (instCode != Utilities.INST_DEFAULT_CODE) // => Tenant, so do not map those entities marked as Hosted Centrally
-                {
-                    autoPersistenceModel = autoPersistenceModel.Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
-                }
+                var assembly = Assembly.Load(assemblyName);
+                autoPersistenceModel.AddEntityAssembly(assembly);
             }
-            
+
+            bool notCoreInst = !instCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.OrdinalIgnoreCase);
+
+            if (notCoreInst) // => Tenant, so do not map those entities marked as Hosted Centrally
+            {
+                autoPersistenceModel.Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
+            }
             return autoPersistenceModel;
         }
 

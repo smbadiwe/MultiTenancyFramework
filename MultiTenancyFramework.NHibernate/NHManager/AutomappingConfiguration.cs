@@ -11,7 +11,8 @@ namespace MultiTenancyFramework.NHibernate.NHManager
     {
         public override bool ShouldMap(Type type)
         {
-            var map = type.IsClass && !type.IsAbstract && typeof(IEntity).IsAssignableFrom(type);
+            var map = type.IsClass && !type.IsGenericType && !type.IsAbstract
+                && typeof(IEntity).IsAssignableFrom(type) && !type.IsGenericTypeDefinition; // ContainsGenericParameters;
 
             return map;
         }
@@ -27,7 +28,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         public override bool IsComponent(Type type)
         {
             // Component types should not be 'Entity's and may or may not have [ComplexType] on them
-            if (type != typeof(string) && type.IsClass && !type.IsAbstract)
+            if (type != typeof(string) && type.IsClass && !type.IsAbstract && !type.IsGenericType && !type.IsGenericTypeDefinition)
             {
                 var isComponent = !typeof(IEntity).IsAssignableFrom(type) &&
                     (type.BaseType == typeof(object) || type.GetCustomAttribute<ComplexTypeAttribute>() != null);

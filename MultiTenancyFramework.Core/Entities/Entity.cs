@@ -34,7 +34,7 @@ namespace MultiTenancyFramework.Entities
         /// <summary>
         /// Sometines we don't want to log the change. This is usually when the change was not done by a user;
         /// </summary>
-        //[IgnoreInAuditLog]
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
         public virtual bool SkipAudit { get; set; }
 
         public virtual bool IsEnabled { get { return !IsDisabled; } }
@@ -60,7 +60,7 @@ namespace MultiTenancyFramework.Entities
         public override int GetHashCode()
         {
             var code = Id.GetHashCode() + base.GetHashCode();
-            if (string.IsNullOrWhiteSpace(InstitutionCode)) code += +InstitutionCode.GetHashCode();
+            if (string.IsNullOrWhiteSpace(InstitutionCode)) code += InstitutionCode.GetHashCode();
             return code;
         }
 
