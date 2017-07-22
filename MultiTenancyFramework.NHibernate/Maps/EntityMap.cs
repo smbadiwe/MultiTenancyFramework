@@ -28,6 +28,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
         {
             Id(x => x.Id);
             Map(x => x.IsDeleted);
+            Map(x => x.InstitutionCode);
             Map(x => x.IsDisabled);
             Map(x => x.DateCreated);
             Map(x => x.CreatedBy);

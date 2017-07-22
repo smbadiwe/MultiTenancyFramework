@@ -35,6 +35,7 @@ namespace ConsoleTests
         public virtual long TeacherId { get; set; }
 
         public virtual long ClassId { get; set; }
+        public virtual Chukwuka Chukwuka { get; set; }
 
         public virtual long SubjectId { get; set; }
         public virtual NameAndVal NameAndVal { get; set; }
@@ -52,7 +53,7 @@ namespace ConsoleTests
             // Initialize MVC settings
             //AppStartInitializer.Initialize();
 
-            NHSessionManager.AddEntityAssemblies(new[] { "ConsoleTests" });
+            NHSessionManager.AddEntityAssemblies(new[] { "ConsoleTests", "MultiTenancyFramework.Mvc" });
 
         }
 

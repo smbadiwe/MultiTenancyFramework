@@ -1,14 +1,14 @@
-﻿using MultiTenancyFramework.Entities;
+﻿using FluentNHibernate.Automapping;
+using FluentNHibernate.Automapping.Alterations;
+using MultiTenancyFramework.Entities;
 
 namespace MultiTenancyFramework.NHibernate.Maps
 {
-    public class UserRoleMap : EntityMap<UserRole>
+    public class UserRoleMap : IAutoMappingOverride<UserRole>
     {
-        public UserRoleMap()
+        public void Override(AutoMapping<UserRole> mapping)
         {
-            Map(x => x.Description);
-            Map(x => x.IsSystemProvided);
-            Map(x => x.Privileges).VarCharMax();
+            mapping.Map(x => x.Privileges).VarCharMax();
         }
     }
 }

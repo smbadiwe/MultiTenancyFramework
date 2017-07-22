@@ -1,21 +1,14 @@
-﻿using MultiTenancyFramework.Entities;
+﻿using FluentNHibernate.Automapping;
+using FluentNHibernate.Automapping.Alterations;
+using MultiTenancyFramework.Entities;
 
 namespace MultiTenancyFramework.NHibernate.Maps
 {
-    public class AuditLogMap : BaseEntityMap<AuditLog>
+    public class AuditLogMap : IAutoMappingOverride<AuditLog>
     {
-        public AuditLogMap()
+        public void Override(AutoMapping<AuditLog> mapping)
         {
-            Map(x => x.EventDate);
-            Map(x => x.EventType);
-            Map(x => x.Entity);
-            Map(x => x.EntityId);
-            Map(x => x.AuditData).VarCharMax();
-            Map(x => x.UserId);
-            Map(x => x.UserName);
-            Map(x => x.ClientIpAddress);
-            Map(x => x.ClientName);
-            Map(x => x.ApplicationName);
+            mapping.Map(x => x.AuditData).VarCharMax();
         }
     }
 }

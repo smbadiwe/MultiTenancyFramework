@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MultiTenancyFramework.Entities
 {
@@ -8,6 +9,7 @@ namespace MultiTenancyFramework.Entities
         /// <summary>
         /// To set it, call the extension: SetTrailItems
         /// </summary>
+        [NotMapped]
         public virtual List<TrailItem> TrailItems { get; set; }
 
         /// <summary>
