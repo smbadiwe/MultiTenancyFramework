@@ -459,7 +459,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
             AutoPersistenceModel autoPersistenceModel = new AutoPersistenceModel(new AutomappingConfiguration());
 
-            // Check for ClassMap<> or .hbm type mapping files
+            // Check for automap overrides, ClassMap<> or .hbm type mapping files
             if (hc.SessionFactory != null)
             {
                 var mappingAssemblies = new HashSet<string>(hc.SessionFactory.Mappings.Select(x => x.Assembly));
@@ -483,6 +483,9 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
                     // Looks for fluent mappings
                     autoPersistenceModel.AddMappingsFromAssembly(assembly);
+
+                    // Looks for auto-mapping overrides
+                    autoPersistenceModel.UseOverridesFromAssembly(assembly);
                 }
 
                 cfg.BeforeBindMapping += (sender, args) => args.Mapping.autoimport = false;
@@ -495,19 +498,16 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             // 'Core' first
             var entityAssembly = typeof(Entity).Assembly;
             autoPersistenceModel.AddEntityAssembly(entityAssembly);
-            autoPersistenceModel.UseOverridesFromAssembly(entityAssembly);
 
             // The rest
-            EntityAssemblies.Add(ThisAssembly);
             var entityAssemblyName = entityAssembly.GetName().Name;
             foreach (var assemblyName in EntityAssemblies)
             {
                 if (assemblyName.Equals(entityAssemblyName, StringComparison.OrdinalIgnoreCase)) continue;
 
-                // Looks for Automapping overrides and automap
+                // Looks for automap
                 var assembly = Assembly.Load(assemblyName);
                 autoPersistenceModel.AddEntityAssembly(assembly);
-                autoPersistenceModel.UseOverridesFromAssembly(assembly);
             }
 
             bool notCoreInst = !instCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.OrdinalIgnoreCase);
@@ -566,7 +566,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             cfg.Properties.Add(Environment.Isolation, "ReadCommitted");
             cfg.Properties.Add(Environment.ProxyFactoryFactoryClass, "NHibernate.Bytecode.DefaultProxyFactoryFactory, NHibernate");
             cfg.Properties.Add(Environment.CurrentSessionContextClass, "web");
-            
+
             return cfg;
         }
 
