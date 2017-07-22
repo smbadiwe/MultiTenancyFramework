@@ -20,8 +20,18 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         public override bool ShouldMap(Member member)
         {
             //base.ShouldMap(member) tests for IsPublic and IsProperty
-            return base.ShouldMap(member) && member.CanWrite
-                && member.MemberInfo.GetCustomAttribute<NotMappedAttribute>() == null;
+            if (base.ShouldMap(member) && member.CanWrite
+                && member.MemberInfo.GetCustomAttribute<NotMappedAttribute>() == null)
+            {
+                // Check if the property is overridden in a child class. If it is, return false.
+                if (member.MemberInfo.DeclaringType == member.MemberInfo.ReflectedType)
+                {
+                    var classProps = member.MemberInfo.ReflectedType.BaseType.GetProperty(member.Name, BindingFlags.Instance | BindingFlags.Public);
+                    return classProps == null;
+                }
+                return true;
+            }
+            return false;
         }
 
         public override bool IsComponent(Type type)
