@@ -75,7 +75,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Maps\DatabaseConnectionMap.cs" />
-    <Compile Include="Maps\EntityAutoMap.cs" />
     <Compile Include="Maps\PhotoMap.cs" />
     <Compile Include="Maps\PrivilegeMap.cs" />
     <Compile Include="NHManager\AutomappingConfiguration.cs" />

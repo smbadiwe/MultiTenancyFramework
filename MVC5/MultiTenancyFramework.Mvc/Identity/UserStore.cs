@@ -178,7 +178,7 @@ namespace MultiTenancyFramework.Mvc.Identity
                 throw new ArgumentNullException("user");
             }
 
-            var userClaim = claim as UserClaim;
+            var userClaim = new UserClaim(claim);
             if (userClaim == null)
             {
                 throw new ArgumentException("Use or derive from MultiTenancyFramework.Core.UserClaim");
@@ -209,7 +209,7 @@ namespace MultiTenancyFramework.Mvc.Identity
             {
                 foreach (var row in rows)
                 {
-                    identity.AddClaim(row);
+                    identity.AddClaim(new Claim(row.ClaimType, row.ClaimValue, row.ClaimValueType));
                 }
             }
             return Task.FromResult<IList<Claim>>(identity.Claims.ToList());
@@ -227,7 +227,7 @@ namespace MultiTenancyFramework.Mvc.Identity
                 throw new ArgumentNullException("claim");
             }
 
-            var userClaim = claim as UserClaim;
+            var userClaim = new UserClaim(claim);
             if (userClaim == null)
             {
                 throw new ArgumentException("Use or derive from MultiTenancyFramework.Core.UserClaim");

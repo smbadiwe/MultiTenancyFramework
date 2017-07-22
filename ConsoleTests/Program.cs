@@ -2,9 +2,11 @@
 using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.NHibernate.NHManager;
+using MultiTenancyFramework.NHibernate.Queries;
 using MultiTenancyFramework.SimpleInjector;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -21,6 +23,7 @@ namespace ConsoleTests
         public virtual bool WillCome { get { return true; } }
 
     }
+    [ComplexType]
     public class NameAndVal
     {
         public string MyName { get; set; }
@@ -125,14 +128,21 @@ namespace ConsoleTests
                 SubjectId = 499
             });
             //testSplitCamelCase();
-            var dao = new MultiTenancyFramework.NHibernate.CoreDAO<Somadina>();
+            var handler = new GetAppUserByUsernameQueryHandler
+            {
+                InstitutionCode = "core"
+            };
+            var res = handler.Handle(new MultiTenancyFramework.Data.Queries.GetAppUserByUsernameQuery { Username = "Super User" });
+            var dao = new MultiTenancyFramework.NHibernate.CoreDAO<UserRole>();
             dao.InstitutionCode = "core";
+            //var ite = dao.RetrieveAll();
+            //var ite2 = dao.Retrieve(1);
             try
             {
-                foreach (var item in list)
-                {
-                    dao.Save(item);
-                }
+                //foreach (var item in list)
+                //{
+                //    dao.Save(item);
+                //}
                 //dao.CommitChanges();
             }
             catch (Exception ex)

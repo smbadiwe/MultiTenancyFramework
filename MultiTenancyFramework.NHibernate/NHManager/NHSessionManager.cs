@@ -457,12 +457,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 throw new HibernateConfigException("Cannot process NHibernate Section in config file.");
             }
 
-            //TODO: I'm committing this knowing it's buggy: an attempt to build in automapping is still 
-            // failing with 'property 'Name' already mapped' error. We'll revisit this again.
-            // The issue is that 'Name' in Entity class from which other classes inherit is not mapped in EntityMap<>
-            // but it's mapped in some classes.
-            // UPDATE: My latest attempt was not throwing a stack-overflow exception once 'cfg.AddAutoMappings(autoPersistenceModel);' is called
-            AutoPersistenceModel autoPersistenceModel = new AutoPersistenceModel(); // new AutomappingConfiguration());
+            AutoPersistenceModel autoPersistenceModel = new AutoPersistenceModel(new AutomappingConfiguration());
 
             // Check for ClassMap<> or .hbm type mapping files
             if (hc.SessionFactory != null)
@@ -494,31 +489,35 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             }
 
             #region Auto-mapping
-            //// Check entity assemblies for possible automapping in case the mapping file is not written
-            //// Hey, don't forget this assembly and the 'Core' - check them too
+            // Check entity assemblies for possible automapping in case the mapping file is not written
+            // Hey, don't forget this assembly and the 'Core' - check them too
 
-            //// 'Core' first
-            //var entityAssembly = typeof(Entity).Assembly;
-            //autoPersistenceModel.AddEntityAssembly(entityAssembly);
-            //// The rest
-            //EntityAssemblies.Add(ThisAssembly);
-            //var entityAssemblyName = entityAssembly.GetName().Name;
-            //foreach (var assemblyName in EntityAssemblies)
-            //{
-            //    if (assemblyName.Equals(entityAssemblyName, StringComparison.OrdinalIgnoreCase)) continue;
+            // 'Core' first
+            var entityAssembly = typeof(Entity).Assembly;
+            autoPersistenceModel.AddEntityAssembly(entityAssembly);
+            autoPersistenceModel.UseOverridesFromAssembly(entityAssembly);
 
-            //    // Looks for Automapping overrides
-            //    var assembly = Assembly.Load(assemblyName);
-            //    autoPersistenceModel.AddEntityAssembly(assembly);
-            //}
+            // The rest
+            EntityAssemblies.Add(ThisAssembly);
+            var entityAssemblyName = entityAssembly.GetName().Name;
+            foreach (var assemblyName in EntityAssemblies)
+            {
+                if (assemblyName.Equals(entityAssemblyName, StringComparison.OrdinalIgnoreCase)) continue;
 
-            //bool notCoreInst = !instCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.OrdinalIgnoreCase);
+                // Looks for Automapping overrides and automap
+                var assembly = Assembly.Load(assemblyName);
+                autoPersistenceModel.AddEntityAssembly(assembly);
+                autoPersistenceModel.UseOverridesFromAssembly(assembly);
+            }
 
-            //if (notCoreInst) // => Tenant, so do not map those entities marked as Hosted Centrally
-            //{
-            //    autoPersistenceModel.Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
-            //} 
+            bool notCoreInst = !instCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.OrdinalIgnoreCase);
+
+            if (notCoreInst) // => Tenant, so do not map those entities marked as Hosted Centrally
+            {
+                autoPersistenceModel.Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
+            }
             #endregion
+
             return autoPersistenceModel;
         }
 
@@ -567,19 +566,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             cfg.Properties.Add(Environment.Isolation, "ReadCommitted");
             cfg.Properties.Add(Environment.ProxyFactoryFactoryClass, "NHibernate.Bytecode.DefaultProxyFactoryFactory, NHibernate");
             cfg.Properties.Add(Environment.CurrentSessionContextClass, "web");
-
-            #region Defined in the class: AppFilterDefinition
-            ////To filter queries: 
-            ////Where IsDeleted != 1 AND InstitutionCode = :instCode
-            //var filterDef = new FilterDefinition(
-            //                        name: Utilities.InstitutionFilterName,
-            //                        defaultCondition: $"{Utilities.SoftDeletePropertyName} != 1 AND {Utilities.InstitutionCodePropertyName} = :{Utilities.InstitutionCodeQueryParamName}",
-            //                        parameterTypes: new Dictionary<string, IType> { { Utilities.InstitutionCodeQueryParamName, NHibernateUtil.String } },
-            //                        useManyToOne: false);
-
-            //cfg.AddFilterDefinition(filterDef); 
-            #endregion
-
+            
             return cfg;
         }
 

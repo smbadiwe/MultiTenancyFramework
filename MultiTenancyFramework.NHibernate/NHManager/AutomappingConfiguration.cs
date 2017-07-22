@@ -19,8 +19,9 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
         public override bool ShouldMap(Member member)
         {
+            //base.ShouldMap(member) tests for IsPublic and IsProperty
             return base.ShouldMap(member) && member.CanWrite
-                && (member.MemberInfo.GetCustomAttribute<NotMappedAttribute>() == null);
+                && member.MemberInfo.GetCustomAttribute<NotMappedAttribute>() == null;
         }
 
         public override bool IsComponent(Type type)
