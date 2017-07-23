@@ -131,11 +131,11 @@ namespace ConsoleTests
             //testSplitCamelCase();
             var handler = new GetAppUserByUsernameQueryHandler
             {
-                InstitutionCode = "core"
+                InstitutionCode = "mel2q"
             };
             var res = handler.Handle(new MultiTenancyFramework.Data.Queries.GetAppUserByUsernameQuery { Username = "Super User" });
             var dao = new MultiTenancyFramework.NHibernate.CoreDAO<UserRole>();
-            dao.InstitutionCode = "core";
+            dao.InstitutionCode = "mel2q";
             //var ite = dao.RetrieveAll();
             //var ite2 = dao.Retrieve(1);
             try

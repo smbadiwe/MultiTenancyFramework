@@ -457,38 +457,48 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 throw new HibernateConfigException("Cannot process NHibernate Section in config file.");
             }
 
-            AutoPersistenceModel autoPersistenceModel = new AutoPersistenceModel(new AutomappingConfiguration());
+            var mappingAssemblies = new HashSet<string>();
+            mappingAssemblies.Add(ThisAssembly); // Add yourself
 
             // Check for automap overrides, ClassMap<> or .hbm type mapping files
             if (hc.SessionFactory != null)
             {
-                var mappingAssemblies = new HashSet<string>(hc.SessionFactory.Mappings.Select(x => x.Assembly));
-
-                mappingAssemblies.Add(ThisAssembly); // Add yourself
-
-                //Doing this ensure framework libraries are captured without having duplicates
-                if (MappingAssemblies.Any())
+                foreach (var file in hc.SessionFactory.Mappings.Select(x => x.Assembly))
                 {
-                    foreach (var file in MappingAssemblies)
-                    {
-                        mappingAssemblies.Add(file);
-                    }
+                    mappingAssemblies.Add(file);
                 }
-                foreach (var mappingAssemblyCfg in mappingAssemblies)
+            }
+
+            //Doing this ensures that any other specified libraries are captured
+            if (MappingAssemblies.Any())
+            {
+                foreach (var file in MappingAssemblies)
                 {
-                    var assembly = Assembly.Load(mappingAssemblyCfg);
-
-                    // Looks for any HBMs
-                    cfg.AddAssembly(assembly);
-
-                    // Looks for fluent mappings
-                    autoPersistenceModel.AddMappingsFromAssembly(assembly);
-
-                    // Looks for auto-mapping overrides
-                    autoPersistenceModel.UseOverridesFromAssembly(assembly);
+                    mappingAssemblies.Add(file);
                 }
+            }
 
-                cfg.BeforeBindMapping += (sender, args) => args.Mapping.autoimport = false;
+            var mappingAssembliesLoaded = new List<Assembly>(mappingAssemblies.Count);
+            foreach (var mappingAssemblyCfg in mappingAssemblies)
+            {
+                var assembly = Assembly.Load(mappingAssemblyCfg);
+                mappingAssembliesLoaded.Add(assembly);
+            }
+
+            var autoMapConfig = new AutomappingConfiguration();
+            //autoMapConfig.ScanForPotentialClassMaps(mappingAssembliesLoaded);
+            AutoPersistenceModel autoPersistenceModel = new AutoPersistenceModel(autoMapConfig);
+
+            foreach (var assembly in mappingAssembliesLoaded)
+            {
+                // Looks for any HBMs
+                cfg.AddAssembly(assembly);
+
+                // Looks for fluent mappings
+                autoPersistenceModel.AddMappingsFromAssembly(assembly);
+
+                // Looks for auto-mapping overrides
+                autoPersistenceModel.UseOverridesFromAssembly(assembly);
             }
 
             #region Auto-mapping
@@ -517,6 +527,8 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 autoPersistenceModel.Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
             }
             #endregion
+
+            cfg.BeforeBindMapping += (sender, args) => args.Mapping.autoimport = false;
 
             return autoPersistenceModel;
         }
