@@ -69,21 +69,28 @@ namespace MultiTenancyFramework.Mvc
         {
             try
             {
+                string logInfo = "Received HttpSessionStateBase? " + (session != null);
                 if (session == null && HttpContext.Current != null && HttpContext.Current.Session != null)
                     session = new HttpSessionStateWrapper(HttpContext.Current.Session);
                 if (session != null)
                 {
                     IdentityUser user = session[SS_CURRENT_USER] as IdentityUser;
-                    //if (user == null)
-                    //{
-                    //    IdentityUserDAO.InstitutionCode = InstitutionCode;
-                    //    var userId = HttpContext.Current.User.Identity.GetUserId<long>();
-                    //    if (userId > 0) user = IdentityUserDAO.Retrieve(userId);
-                    //    if (user == null) throw new LogOutUserException("Called WebUtilities.GetCurrentlyLoggedInUser(): Failed to get user [id: {userId}. instCode: {IdentityUserDAO.InstitutionCode}]");
+                    if (user == null)
+                    {
+                        var principal = HttpContext.Current.User as ClaimsPrincipal;
+                        if (principal != null && principal.Identity.IsAuthenticated)
+                        {
+                            logInfo += "\nClaimsPrincipal is here and authenticated";
+                            Utilities.Logger.Log(logInfo);
+                            IdentityUserDAO.InstitutionCode = InstitutionCode;
+                            var userId = HttpContext.Current.User.Identity.GetUserId<long>();
+                            if (userId > 0) user = IdentityUserDAO.Retrieve(userId);
+                            if (user == null) throw new LogOutUserException($"Called WebUtilities.GetCurrentlyLoggedInUser(): Failed to get user [id: {userId}. instCode: {IdentityUserDAO.InstitutionCode}]");
 
-                    //    user.InstitutionCode = IdentityUserDAO.InstitutionCode; //Needful? Maybe not.
-                    //    HttpContext.Current.Session[SS_CURRENT_USER] = user;
-                    //}
+                            user.InstitutionCode = IdentityUserDAO.InstitutionCode; //Needful? Maybe not.
+                            HttpContext.Current.Session[SS_CURRENT_USER] = user;
+                        }
+                    }
                     return user;
                 }
                 return null;
@@ -123,9 +130,10 @@ namespace MultiTenancyFramework.Mvc
                     if (string.IsNullOrWhiteSpace(instCode) || instCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.OrdinalIgnoreCase)) return null;
 
                     // Thr request may be from a non-existent institution, so we check if we have it in session
-                    if (HttpContext.Current.Session != null && HttpContext.Current.Session[SS_CODE] != null)
+                    var httpSession = HttpContext.Current.Session;
+                    if (httpSession != null && httpSession[SS_CODE] != null)
                     {
-                        var codeInSession = Convert.ToString(HttpContext.Current.Session[SS_CODE]); //ClaimsPrincipal.Current.FindFirst("ic")?.Value; // 
+                        var codeInSession = Convert.ToString(httpSession[SS_CODE]); //ClaimsPrincipal.Current.FindFirst("ic")?.Value; // 
                         if (!instCode.Equals(codeInSession, StringComparison.OrdinalIgnoreCase))
                         {
                             var error = $"codeInSession ({codeInSession}) != instCode ({instCode}).";

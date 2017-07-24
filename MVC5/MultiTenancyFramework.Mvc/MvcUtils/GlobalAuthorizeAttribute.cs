@@ -16,28 +16,22 @@ namespace MultiTenancyFramework.Mvc
         /// <param name="filterContext"></param>
         public override void OnAuthorization(AuthorizationContext filterContext)
         {
-            var actionDescriptor = filterContext.ActionDescriptor;
+            if (filterContext == null)
+                throw new ArgumentNullException("filterContext");
 
+            var actionDescriptor = filterContext.ActionDescriptor;
+            
             #region Check whether it's an anonymous action
 
-            // check if AllowAnonymous is on the controller
-            var anonymous = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true);
-            if (anonymous.Length > 0)
-            {
-                //Allow Anonymous
-                return;
-            }
-
-            // It's not; so check if AllowAnonymous is on the action
-            anonymous = actionDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), true);
-            if (anonymous.Length > 0)
+            if (actionDescriptor.ControllerDescriptor.IsDefined(typeof(AllowAnonymousAttribute), true) 
+                || actionDescriptor.IsDefined(typeof(AllowAnonymousAttribute), true))
             {
                 //Allow Anonymous
                 return;
             }
 
             #endregion
-
+            
             var values = filterContext.RouteData.Values;
             var instCode = Convert.ToString(values["institution"]);
 
@@ -61,18 +55,12 @@ namespace MultiTenancyFramework.Mvc
             {
                 #region Check whether to allow Core access the action
                 
-                // check if AllowAnonymous is on the controller
-                var allowParent = actionDescriptor.ControllerDescriptor.GetCustomAttributes(typeof(AllowAccessToParentAttribute), true);
-                if (allowParent.Length == 0)
+                if (!actionDescriptor.ControllerDescriptor.IsDefined(typeof(AllowAccessToParentAttribute), true)
+                    && !actionDescriptor.IsDefined(typeof(AllowAccessToParentAttribute), true))
                 {
-                    // It's not; so check if AllowAnonymous is on the action
-                    allowParent = actionDescriptor.GetCustomAttributes(typeof(AllowAccessToParentAttribute), true);
-                    if (allowParent.Length == 0)
-                    {
-                        // bounce
-                        filterContext.Result = MvcUtility.GetPageResult("TenantsOnlyAllowed", "Error", "", instCode, new Dictionary<string, object> { { "actionAttempted", filterContext.HttpContext.Request.Url.AbsoluteUri } });
-                        return;
-                    }
+                    // bounce
+                    filterContext.Result = MvcUtility.GetPageResult("TenantsOnlyAllowed", "Error", "", instCode, new Dictionary<string, object> { { "actionAttempted", filterContext.HttpContext.Request.Url.AbsoluteUri } });
+                    return;
                 }
 
                 #endregion
@@ -86,8 +74,6 @@ namespace MultiTenancyFramework.Mvc
             // should have at least one user privllege
             if (userPrivList == null)
             {
-                var error = $"userPrivList is null for user: {filterContext.HttpContext.User.Identity.Name}. Logging out...";
-                Utilities.Logger.Log(error);
                 WebUtilities.LogOut();
                 filterContext.Result = MvcUtility.GetLoginPageResult(instCode);
                 return;
@@ -117,8 +103,7 @@ namespace MultiTenancyFramework.Mvc
 
             #endregion
 
-            // fall back to base
-            base.OnAuthorization(filterContext);
+            // If we get to this point, then the user authorized to access this action
         }
     }
 

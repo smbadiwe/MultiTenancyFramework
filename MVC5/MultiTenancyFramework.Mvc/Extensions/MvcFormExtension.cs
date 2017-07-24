@@ -175,7 +175,7 @@ namespace System.Web.Mvc.Html
         public static MvcForm BeginFormGeneral(this HtmlHelper htmlHelper, string actionName, string controllerName, RouteValueDictionary routeValues, FormMethod method, IDictionary<string, object> htmlAttributes)
         {
             var routes = GetRoutes(actionName, controllerName, routeValues);
-            var mvcForm = htmlHelper.BeginForm(Convert.ToString(routes["action"]), Convert.ToString(routes["controller"]), routes, method, new RouteValueDictionary(htmlAttributes));
+            var mvcForm = htmlHelper.BeginForm(Convert.ToString(routes["action"]), Convert.ToString(routes["controller"]), routes, method, htmlAttributes);
             if (method != FormMethod.Get)
             {
                 htmlHelper.ViewContext.Writer.Write(htmlHelper.AntiForgeryToken().ToHtmlString());
