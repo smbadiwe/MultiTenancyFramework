@@ -11,6 +11,7 @@ namespace MultiTenancyFramework.Mvc.MvcUtils
         public static void Initialize(bool useLowercaseRoutes = true)
         {
             AreaRegistration.RegisterAllAreas();
+            ModelBinders.Binders.Add(typeof(string), new TrimModelBinder());
             ModelMetadataProviders.Current = new MyModelMetadataProvider();
             InstitutionFilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 

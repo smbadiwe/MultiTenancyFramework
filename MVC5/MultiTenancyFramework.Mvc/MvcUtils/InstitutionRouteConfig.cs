@@ -8,6 +8,8 @@ namespace MultiTenancyFramework.Mvc
     /// </summary>
     public class InstitutionRouteConfig
     {
+		public const string StaticFileExtensionsRegex = @".*\.(css|less|sass|js|gif|png|jpg|jpeg|ico|svg|ttf|eot|woff|woff2|xml|csv|txt|map|json|pdf|doc|docx|xls|xlsx|dll|exe|pdb|html|htm|jsp|aspx)(/.*)?";
+		
         /// <summary>
         /// Routes are mapped such that urls generated are lowercase
         /// </summary>
@@ -15,7 +17,7 @@ namespace MultiTenancyFramework.Mvc
         public static void RegisterRoutes(RouteCollection routes, bool lowercaseUrls)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-            routes.IgnoreRoute("{*staticfile}", new { staticfile = @".*\.(css|less|sass|js|gif|png|jpg|jpeg|ico|svg|ttf|eot|woff|woff2|xml|csv|txt|map|json|pdf|doc|docx|xls|xlsx|dll|exe|pdb|html|htm|jsp|aspx)(/.*)?" });
+            routes.IgnoreRoute("{*staticfile}", new { staticfile = StaticFileExtensionsRegex });
             
             routes.MapMvcAttributeRoutes();
 
