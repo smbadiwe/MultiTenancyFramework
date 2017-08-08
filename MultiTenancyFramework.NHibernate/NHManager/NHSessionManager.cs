@@ -520,12 +520,12 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 autoPersistenceModel.AddEntityAssembly(assembly);
             }
 
-            bool notCoreInst = !instCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.OrdinalIgnoreCase);
-
-            if (notCoreInst) // => Tenant, so do not map those entities marked as Hosted Centrally
-            {
-                autoPersistenceModel.Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
-            }
+            // The below code does not work because we (may) have user-defined configurations
+            //bool notCoreInst = !instCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.OrdinalIgnoreCase);
+            //if (notCoreInst) // => Tenant, so do not map those entities marked as Hosted Centrally
+            //{
+            //    autoPersistenceModel.Where(x => !typeof(IAmHostedCentrally).IsAssignableFrom(x));
+            //}
             #endregion
 
             cfg.BeforeBindMapping += (sender, args) => args.Mapping.autoimport = false;
