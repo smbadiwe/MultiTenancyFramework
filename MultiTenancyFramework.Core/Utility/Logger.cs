@@ -21,7 +21,7 @@ namespace MultiTenancyFramework
             try
             {
                 HttpContext context = HttpContext.Current;
-                Task.Factory.StartNew(() => LogToFile(ex, context)); 
+                Task.Factory.StartNew(() => LogToFile(ex, context));
             }
             catch { }
         }
@@ -50,29 +50,11 @@ namespace MultiTenancyFramework
             }
             var exMsg = this.BuildErrorMsg(ex, context, isInfo);
 
-            string schemaForTestEnvironment;
-            schemaForTestEnvironment = string.Empty;
-
-            //if (ConfigurationManager.SendMailInstead)
-            //{
-            //    string subject = null;
-            //    if (isInfo)
-            //    {
-            //        subject = string.Format("INFORMATION FROM {0}{1} - {2}", ConfigurationHelper.SectionItem<string>("ClientConfiguration", "ApplicationName"), schemaForTestEnvironment, DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss tt"));
-            //    }
-            //    else
-            //    {
-            //        subject = string.Format("ERROR ON {0}{1} - {2}", ConfigurationHelper.SectionItem<string>("ClientConfiguration", "ApplicationName"), schemaForTestEnvironment, DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss tt"));
-            //    }
-
-            //   Emailer.SendMailWithDefaultCredentials(exMsg, subject);
-            //}
+            Emailer.EmailLogMessage(exMsg, isInfo);
 
             WriteToFile(exMsg, context, false, isInfo);
-
-            ConfigurationManager.UnloadConfigFileAndResetLoggerConfigProp();
         }
-        
+
         private string BuildErrorMsg(Exception ex, HttpContext context, bool isInfo)
         {
             if (ex != null)
@@ -105,7 +87,7 @@ namespace MultiTenancyFramework
             }
             return string.Empty;
         }
-        
+
         private void WriteToFile(string exceptionMessage, HttpContext context, bool isTest, bool isInfo)
         {
             try
@@ -136,7 +118,7 @@ namespace MultiTenancyFramework
                 }
                 catch
                 {
-                    System.Threading.Thread.Sleep(1000);
+                    System.Threading.Thread.Sleep(2000); // to wait a little bit to make sure the file is released by any other process holding it before trying again
                     using (var sw = new StreamWriter(filePath, true, Encoding.UTF8, 4096))
                     {
                         sw.WriteAsync(exceptionMessage);
@@ -148,10 +130,10 @@ namespace MultiTenancyFramework
 
     }
 
-    internal class ConfigurationManager
+    public class ConfigurationManager
     {
-        static HttpContext _context;
-        internal static void LoadConfigFileAndSetLoggerConfigProp(HttpContext context)
+        private static HttpContext _context;
+        public static void LoadConfigFileAndSetLoggerConfigProp(HttpContext context)
         {
             _context = context;
             if (LoggerConfig != null) return;
@@ -185,17 +167,6 @@ namespace MultiTenancyFramework
                 {
                     doc = XDocument.Parse(string.Format(@"
                                             <LoggingConfig>
-                                              <SendMailInstead>true</SendMailInstead>
-                                              <MailSetup>
-                                                <DisplayName>{0}</DisplayName>
-                                                <Subject>ERROR ON {0}</Subject>
-                                                <ToEmail>somadinambadiwe@gmail.com</ToEmail>
-                                                <SmtpUsername>DoNotReply.QCPTA@gmail.com</SmtpUsername>
-                                                <SmtpPassword>october2014</SmtpPassword>
-                                                <SmtpHost>smtp.gmail.com</SmtpHost>
-                                                <SmtpPort>587</SmtpPort>
-                                                <EnableSSL>true</EnableSSL>
-                                              </MailSetup>
                                               <!--Where the log files are -->
                                               <LogDirectory>Logs</LogDirectory>
                                               <!--When false, only actual errors are logged-->
@@ -234,12 +205,12 @@ namespace MultiTenancyFramework
             LoggerConfig = config; // (System.Configuration.ConfigurationManager.GetSection("SOMA.Framework.Logging") as NameValueCollection);
         }
 
-        internal static void UnloadConfigFileAndResetLoggerConfigProp()
+        public static void UnloadConfigFileAndResetLoggerConfigProp()
         {
             LoggerConfig = null;
         }
 
-        internal static string LogDirectory
+        public static string LogDirectory
         {
             get
             {
@@ -258,7 +229,7 @@ namespace MultiTenancyFramework
             }
         }
 
-        internal static decimal SizeLimit
+        public static decimal SizeLimit
         {
             get
             {
@@ -273,7 +244,7 @@ namespace MultiTenancyFramework
             }
         }
 
-        internal static bool Enabled
+        public static bool Enabled
         {
             get
             {
@@ -289,81 +260,7 @@ namespace MultiTenancyFramework
         }
 
         private static NameValueCollection LoggerConfig { get; set; }
-
-        internal static bool SendMailInstead
-        {
-            get
-            {
-                return Convert.ToBoolean(LoggerConfig["SendMailInstead"]);
-            }
-        }
-
-        internal static bool EnableSSL
-        {
-            get
-            {
-                return Convert.ToBoolean(LoggerConfig["EnableSSL"]);
-            }
-        }
-
-        internal static string ToEmail
-        {
-            get
-            {
-                return Convert.ToString(LoggerConfig["ToEmail"]);
-            }
-        }
-
-        /// <summary>
-        /// Also doubles as the From email.
-        /// </summary>
-        internal static string SmtpUsername
-        {
-            get
-            {
-                return Convert.ToString(LoggerConfig["SmtpUsername"]);
-            }
-        }
-
-        internal static string DisplayName
-        {
-            get
-            {
-                return Convert.ToString(LoggerConfig["DisplayName"]);
-            }
-        }
-
-        internal static string Subject
-        {
-            get
-            {
-                return Convert.ToString(LoggerConfig["Subject"]) + " - " + DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss tt");
-            }
-        }
-
-        internal static string SmtpPassword
-        {
-            get
-            {
-                return Convert.ToString(LoggerConfig["SmtpPassword"]);
-            }
-        }
-
-        internal static string SmtpHost
-        {
-            get
-            {
-                return Convert.ToString(LoggerConfig["SmtpHost"]);
-            }
-        }
-
-        internal static int SmtpPort
-        {
-            get
-            {
-                return Convert.ToInt32(LoggerConfig["SmtpPort"]);
-            }
-        }
+        
     }
 
 }

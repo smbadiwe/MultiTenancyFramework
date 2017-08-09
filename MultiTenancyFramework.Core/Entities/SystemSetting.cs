@@ -5,6 +5,8 @@
     /// </summary>
     public class SystemSetting : BaseEntity, IAmHostedCentrally
     {
+        public virtual string ApplicationName { get; set; }
+        public virtual bool EmailLogMessages { get; set; }
         public virtual UsernameAndPasswordRule UsernameAndPasswordRule { get; set; } = new UsernameAndPasswordRule();
         public virtual EmailAndSmtpSetting EmailAndSmtpSetting { get; set; } = new EmailAndSmtpSetting();
 
