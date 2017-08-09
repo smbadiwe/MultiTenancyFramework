@@ -24,7 +24,7 @@ namespace MultiTenancyFramework.Mvc
             if (string.IsNullOrWhiteSpace(message.Body)) return Task.FromResult(false);
 
             if (string.IsNullOrWhiteSpace(message.Destination)) message.Destination = EmailAndSmtpSetting.DefaultEmailReceiver;
-            var toEmails = message.Destination.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+            var toEmails = message.Destination?.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
             if (toEmails == null || toEmails.Length == 0) return Task.FromResult(false);
 
             string[] ccEmails, bccEmails;
@@ -47,9 +47,9 @@ namespace MultiTenancyFramework.Mvc
                 fromEmail = null; // we'll use the default
                 displayName = null; // we'll use the default
             }
-            Emailer.SendEmail(fromEmail, message.Body, message.Subject, null, toEmails, ccEmails, bccEmails, isBodyHtml, displayName);
+            var sent = Emailer.SendEmail(fromEmail, message.Body, message.Subject, null, toEmails, ccEmails, bccEmails, isBodyHtml, displayName);
             
-            return Task.FromResult(true);
+            return Task.FromResult(sent);
         }
     }
 
