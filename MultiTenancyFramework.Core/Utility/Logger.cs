@@ -36,7 +36,7 @@ namespace MultiTenancyFramework
             if (ex is System.Threading.ThreadAbortException) return;
             if (context == null) context = HttpContext.Current;
 
-            ConfigurationManager.LoadConfigFileAndSetLoggerConfigProp(context);
+            ConfigurationManager.LoadConfigFileAndSetLoggerConfigProp(context.Server);
 
             //isDone = false;
             bool isInfo = string.IsNullOrWhiteSpace(ex.StackTrace);
@@ -132,20 +132,20 @@ namespace MultiTenancyFramework
 
     public class ConfigurationManager
     {
-        private static HttpContext _context;
-        public static void LoadConfigFileAndSetLoggerConfigProp(HttpContext context)
+        private static HttpServerUtility _server;
+        public static void LoadConfigFileAndSetLoggerConfigProp(HttpServerUtility server)
         {
-            _context = context;
+            _server = server;
             if (LoggerConfig != null) return;
 
             string xmlFilePath = null;
-            if (context == null)
+            if (server == null)
             {
                 xmlFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LoggingConfig.xml");
             }
             else
             {
-                xmlFilePath = context.Server.MapPath("~/LoggingConfig.xml");
+                xmlFilePath = server.MapPath("~/LoggingConfig.xml");
             }
             if (string.IsNullOrWhiteSpace(xmlFilePath)) throw new ApplicationException("Could not get any LoggingConfig file.");
             if (!xmlFilePath.EndsWith("LoggingConfig.xml")) throw new ApplicationException("No LoggingConfig file supplied");
@@ -218,13 +218,13 @@ namespace MultiTenancyFramework
                 if (string.IsNullOrWhiteSpace(dirRead)) dirRead = "Logs";
 
                 dirRead = dirRead.Replace("~/", "");
-                if (_context == null)
+                if (_server == null)
                 {
                     return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, dirRead);
                 }
                 else
                 {
-                    return _context.Server == null ? "Logs" : _context.Server.MapPath("~/" + dirRead);
+                    return _server == null ? "Logs" : _server.MapPath("~/" + dirRead);
                 }
             }
         }

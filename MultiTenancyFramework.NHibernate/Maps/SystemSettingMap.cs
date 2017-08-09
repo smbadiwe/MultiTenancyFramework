@@ -6,6 +6,8 @@ namespace MultiTenancyFramework.NHibernate.Maps
     {
         public SystemSettingMap()
         {
+            Map(x => x.ApplicationName);
+            Map(x => x.EmailLogMessages);
             Component(x => x.EmailAndSmtpSetting, y =>
             {
                 y.Map(z => z.DefaultEmailSender);
