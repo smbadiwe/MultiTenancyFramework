@@ -8,7 +8,7 @@ namespace MultiTenancyFramework.Mvc
     /// </summary>
     public class InstitutionRouteConfig
     {
-		public const string StaticFileExtensionsRegex = @".*\.(css|less|sass|js|gif|png|jpg|jpeg|ico|svg|ttf|eot|woff|woff2|xml|csv|txt|map|json|pdf|doc|docx|xls|xlsx|dll|exe|pdb|html|htm|jsp|aspx)(/.*)?";
+		public const string StaticFileExtensionsRegex = @".*\.(css|less|sass|js|gif|png|jpg|jpeg|ico|svg|ttf|eot|woff|woff2|xml|csv|txt|map|json|pdf|doc|docx|xls|xlsx|dll|exe|pdb|html|htm|jsp|aspx|ascx|ashx|php|py|rb|scss|ts)(/.*)?";
 		
         /// <summary>
         /// Routes are mapped such that urls generated are lowercase

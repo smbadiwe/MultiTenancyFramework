@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SimpleInjector, Version=4.0.8.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.4.0.8\lib\net45\SimpleInjector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -52,12 +56,20 @@
   <ItemGroup>
     <Compile Include="Extensions\OtherExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\EmailerTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IoCContainers\MultiTenancyFramework.SimpleInjector\MultiTenancyFramework.SimpleInjector.csproj">
+      <Project>{1D0C1D0D-22CC-4D9F-89AB-0CF3E5A104A3}</Project>
+      <Name>MultiTenancyFramework.SimpleInjector</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MultiTenancyFramework.Core\MultiTenancyFramework.Core.csproj">
       <Project>{1EFEECF2-0332-4B84-8BD3-772F59B0B579}</Project>
       <Name>MultiTenancyFramework.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

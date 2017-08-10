@@ -90,12 +90,15 @@ namespace MultiTenancyFramework
                 if (msg != null)
                 {
                     if (client == null) client = GetDefaultClient();
-                    ServicePointManager.ServerCertificateValidationCallback =
-                        delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate,
-                        System.Security.Cryptography.X509Certificates.X509Chain chain,
-                        System.Net.Security.SslPolicyErrors sslPolicyErrors)
-                        { return true; };
 
+                    //ServicePointManager.ServerCertificateValidationCallback =
+                    //    delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate,
+                    //    System.Security.Cryptography.X509Certificates.X509Chain chain,
+                    //    System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                    //    { return true; };
+
+                    ServicePointManager.ServerCertificateValidationCallback = (obj, cert, chain, policy) => true;
+                    
                     client.Send(msg);
                     return true;
                 }
@@ -135,14 +138,6 @@ namespace MultiTenancyFramework
 
                 if (string.IsNullOrWhiteSpace(senderEmail)) return false;
                 if (toEmails == null || toEmails.Length == 0) return false;
-
-                //ServicePointManager.ServerCertificateValidationCallback =
-                //    delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate,
-                //    System.Security.Cryptography.X509Certificates.X509Chain chain,
-                //    System.Net.Security.SslPolicyErrors sslPolicyErrors)
-                //    { return true; };
-
-                ServicePointManager.ServerCertificateValidationCallback = (obj, cert, chain, policy) => true;
 
                 var msg = new MailMessage()
                 {

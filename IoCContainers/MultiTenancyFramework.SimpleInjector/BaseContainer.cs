@@ -34,17 +34,22 @@ namespace MultiTenancyFramework.SimpleInjector
 
             #region Known Cases. This part is made necessary due to a limitation of Simple Injector
             var types = exportedTypes.Where(x => x.IsGenericType && x.Name.StartsWith("CoreDAO")).ToArray();
-            container.Register(typeof(ICoreDAO<,>), types.First(x => x.Name.EndsWith("2")));
-            container.Register(typeof(ICoreDAO<>), types.First(x => x.Name.EndsWith("1")));
+            if (types.Any(x => x.Name.EndsWith("2")))
+                container.Register(typeof(ICoreDAO<,>), types.First(x => x.Name.EndsWith("2")));
+            if (types.Any(x => x.Name.EndsWith("1")))
+                container.Register(typeof(ICoreDAO<>), types.First(x => x.Name.EndsWith("1")));
 
             types = exportedTypes.Where(x => x.IsGenericType && x.Name.StartsWith("PrivilegeDAO")).ToArray();
-            container.Register(typeof(IPrivilegeDAO<>), types.First(x => x.Name.EndsWith("1")));
+            if (types.Any(x => x.Name.EndsWith("1")))
+                container.Register(typeof(IPrivilegeDAO<>), types.First(x => x.Name.EndsWith("1")));
 
             types = exportedTypes.Where(x => x.IsGenericType && x.Name.StartsWith("AppUserDAO")).ToArray();
-            container.Register(typeof(IAppUserDAO<>), types.First(x => x.Name.EndsWith("1")));
+            if (types.Any(x => x.Name.EndsWith("1")))
+                container.Register(typeof(IAppUserDAO<>), types.First(x => x.Name.EndsWith("1")));
 
             types = exportedTypes.Where(x => x.IsGenericType && x.Name.StartsWith("InstitutionDAO")).ToArray();
-            container.Register(typeof(IInstitutionDAO<>), types.First(x => x.Name.EndsWith("1")));
+            if (types.Any(x => x.Name.EndsWith("1")))
+                container.Register(typeof(IInstitutionDAO<>), types.First(x => x.Name.EndsWith("1")));
             #endregion
 
             // This is for convention-based registrations. Convention is IService/Service
