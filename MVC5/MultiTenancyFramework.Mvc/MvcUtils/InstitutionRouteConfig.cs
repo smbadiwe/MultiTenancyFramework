@@ -38,6 +38,14 @@ namespace MultiTenancyFramework.Mvc
                 constraints: new { id = @"\d*" }
             );
 
+            // Added this case so it does not fall to the route: 'TenantHome' below
+            routes.MapRoute( 
+                name: "CoreHome",
+                url: "Home",
+                defaults: new { institution = Utilities.INST_DEFAULT_CODE, area = "", controller = "Home", action = "Index", id = UrlParameter.Optional },
+                constraints: new { id = @"\d*" }
+            );
+
             routes.MapRoute( 
                 name: "TenantError",
                 url: "{institution}/Error",

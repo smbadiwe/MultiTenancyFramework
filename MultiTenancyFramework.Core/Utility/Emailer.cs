@@ -11,7 +11,7 @@ namespace MultiTenancyFramework
 {
     public static class Emailer
     {
-        private static EmailAndSmtpSetting EmailAndSmtpSetting;
+        public static EmailAndSmtpSetting EmailAndSmtpSetting { get; private set; }
         private static string ApplicationName;
         private static bool EmailLogMessages;
         private static ILogger Logger;
@@ -89,17 +89,20 @@ namespace MultiTenancyFramework
             {
                 if (msg != null)
                 {
-                    if (client == null) client = GetDefaultClient();
-
-                    //ServicePointManager.ServerCertificateValidationCallback =
-                    //    delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate,
-                    //    System.Security.Cryptography.X509Certificates.X509Chain chain,
-                    //    System.Net.Security.SslPolicyErrors sslPolicyErrors)
-                    //    { return true; };
+                    bool dispose = false;
+                    if (client == null)
+                    {
+                        dispose = true;
+                        client = GetDefaultClient();
+                    }
 
                     ServicePointManager.ServerCertificateValidationCallback = (obj, cert, chain, policy) => true;
                     
                     client.Send(msg);
+                    if (dispose)
+                    {
+                        client.Dispose();
+                    }
                     return true;
                 }
             }

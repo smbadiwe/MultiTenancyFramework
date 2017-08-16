@@ -41,7 +41,6 @@ namespace MultiTenancyFramework.Mvc
                 }
                 catch (Exception ex)
                 {
-                    Utilities.Logger.Log(ex);
                     throw new LogOutUserException();
                 }
             }
@@ -54,7 +53,6 @@ namespace MultiTenancyFramework.Mvc
                 }
                 catch (Exception ex) // paranoia
                 {
-                    Utilities.Logger.Log(new GeneralException("Called WebUtilities.LoggedInUsersPrivilegesDict: Error setting LoggedInUsersPrivileges in session", ex));
                     throw new LogOutUserException();
                 }
             }
@@ -69,7 +67,6 @@ namespace MultiTenancyFramework.Mvc
         {
             try
             {
-                string logInfo = "Received HttpSessionStateBase? " + (session != null);
                 if (session == null && HttpContext.Current != null && HttpContext.Current.Session != null)
                     session = new HttpSessionStateWrapper(HttpContext.Current.Session);
                 if (session != null)
@@ -80,8 +77,6 @@ namespace MultiTenancyFramework.Mvc
                         var principal = HttpContext.Current.User as ClaimsPrincipal;
                         if (principal != null && principal.Identity.IsAuthenticated)
                         {
-                            logInfo += "\nClaimsPrincipal is here and authenticated";
-                            Utilities.Logger.Log(logInfo);
                             IdentityUserDAO.InstitutionCode = InstitutionCode;
                             var userId = HttpContext.Current.User.Identity.GetUserId<long>();
                             if (userId > 0) user = IdentityUserDAO.Retrieve(userId);
@@ -95,12 +90,7 @@ namespace MultiTenancyFramework.Mvc
                 }
                 return null;
             }
-            catch (LogOutUserException ex)
-            {
-                Utilities.Logger.Log(ex);
-                throw ex;
-            }
-            catch (Exception ex) // when (!(ex is LogOutUserException))
+            catch (Exception ex) when (!(ex is LogOutUserException))
             {
                 Utilities.Logger.Log(ex);
                 return null;
@@ -138,7 +128,6 @@ namespace MultiTenancyFramework.Mvc
                         {
                             var error = $"codeInSession ({codeInSession}) != instCode ({instCode}).";
                             var ex = new LogOutUserException(error);
-                            Utilities.Logger.Log(ex);
                             throw ex;
                         }
                         return codeInSession;
