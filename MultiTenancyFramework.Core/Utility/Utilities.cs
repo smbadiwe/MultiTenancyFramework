@@ -18,7 +18,7 @@ namespace MultiTenancyFramework
                     "U", "V", "W", "X", "Y","Z","AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ","AK", "AL", "AM", "AN", "AO","AP", "AQ",
                     "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY","AZ"};
 
-        private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        private const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
         private static Random random = new Random();
         public static string GenerateRandomAlphanumericText(int length)
         {

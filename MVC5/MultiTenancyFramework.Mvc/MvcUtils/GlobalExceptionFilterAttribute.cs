@@ -25,7 +25,10 @@ namespace MultiTenancyFramework.Mvc
                 filterContext.ExceptionHandled = true;
                 var values = filterContext.RouteData.Values;
                 string instCode = Convert.ToString(values["institution"]);
-                var urlAccessed = string.Format("{0}/{1}/{2}/{3}", instCode, values["area"], values["controller"], values["action"]);
+                string area = Convert.ToString(values["area"]);
+                string controller = Convert.ToString(values["controller"]);
+                string action = Convert.ToString(values["action"]);
+                var urlAccessed = string.Format("{0}/{1}/{2}/{3}", instCode, area, controller, action);
                 Logger.Log(new GeneralException(string.Format("Crash from {0}", urlAccessed), filterContext.Exception));
 
                 var genEx = filterContext.Exception as GeneralException;
@@ -33,25 +36,27 @@ namespace MultiTenancyFramework.Mvc
                 {
                     if (genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode)
                     {
-                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("Invalid Url. Please cross-check.", Convert.ToString(values["controller"]), Convert.ToString(values["action"]))
+                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("Invalid Url. Please cross-check.", controller, action)
                         {
-                            AreaName = Convert.ToString(values["area"]),
+                            ErrorType = ExceptionType.UnidentifiedInstitutionCode,
+                            AreaName = area,
                             FromUrl = urlAccessed
                         };
                     }
                     else if (genEx.ExceptionType == ExceptionType.DatabaseRelated)
                     {
-                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("A database error has occurred. Contact the administrator", Convert.ToString(values["controller"]), Convert.ToString(values["action"]))
+                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("A database error has occurred. Contact the administrator", controller, action)
                         {
-                            AreaName = Convert.ToString(values["area"]),
+                            ErrorType = ExceptionType.DatabaseRelated,
+                            AreaName = area,
                             FromUrl = urlAccessed
                         };
                     }
                     else
                     {
-                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(genEx, Convert.ToString(values["controller"]), Convert.ToString(values["action"]))
+                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(genEx, controller, action)
                         {
-                            AreaName = Convert.ToString(values["area"]),
+                            AreaName = area,
                             FromUrl = urlAccessed
                         };
                     }
@@ -75,27 +80,30 @@ namespace MultiTenancyFramework.Mvc
                 }
                 else
                 {
-                    if (filterContext.Exception is System.Data.Common.DbException)
+                    var dbExType = typeof(System.Data.Common.DbException);
+                    if (dbExType.IsAssignableFrom(filterContext.Exception.GetType())
+                        || (filterContext.Exception.GetBaseException() != null && dbExType.IsAssignableFrom(filterContext.Exception.GetBaseException().GetType())))
                     {
-                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("A database error has occurred. Contact the administrator", Convert.ToString(values["controller"]), Convert.ToString(values["action"]))
+                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("A database error has occurred. Contact the administrator", controller, action)
                         {
-                            AreaName = Convert.ToString(values["area"]),
+                            ErrorType = ExceptionType.DatabaseRelated,
+                            AreaName = area,
                             FromUrl = urlAccessed
                         };
                     }
                     else if (filterContext.Exception is HttpAntiForgeryException)
                     {
-                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception.Message, Convert.ToString(values["controller"]), Convert.ToString(values["action"]))
+                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("Looks like this is a cross-site request forgery. We can't find the token.", controller, action)
                         {
-                            AreaName = Convert.ToString(values["area"]),
+                            AreaName = area,
                             FromUrl = urlAccessed
                         };
                     }
                     else
                     {
-                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception, Convert.ToString(values["controller"]), Convert.ToString(values["action"]))
+                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception, controller, action)
                         {
-                            AreaName = Convert.ToString(values["area"]),
+                            AreaName = area,
                             FromUrl = urlAccessed
                         };
                     }
