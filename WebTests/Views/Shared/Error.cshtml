@@ -1,0 +1,70 @@
+﻿@model MultiTenancyFramework.Mvc.ErrorMessageModel
+
+@using MultiTenancyFramework;
+@{
+    if (Model != null && Model.RenderErrorPageFully)
+    {
+        Layout = null;  //"~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = null;
+    }
+    //Response.StatusCode = (int)Model.ResponseCode;
+}
+
+<h2 class="text-danger">Oops!</h2>
+<h5 class="text-info"><b>Url Accessed: </b>@Model.FromUrl</h5>
+@if (Model == null)
+{
+    <h3 class="text-danger">
+        An error occured while processing your request.
+    </h3>
+}
+else
+{
+    if (Model.ErrorType == ExceptionType.DatabaseRelated)
+    {
+        <h3 class="text-danger">
+            A database error has occurred. Contact administrator.
+        </h3>
+    }
+    else if (Model.ErrorType == ExceptionType.SetupFailure)
+    {
+        <h3 class="text-danger">
+            @Html.Raw(Model.ErrorMessage)
+        </h3>
+        <h4>HINT: Check the connection string, or contact the administrator.</h4>
+    }
+    else
+    {
+        <h3 class="text-danger">
+            @Html.Raw(Model.ErrorMessage)
+        </h3>
+        if (Model.ExceptionType != typeof(LogOutUserException) && !string.IsNullOrWhiteSpace(Model.StackTrace))
+        {
+            if ((Model.ErrorType.HasValue && new[] { ExceptionType.InvalidUserActionOrInput, ExceptionType.AccessDeniedInstitution }.Contains(Model.ErrorType.Value)) == false)
+            {
+                string trace = Model.StackTrace.Replace(" at ", "<br /> at ");
+                <p>
+                    @Html.Raw(trace)
+                </p>
+            }
+        }
+    }
+    if (Model.ExceptionType == typeof(LogOutUserException) || (!string.IsNullOrWhiteSpace(Model.FromUrl) && Model.FromUrl.EndsWith("/Home/Welcome")))
+    {
+        <a class="btn btn-lg btn-primary" href="@Url.MyAction("Index", "Home", "")">Back to Home page</a>
+    }
+    else
+    {
+        <a class="btn btn-lg btn-primary" href="@Url.MyAction("Welcome", "Home", "")">Back to Home page</a>
+    }
+}
+<!-- Page Layout -->
+<script src="~/Scripts/AppScripts/layout.min.js"></script>
+<script>
+    $(function () {
+        hideProgressMsgModal();
+    });
+</script>

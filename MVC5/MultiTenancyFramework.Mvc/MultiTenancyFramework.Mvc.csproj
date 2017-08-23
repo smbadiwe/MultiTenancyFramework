@@ -166,8 +166,10 @@
     <Compile Include="MvcUtils\MvcUtility.cs" />
     <Compile Include="MvcUtils\DisplayHintAttribute.cs" />
     <Compile Include="MvcUtils\MyModelMetadataProvider.cs" />
+    <Compile Include="MvcUtils\MyRazorViewEngine.cs" />
     <Compile Include="MvcUtils\TrimModelBinder.cs" />
     <Compile Include="MvcUtils\ValidateUsingPrivilegeForActionAttribute.cs" />
+    <Compile Include="MvcUtils\ViewNotFoundException.cs" />
     <Compile Include="MyMvcServiceLocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SmsService.cs" />

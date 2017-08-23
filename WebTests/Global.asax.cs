@@ -35,7 +35,7 @@ namespace WebTests
             // Initialize MVC settings
             AppStartInitializer.Initialize();
             
-            NHSessionManager.AddEntityAssemblies(new[] { "MultiTenancyFramework.Mvc", "Framework", "SchoolSoul.Core" });
+            NHSessionManager.AddEntityAssemblies(new[] { "MultiTenancyFramework.Mvc" });
             
         }
     }

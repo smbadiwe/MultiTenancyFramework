@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace MultiTenancyFramework.Mvc
 {
@@ -25,6 +28,17 @@ namespace MultiTenancyFramework.Mvc
                 filterContext.ExceptionHandled = true;
                 var values = filterContext.RouteData.Values;
                 string instCode = Convert.ToString(values["institution"]);
+
+                // When view is not found, it usually throws 
+                //Exception Details: System.InvalidOperationException: 
+                // The view '~/Views/my-category/my-article-with-long-name.aspx' or its master could not be found. The following locations were searched: ~/Views/my-category/my-article-with-long-name.aspx
+                if (filterContext.Exception is InvalidOperationException && filterContext.Exception.Message.Contains("The view '~/Views"))
+                {
+                    Logger.Log(filterContext.Exception.Message);
+                    filterContext.Result = MvcUtility.GetPageResult("ViewNotFound", "Error", "", instCode);
+                    return;
+                }
+
                 string area = Convert.ToString(values["area"]);
                 string controller = Convert.ToString(values["controller"]);
                 string action = Convert.ToString(values["action"]);
@@ -40,7 +54,8 @@ namespace MultiTenancyFramework.Mvc
                         {
                             ErrorType = ExceptionType.UnidentifiedInstitutionCode,
                             AreaName = area,
-                            FromUrl = urlAccessed
+                            FromUrl = urlAccessed,
+                            ResponseCode = HttpStatusCode.NotFound,
                         };
                     }
                     else if (genEx.ExceptionType == ExceptionType.DatabaseRelated)
@@ -49,7 +64,8 @@ namespace MultiTenancyFramework.Mvc
                         {
                             ErrorType = ExceptionType.DatabaseRelated,
                             AreaName = area,
-                            FromUrl = urlAccessed
+                            FromUrl = urlAccessed,
+                            ResponseCode = HttpStatusCode.InternalServerError,
                         };
                     }
                     else
@@ -88,7 +104,8 @@ namespace MultiTenancyFramework.Mvc
                         {
                             ErrorType = ExceptionType.DatabaseRelated,
                             AreaName = area,
-                            FromUrl = urlAccessed
+                            FromUrl = urlAccessed,
+                            ResponseCode = HttpStatusCode.InternalServerError,
                         };
                     }
                     else if (filterContext.Exception is HttpAntiForgeryException)

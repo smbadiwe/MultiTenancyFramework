@@ -217,7 +217,8 @@ namespace MultiTenancyFramework.Mvc
             {
                 AreaName = Convert.ToString(values["area"]),
                 FromUrl = urlAccessed,
-                RenderErrorPageFully = true
+                RenderErrorPageFully = true,
+                ResponseCode = System.Net.HttpStatusCode.Forbidden,
             };
             WebUtilities.LogOut();
             return MvcUtility.GetPageResult("Index", "Error", "", InstitutionCode);

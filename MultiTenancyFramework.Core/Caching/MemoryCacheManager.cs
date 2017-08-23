@@ -43,7 +43,7 @@ namespace MultiTenancyFramework.Caching
                 return;
 
             var policy = new CacheItemPolicy();
-            policy.AbsoluteExpiration = DateTime.UtcNow + TimeSpan.FromMinutes(cacheTime);
+            policy.SlidingExpiration = TimeSpan.FromMinutes(cacheTime);
             Cache.Add(new CacheItem(key, data), policy);
         }
 

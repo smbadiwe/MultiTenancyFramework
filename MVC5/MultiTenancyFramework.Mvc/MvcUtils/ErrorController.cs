@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Net;
+using System.Web.Mvc;
 
 namespace MultiTenancyFramework.Mvc
 {
@@ -6,9 +7,10 @@ namespace MultiTenancyFramework.Mvc
     public class ErrorController : Controller
     {
         /// <summary>
-        /// The name of the Error View under Shared Folder. It's "Error" by default
+        /// The name of the Error View under Shared Folder. It's "Error" by default,
+        /// but you may want to set the full path: ~/Views/...
         /// </summary>
-        public string SharedErrorViewName { get; set; } = "Error";
+        public static string SharedErrorViewName { get; set; } = "Error";
 
         // GET: Error
         public virtual ActionResult Index()
@@ -19,7 +21,7 @@ namespace MultiTenancyFramework.Mvc
         public virtual ActionResult DenyInstitutionAccess()
         {
             WebUtilities.LogOut();
-            return ErrorView(true);
+            return ErrorView(HttpStatusCode.Forbidden, true);
         }
 
         /// <summary>
@@ -30,7 +32,10 @@ namespace MultiTenancyFramework.Mvc
         public virtual ActionResult DenyAccess(string actionAttempted = null)
         {
             WebUtilities.LogOut();
-            return View(SharedErrorViewName, new ErrorMessageModel(string.Format("You are not authorized to access this page.{0}", !string.IsNullOrWhiteSpace(actionAttempted) ? $" [You need to be given the privilege: {actionAttempted}]" : ""), true));
+            return View(SharedErrorViewName, new ErrorMessageModel(string.Format("You are not authorized to access this page.{0}", !string.IsNullOrWhiteSpace(actionAttempted) ? $" [You need to be given the privilege: {actionAttempted}]" : ""), true)
+            {
+                ResponseCode = HttpStatusCode.Forbidden,
+            });
         }
 
         /// <summary>
@@ -40,10 +45,14 @@ namespace MultiTenancyFramework.Mvc
         /// <returns></returns>
         public virtual ActionResult TenantsOnlyAllowed(string actionAttempted = null)
         {
-            return View(SharedErrorViewName, new ErrorMessageModel(string.Format("Only tenant institutions are allowed to access this page.{0}", !string.IsNullOrWhiteSpace(actionAttempted) ? $" [You need to be given the privilege: {actionAttempted}]" : ""), false));
+            return View(SharedErrorViewName, new ErrorMessageModel(string.Format("Only tenant institutions are allowed to access this page.{0}", !string.IsNullOrWhiteSpace(actionAttempted) ? $" [You need to be given the privilege: {actionAttempted}]" : "")
+               , false)
+            {
+                ResponseCode = HttpStatusCode.Forbidden,
+            });
         }
 
-        private ViewResult ErrorView(bool showFully = false)
+        private ViewResult ErrorView(HttpStatusCode code = HttpStatusCode.BadRequest, bool showFully = false)
         {
             ErrorMessageModel model;
             if (TempData.ContainsKey(ErrorMessageModel.ErrorMessageKey))
@@ -54,19 +63,43 @@ namespace MultiTenancyFramework.Mvc
             {
                 model = new ErrorMessageModel(showFully);
             }
+            if (model.ResponseCode == HttpStatusCode.BadRequest)
+            {
+                model.ResponseCode = code;
+            }
             return View(SharedErrorViewName, model);
         }
 
         // GET: InvalidUrl
         public virtual ActionResult InvalidUrl()
         {
-            return View(SharedErrorViewName, new ErrorMessageModel("Invalid Url. Please cross-check.", true));
+            var path = Server.MapPath("~/404.html");
+            if (System.IO.File.Exists(path))
+            {
+                return File(path, "text/html");
+            }
+
+            return View(SharedErrorViewName, new ErrorMessageModel("Invalid Url. Please cross-check.", true)
+            {
+                ResponseCode = HttpStatusCode.NotFound
+            });
+        }
+
+        public virtual ActionResult ViewNotFound()
+        {
+            return View(SharedErrorViewName, new ErrorMessageModel("Looks like the view for the requested action is not available or under construction")
+            {
+                ResponseCode = HttpStatusCode.ServiceUnavailable
+            });
         }
 
         // GET: DisabledInstitution
         public virtual ActionResult DisabledInstitution(string instName)
         {
-            return View(SharedErrorViewName, new ErrorMessageModel(string.Format("This institution <b>{0}</b> has not been registered on our platform.", instName), true));
+            return View(SharedErrorViewName, new ErrorMessageModel(string.Format("This institution <b>{0}</b> has not been registered on our platform.", instName), true)
+            {
+                ResponseCode = HttpStatusCode.Forbidden
+            });
         }
 
         // GET: Show

@@ -18,6 +18,13 @@ namespace MultiTenancyFramework.Mvc
         /// </summary>
         public string FromUrl { get; set; }
         /// <summary>
+        /// Gets or sets the response code. Default is 400 (Bad Request)
+        /// </summary>
+        /// <value>
+        /// The response code.
+        /// </value>
+        public HttpStatusCode ResponseCode { get; set; } = HttpStatusCode.BadRequest;
+        /// <summary>
         /// typeof(Exception): The exception's type.
         /// </summary>
         public Type ExceptionType { get; private set; }

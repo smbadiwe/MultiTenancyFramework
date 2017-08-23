@@ -75,10 +75,11 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             {
                 if (_context.Context != null && _context.Context.Response != null)
                 {
-                    var baseUrl = ConfigurationHelper.GetSiteUrl() ?? _context.Context.Request.Url.Authority;
+                    //var baseUrl = ConfigurationHelper.GetSiteUrl() ?? _context.Context.Request.Url.Authority;
 
-                    var errorUrl = $"{baseUrl}/{_context.Context.Request.RequestContext.RouteData.Values["institution"]}/Error/?gl=1&ErrorMessage={lastError.Message}";
-                    logger.Log($"A.._Error (NHSessionHttpModule) called. Redirecting to {errorUrl}");
+                    var errorUrl = "~/500.html"; // $"{baseUrl}/{_context.Context.Request.RequestContext.RouteData.Values["institution"]}/Error/?gl=1&ErrorMessage={lastError.Message}";
+                    //logger.Log($"A.._Error (NHSessionHttpModule) called. Redirecting to {errorUrl}");
+                    _context.Context.Response.StatusCode = 500;
                     _context.Context.Response.Redirect(errorUrl);
                 }
             }
