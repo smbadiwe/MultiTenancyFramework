@@ -55,7 +55,7 @@ namespace MultiTenancyFramework.SimpleInjector
             // This is for convention-based registrations. Convention is IService/Service
             var registrations =
                 from type in exportedTypes
-                //where !type.IsAbstract
+                    //where !type.IsAbstract
                 where !type.IsGenericType
                 where type.GetInterfaces().Any(x => x.Name.EndsWith(type.Name))
                 select new { Service = type.GetInterfaces().Single(x => x.Name.EndsWith(type.Name)), Implementation = type }

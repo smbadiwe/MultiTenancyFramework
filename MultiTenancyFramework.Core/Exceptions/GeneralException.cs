@@ -8,18 +8,6 @@ namespace MultiTenancyFramework
     /// </summary>
     public class GeneralException : Exception
     {
-        public override string Message
-        {
-            get
-            {
-                return base.Message;
-            }
-        }
-        public override Exception GetBaseException()
-        {
-            return this;
-        }
-
         public ExceptionType ExceptionType { get; set; }
         public GeneralException(string message, ExceptionType exceptionType = ExceptionType.InvalidUserActionOrInput) : base(message)
         {

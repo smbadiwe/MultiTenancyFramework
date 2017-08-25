@@ -6,5 +6,22 @@
     public abstract class BaseCommand : ICommand
     {
         public string InstitutionCode { get; set; }
+        private ILogger _logger;
+        /// <summary>
+        /// Logger to log errors and/or messages
+        /// </summary>
+        public virtual ILogger Logger
+        {
+            get
+            {
+                if (_logger == null)
+                {
+                    _logger = Utilities.Logger;
+                    _logger.SetLogger(NLog.LogManager.GetCurrentClassLogger());
+                }
+                return _logger;
+            }
+        }
+
     }
 }

@@ -8,7 +8,7 @@ namespace MultiTenancyFramework.Data
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="idT"></typeparam>
-    public interface ICoreDAO<T, idT> : ICoreReadsDAO<T, idT>, ICoreBulkInsertDAO<T, idT>, ICoreWritesDAO<T, idT> where T : IBaseEntity<idT> where idT : IEquatable<idT>
+    public interface ICoreDAO<T, idT> : ICoreReadsDAO<T, idT>, ICoreBulkInsertDAO<T, idT>, ICoreWritesDAO<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
     {
 
     }
@@ -17,7 +17,7 @@ namespace MultiTenancyFramework.Data
     /// This holds the minimum data requirements for each entity. It does not include list retrievals and SQL bulk inserts
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface ICoreDAO<T> : ICoreDAO<T, long> where T : IBaseEntity<long>
+    public interface ICoreDAO<T> : ICoreDAO<T, long> where T : class, IBaseEntity<long>
     {
 
     }

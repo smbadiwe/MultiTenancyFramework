@@ -11,12 +11,6 @@ namespace MultiTenancyFramework.Mvc
     /// </summary>
     public class GlobalExceptionFilterAttribute : FilterAttribute, IExceptionFilter // : HandleErrorAttribute
     {
-        private readonly ILogger Logger;
-        public GlobalExceptionFilterAttribute()
-        {
-            Logger = Utilities.Logger;
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -29,6 +23,7 @@ namespace MultiTenancyFramework.Mvc
                 var values = filterContext.RouteData.Values;
                 string instCode = Convert.ToString(values["institution"]);
 
+                var Logger = Utilities.Logger;
                 // When view is not found, it usually throws 
                 //Exception Details: System.InvalidOperationException: 
                 // The view '~/Views/my-category/my-article-with-long-name.aspx' or its master could not be found. The following locations were searched: ~/Views/my-category/my-article-with-long-name.aspx

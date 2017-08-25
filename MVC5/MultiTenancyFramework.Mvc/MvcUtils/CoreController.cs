@@ -17,7 +17,7 @@ namespace MultiTenancyFramework.Mvc
         /// <summary>
         /// Query Processor to process queries
         /// </summary>
-        protected IDbQueryProcessor QueryProcessor
+        protected virtual IDbQueryProcessor QueryProcessor
         {
             get
             {
@@ -33,7 +33,7 @@ namespace MultiTenancyFramework.Mvc
         /// <summary>
         /// Command Processor to execute commands
         /// </summary>
-        protected ICommandProcessor CommandProcessor
+        protected virtual ICommandProcessor CommandProcessor
         {
             get
             {
@@ -47,7 +47,7 @@ namespace MultiTenancyFramework.Mvc
         /// BTW, there is also WebUtilities.InstitutionCode which essentially same, just that that one
         /// will force logout if Session has expired, unlike this one. So, use with caution
         /// </summary>
-        protected string InstitutionCode
+        protected virtual string InstitutionCode
         {
             get
             {
@@ -66,7 +66,7 @@ namespace MultiTenancyFramework.Mvc
         /// <summary>
         /// Logger to log errors and/or messages
         /// </summary>
-        protected ILogger Logger
+        protected virtual ILogger Logger
         {
             get
             {
@@ -80,13 +80,13 @@ namespace MultiTenancyFramework.Mvc
         /// <code>WebUtilities.GetCurrentlyLoggedInUser();</code>
         /// <para>If you need to set the value, call <code>WebUtilities.SetCurrentlyLoggedInUser(newValue);</code></para>
         /// </summary>
-        protected IdentityUser IdentityUser { get { return WebUtilities.GetCurrentlyLoggedInUser(Session); } }
+        protected virtual IdentityUser IdentityUser { get { return WebUtilities.GetCurrentlyLoggedInUser(Session); } }
 
         /// <summary>
         /// Current datetime
         /// </summary>
         /// <returns></returns>
-        protected DateTime Now()
+        protected virtual DateTime Now()
         {
             return DateTime.Now.GetLocalTime();
         }
@@ -154,7 +154,7 @@ namespace MultiTenancyFramework.Mvc
         /// <param name="controllerName"></param>
         /// <param name="institutionCode"></param>
         /// <returns></returns>
-        protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string institutionCode)
+        protected virtual internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string institutionCode)
         {
             return RedirectToAction(actionName, controllerName, "", institutionCode);
         }
@@ -167,7 +167,7 @@ namespace MultiTenancyFramework.Mvc
         /// <param name="areaName"></param>
         /// <param name="institutionCode"></param>
         /// <returns></returns>
-        protected internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string areaName, string institutionCode)
+        protected virtual internal RedirectToRouteResult RedirectToAction(string actionName, string controllerName, string areaName, string institutionCode)
         {
             if (string.IsNullOrWhiteSpace(actionName)) throw new ArgumentNullException("action");
             var routeValues = new System.Web.Routing.RouteValueDictionary();
@@ -207,7 +207,7 @@ namespace MultiTenancyFramework.Mvc
         /// Redirects to \Error
         /// </summary>
         /// <returns></returns>
-        protected RedirectToRouteResult HttpAccessDenied()
+        protected virtual RedirectToRouteResult HttpAccessDenied()
         {
 
             var values = RouteData.Values;
@@ -229,7 +229,7 @@ namespace MultiTenancyFramework.Mvc
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        protected ViewResult ErrorView(ErrorMessageModel model)
+        protected virtual ViewResult ErrorView(ErrorMessageModel model)
         {
             return View("Error", model);
         }
@@ -239,7 +239,7 @@ namespace MultiTenancyFramework.Mvc
         /// </summary>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        protected ViewResult ErrorView(string errorMessage)
+        protected virtual ViewResult ErrorView(string errorMessage)
         {
             return View("Error", new ErrorMessageModel(errorMessage));
         }
@@ -265,7 +265,7 @@ namespace MultiTenancyFramework.Mvc
             AddAlert(AlertStyles.Danger, message, dismissable);
         }
 
-        protected void AlertFailureInvalidModel(bool dismissable = false)
+        protected virtual void AlertFailureInvalidModel(bool dismissable = false)
         {
             AddAlert(AlertStyles.Danger, "One or more data items received is invalid", dismissable);
         }

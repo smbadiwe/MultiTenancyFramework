@@ -1,4 +1,5 @@
 ﻿using MultiTenancyFramework.Data;
+using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,37 @@ namespace MultiTenancyFramework.Logic
     {
         protected ICoreDAO<T, idT> _dao;
 
+        private ILogger _logger;
+        /// <summary>
+        /// Logger to log errors and/or messages
+        /// </summary>
+        protected virtual ILogger Logger
+        {
+            get
+            {
+                if (_logger == null)
+                {
+                    _logger = Utilities.Logger;
+                    _logger.SetLogger(NLog.LogManager.GetCurrentClassLogger());
+                }
+                return _logger;
+            }
+        }
+
+
+        private IDbQueryProcessor _queryProcessor;
+
+        public IDbQueryProcessor QueryProcessor
+        {
+            get
+            {
+                if (_queryProcessor == null) _queryProcessor = Utilities.QueryProcessor;
+
+                _queryProcessor.InstitutionCode = InstitutionCode;
+                return _queryProcessor;
+            }
+        }
+
         /// <summary>
         /// Use this to point to entities that are hosted centrally
         /// </summary>
@@ -52,6 +84,11 @@ namespace MultiTenancyFramework.Logic
 
             //Because this may have been preset in the incoming 'dao' instance, we do...
             EntityName = _dao.EntityName;
+        }
+
+        public virtual DateTime Now()
+        {
+            return DateTime.Now.GetLocalTime();
         }
 
         #region Events
@@ -272,7 +309,7 @@ namespace MultiTenancyFramework.Logic
             }
             catch (Exception ex)
             {
-                Utilities.Logger.Log(new GeneralException($"Failed updating record {entityId} in table: {tableName}", ex, ExceptionType.DatabaseRelated));
+                Logger.Log(new GeneralException($"Failed updating record {entityId} in table: {tableName}", ex, ExceptionType.DatabaseRelated));
                 return false;
             }
         }

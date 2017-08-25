@@ -41,6 +41,10 @@
     <DocumentationFile>bin\ReleasePackage\MultiTenancyFramework.Core.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -147,6 +151,7 @@
     <Compile Include="Utility\EnumHelper.cs" />
     <Compile Include="Utility\ILogger.cs" />
     <Compile Include="Utility\Logger.cs" />
+    <Compile Include="Utility\LoggerConfigurationManager.cs" />
     <Compile Include="Utility\MyServiceLocator.cs" />
     <Compile Include="Utility\Utilities.cs" />
   </ItemGroup>
@@ -155,6 +160,13 @@
     <None Include="app.config.uninstall.xdt" />
     <None Include="MultiTenancyFramework.Core.nuspec" />
     <None Include="app.config.install.xdt" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
     <None Include="web.config.transform">
       <SubType>Designer</SubType>
     </None>

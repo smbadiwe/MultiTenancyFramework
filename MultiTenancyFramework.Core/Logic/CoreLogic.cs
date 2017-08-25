@@ -65,24 +65,6 @@ namespace MultiTenancyFramework.Logic
 
         }
 
-        private IDbQueryProcessor _queryProcessor;
-
-        public IDbQueryProcessor QueryProcessor
-        {
-            get
-            {
-                if (_queryProcessor == null) _queryProcessor = Utilities.QueryProcessor;
-
-                _queryProcessor.InstitutionCode = InstitutionCode;
-                return _queryProcessor;
-            }
-        }
-
-        public DateTime Now()
-        {
-            return DateTime.Now.GetLocalTime();
-        }
-
         /// <summary>
         /// 
         /// </summary>

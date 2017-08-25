@@ -54,7 +54,11 @@ namespace ConsoleTests
             //AppStartInitializer.Initialize();
 
             NHSessionManager.AddEntityAssemblies(new[] { "ConsoleTests" });
-
+            var fileRules = new Dictionary<string, Tuple<string, LoggerConfigurationManager.LoggingLevel>> {
+                { "NHibernate.SQL", new Tuple<string, LoggerConfigurationManager.LoggingLevel>( "${shortdate}_nh_q.log", LoggerConfigurationManager.LoggingLevel.Debug) },
+                { "NHibernate.*", new Tuple<string, LoggerConfigurationManager.LoggingLevel>( "${shortdate}_nh.log", LoggerConfigurationManager.LoggingLevel.Debug) }
+            };
+            LoggerConfigurationManager.ConfigureNLog(true, fileRules);
         }
 
         public static async Task<byte[]> Index()
@@ -107,55 +111,45 @@ namespace ConsoleTests
 
         static void Main(string[] args)
         {
-            Console.WriteLine(typeof(NHSessionManager).Assembly.FullName.Split(',')[0]);
+            Console.WriteLine(LoggerConfigurationManager.LoggingLevel.Debug.ToString());
             Init();
-            var list = new List<Somadina>();
-            list.Add(new Somadina
-            {
-                TeacherId = 99,
-                ClassId = 199,
-                SubjectId = 299
-            });
-            list.Add(new Somadina
-            {
-                TeacherId = 99,
-                ClassId = 199,
-                SubjectId = 399
-            });
-            list.Add(new Somadina
-            {
-                TeacherId = 99,
-                ClassId = 199,
-                SubjectId = 499
-            });
-            //testSplitCamelCase();
-            var handler = new GetAppUserByUsernameQueryHandler
-            {
-                InstitutionCode = "mel2q"
-            };
-            var res = handler.Handle(new MultiTenancyFramework.Data.Queries.GetAppUserByUsernameQuery { Username = "Super User" });
-            var dao = new MultiTenancyFramework.NHibernate.CoreDAO<UserRole>();
-            dao.InstitutionCode = "mel2q";
-            //var ite = dao.RetrieveAll();
-            //var ite2 = dao.Retrieve(1);
+            //var list = new List<Somadina>();
+            //list.Add(new Somadina
+            //{
+            //    TeacherId = 99,
+            //    ClassId = 199,
+            //    SubjectId = 299
+            //});
+            //list.Add(new Somadina
+            //{
+            //    TeacherId = 99,
+            //    ClassId = 199,
+            //    SubjectId = 399
+            //});
+            //list.Add(new Somadina
+            //{
+            //    TeacherId = 99,
+            //    ClassId = 199,
+            //    SubjectId = 499
+            //});
+            ////testSplitCamelCase();
+            //var handler = new GetAppUserByUsernameQueryHandler
+            //{
+            //    InstitutionCode = "mel2q"
+            //};
+            //var res = handler.Handle(new MultiTenancyFramework.Data.Queries.GetAppUserByUsernameQuery { Username = "Super User" });
             try
             {
-                //foreach (var item in list)
-                //{
-                //    dao.Save(item);
-                //}
-                //dao.CommitChanges();
+                var dao = new MultiTenancyFramework.NHibernate.CoreDAO<UserRole>();
+                dao.InstitutionCode = "mel2q";
+                var ite = dao.RetrieveAll();
+                var ite2 = dao.Retrieve(1);
+
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                dao.RollbackChanges();
+                Utilities.Logger.Log(ex);
             }
-            finally
-            {
-                dao.CloseSession();
-            }
-
             Console.ReadKey();
         }
 
