@@ -15,9 +15,17 @@ namespace MultiTenancyFramework
         /// <returns>True in case the class is real, false otherwise.</returns>
         public static bool IsRealClass(this Type testType)
         {
-            return testType.IsAbstract == false
-                && testType.IsGenericTypeDefinition == false
-                && testType.IsInterface == false;
+            return !testType.IsAbstract
+                && !testType.IsGenericTypeDefinition
+                && !testType.IsInterface
+                && !testType.IsPrimitiveType() 
+                && !testType.IsArray
+                && !testType.IsGenericType;
+        }
+
+        public static bool IsPrimitiveType(this Type t)
+        {
+            return t.IsPrimitive || t.IsValueType || (t == typeof(string));
         }
 
         //a thread-safe way to hold default instances created at run-time

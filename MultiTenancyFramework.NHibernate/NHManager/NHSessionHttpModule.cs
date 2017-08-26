@@ -62,14 +62,14 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             var logger = Utilities.Logger;
             try
             {
-                logger.Log(lastError);
+                logger.Log(lastError, true);
 
                 NHSessionManager.CloseStorage();
                 NHSessionManager.SessionFactories.Clear();
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                logger.Log(ex, true);
             }
             finally
             {

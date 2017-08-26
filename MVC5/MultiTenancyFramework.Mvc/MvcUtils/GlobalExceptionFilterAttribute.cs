@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Web.Mvc;
-using System.Web.Routing;
 
 namespace MultiTenancyFramework.Mvc
 {
@@ -29,7 +27,7 @@ namespace MultiTenancyFramework.Mvc
                 // The view '~/Views/my-category/my-article-with-long-name.aspx' or its master could not be found. The following locations were searched: ~/Views/my-category/my-article-with-long-name.aspx
                 if (filterContext.Exception is InvalidOperationException && filterContext.Exception.Message.Contains("The view '~/Views"))
                 {
-                    Logger.Log(filterContext.Exception.Message);
+                    Logger.Log(filterContext.Exception, true);
                     filterContext.Result = MvcUtility.GetPageResult("ViewNotFound", "Error", "", instCode);
                     return;
                 }

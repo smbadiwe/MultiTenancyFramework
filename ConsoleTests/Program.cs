@@ -54,9 +54,8 @@ namespace ConsoleTests
             //AppStartInitializer.Initialize();
 
             NHSessionManager.AddEntityAssemblies(new[] { "ConsoleTests" });
-            var fileRules = new Dictionary<string, Tuple<string, LoggerConfigurationManager.LoggingLevel>> {
-                { "NHibernate.SQL", new Tuple<string, LoggerConfigurationManager.LoggingLevel>( "${shortdate}_nh_q.log", LoggerConfigurationManager.LoggingLevel.Debug) },
-                { "NHibernate.*", new Tuple<string, LoggerConfigurationManager.LoggingLevel>( "${shortdate}_nh.log", LoggerConfigurationManager.LoggingLevel.Debug) }
+            var fileRules = new Dictionary<string, Tuple<string, LoggingLevel>> {
+                { "NHibernate.SQL", new Tuple<string, LoggingLevel>( "${shortdate}_nh.log", LoggingLevel.Debug) }
             };
             LoggerConfigurationManager.ConfigureNLog(true, fileRules);
         }
@@ -111,7 +110,6 @@ namespace ConsoleTests
 
         static void Main(string[] args)
         {
-            Console.WriteLine(LoggerConfigurationManager.LoggingLevel.Debug.ToString());
             Init();
             //var list = new List<Somadina>();
             //list.Add(new Somadina

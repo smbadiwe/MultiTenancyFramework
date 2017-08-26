@@ -10,17 +10,18 @@ using System.Xml.Linq;
 
 namespace MultiTenancyFramework
 {
+    public enum LoggingLevel
+    {
+        Trace,
+        Debug,
+        Info,
+        Warn,
+        Error,
+        Fatal
+    }
+
     public class LoggerConfigurationManager
     {
-        public enum LoggingLevel
-        {
-            Trace,
-            Debug,
-            Info,
-            Warn,
-            Error,
-            Fatal
-        }
 
         public static void ConfigureNLogWithDefaults()
         {
@@ -75,7 +76,7 @@ namespace MultiTenancyFramework
                         }
                     }
                 }
-                
+
                 var fileTarget = new FileTarget
                 {
                     EnableFileDelete = true,

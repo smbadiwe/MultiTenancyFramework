@@ -43,7 +43,7 @@ namespace MultiTenancyFramework.Logic
                 if (_logger == null)
                 {
                     _logger = Utilities.Logger;
-                    _logger.SetLogger(NLog.LogManager.GetCurrentClassLogger());
+                    _logger.SetLogger(NLog.LogManager.GetLogger(GetType().FullName));
                 }
                 return _logger;
             }

@@ -4,43 +4,100 @@ using System.IO;
 using System.Text;
 using System.Web;
 using NLog;
+using Newtonsoft.Json;
 
 namespace MultiTenancyFramework
 {
     public class Logger : ILogger
     {
         private static NLog.Logger _logger = LogManager.GetLogger(ConfigurationHelper.AppSettingsItem<string>("AppName") ?? "MultiTenancyFramework");
-
+        
         public void SetLogger(object logger)
         {
-            var loggr = _logger as NLog.Logger;
-            if (loggr != null)
-                _logger = loggr;
+            if (logger != null)
+            {
+                var loggr = logger as NLog.Logger;
+                if (loggr != null)
+                    _logger = loggr;
+            }
         }
 
-        public virtual void Log(string format, params object[] args)
+        private LogLevel GetLogLevel(LoggingLevel level)
+        {
+            switch (level)
+            {
+                case LoggingLevel.Debug:
+                    return LogLevel.Debug;
+                case LoggingLevel.Error:
+                    return LogLevel.Error;
+                case LoggingLevel.Info:
+                    return LogLevel.Info;
+                case LoggingLevel.Warn:
+                    return LogLevel.Warn;
+                case LoggingLevel.Fatal:
+                    return LogLevel.Fatal;
+                case LoggingLevel.Trace:
+                default:
+                    return LogLevel.Trace;
+            }
+        }
+
+        /// <summary>
+        /// Logs the specified format.
+        /// </summary>
+        /// <param name="level">The logging level.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="args">The arguments. If an object instance is part of the list, it will be JSON-serialized</param>
+        public virtual void Log(LoggingLevel level, string format, params object[] args)
         {
             if (!string.IsNullOrWhiteSpace(format))
-                _logger.Info(format, args);
+            {
+                if (args != null && args.Length > 0)
+                {
+                    for (int i = args.Length - 1; i >= 0; i--)
+                    {
+                        if (args[i] != null)
+                        {
+                            if (args[i].GetType().IsPrimitiveType()) continue;
+
+                            try
+                            {
+                                args[i] = JsonConvert.SerializeObject(args[i]);
+                            }
+                            catch { }
+                        }
+                    }
+                }
+
+                _logger.Log(GetLogLevel(level), format, args);
+            }
+        }
+
+        public void Log(string format, params object[] args)
+        {
+            Log(LoggingLevel.Debug, format, args);
         }
 
         public virtual void Log(string info)
         {
-            Log(info, null);
+            Log(LoggingLevel.Debug, info, null);
         }
 
-        public virtual void Log(Exception ex)
+        public virtual void Log(LoggingLevel level, string info)
+        {
+            Log(level, info, null);
+        }
+
+        public virtual void Log(Exception ex, bool isFatal = false)
         {
             try
             {
-                LogToFile(ex, null);
-                //HttpContext context = HttpContext.Current;
-                //Task.Factory.StartNew(() => LogToFile(ex, context));
+                LogToFile(ex, isFatal, null);
             }
             catch { }
         }
-        
-        private void LogToFile(Exception ex, HttpContext context) //, out bool isDone
+
+        private void LogToFile(Exception ex, bool isFatal, HttpContext context) //, out bool isDone
         {
             if (ex == null) return;
             if (ex is System.Threading.ThreadAbortException) return;
@@ -48,22 +105,13 @@ namespace MultiTenancyFramework
 
             LoggerConfigurationManager.LoadConfigFileAndSetLoggerConfigProp(context?.Server);
 
-            //isDone = false;
-            bool isInfo = string.IsNullOrWhiteSpace(ex.StackTrace);
-            if (isInfo)
-            {
-                if (LoggerConfigurationManager.Enabled == false)
-                {
-                    //isDone = true;
-                    return;
-                }
-            }
-            var exMsg = BuildErrorMsg(ex, context, isInfo);
+            var isInfo = !isFatal;
+            var exMsg = BuildErrorMsg(ex, context, false);
 
             if (!string.IsNullOrWhiteSpace(exMsg))
             {
-                _logger.Log(isInfo ? LogLevel.Info : LogLevel.Error, exMsg);
-                Emailer.EmailLogMessage(exMsg, isInfo);
+                _logger.Log(isInfo ? LogLevel.Error : LogLevel.Fatal, exMsg);
+                Emailer.EmailLogMessage(exMsg, false);
 
                 //WriteToFile(exMsg, context, false, isInfo);
             }
@@ -98,7 +146,7 @@ namespace MultiTenancyFramework
                     }
                 }
                 //string trace = ex.StackTrace;
-                return string.Format("{0}{1}", msg, string.IsNullOrWhiteSpace(page) ? "" : ("\r\n\t Method Called: \t" + page));
+                return string.Format("{0}{1}", msg, string.IsNullOrWhiteSpace(page) ? "" : ("\n\t Method Called: \t" + page));
             }
             return string.Empty;
         }
