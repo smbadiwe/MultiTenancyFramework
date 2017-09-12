@@ -37,22 +37,20 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
 
         public bool OnPreDelete(PreDeleteEvent @event)
         {
-            var entity = @event.Entity as IEntity<idT>;
+            var entity = ValidateOblect(@event.Entity);
             if (entity != null)
             {
                 var sessionImpl = @event.Session.GetSessionImplementation();
-                EntityEntry entry = sessionImpl.PersistenceContext.GetEntry(@event.Entity);
+                EntityEntry entry = sessionImpl.PersistenceContext.GetEntry(entity);
                 entry.Status = Status.Loaded;
                 entity.IsDeleted = true;
-                if (entity.InstitutionCode == null || entity.InstitutionCode == Utilities.INST_DEFAULT_CODE) entity.InstitutionCode = string.Empty;
+                object id = @event.Persister.GetIdentifier(entity, @event.Session.EntityMode);
+                object[] fields = @event.Persister.GetPropertyValues(entity, @event.Session.EntityMode);
+                object version = @event.Persister.GetVersion(entity, @event.Session.EntityMode);
 
-                object id = @event.Persister.GetIdentifier(@event.Entity, @event.Session.EntityMode);
-                object[] fields = @event.Persister.GetPropertyValues(@event.Entity, @event.Session.EntityMode);
-                object version = @event.Persister.GetVersion(@event.Entity, @event.Session.EntityMode);
+                @event.Persister.Update(id, fields, new int[1], false, fields, version, entity, null, sessionImpl);
 
-                @event.Persister.Update(id, fields, new int[1], false, fields, version, @event.Entity, null, sessionImpl);
-
-                PackageAuditLogItem(EventType.SoftDeleted, @event.Persister, @event.Entity, fields, entry.DeletedState);
+                PackageAuditLogItem(EventType.SoftDeleted, @event.Persister, entity, fields, entry.DeletedState);
             }
             return true;
         }
@@ -69,29 +67,39 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
 
         private void DoMerge(MergeEvent @event)
         {
-            var entity = @event.Original;
-            var entityEntry = @event.Session.PersistenceContext.GetEntry(entity);
-            if (entityEntry == null) return;
-            object[] currentState;
-            var modified = IsEntityModified(entityEntry, entity, @event.Session, out currentState);
-            if (modified)
+            var entity = ValidateOblect(@event.Original);
+            if (entity != null)
             {
-                PackageAuditLogItem(EventType.Modified, entityEntry.Persister, entity, currentState, entityEntry.LoadedState);
+                var entityEntry = @event.Session.PersistenceContext.GetEntry(entity);
+                if (entityEntry == null) return;
+                object[] currentState;
+                var modified = IsEntityModified(entityEntry, entity, @event.Session, out currentState);
+                if (modified)
+                {
+                    PackageAuditLogItem(EventType.Modified, entityEntry.Persister, entity, currentState, entityEntry.LoadedState);
+                }
             }
         }
 
-        private void PackageAuditLogItem(EventType eventType, IEntityPersister persister, object obj, object[] currentValues, object[] oldValues)
+        private IEntity<idT> ValidateOblect(object obj)
+        {
+            var entity = obj as IEntity<idT>;
+            if (entity == null) return null;
+            if (entity.SkipAudit) return null;
+
+            if (typeof(IDoNotNeedAudit).IsAssignableFrom(entity.GetType())) return null;
+
+            if (entity.InstitutionCode == null || Utilities.INST_DEFAULT_CODE.Equals(entity.InstitutionCode, StringComparison.OrdinalIgnoreCase))
+            {
+                entity.InstitutionCode = string.Empty;
+            }
+            return entity;
+        }
+
+        private void PackageAuditLogItem(EventType eventType, IEntityPersister persister, IEntity<idT> entity, object[] currentValues, object[] oldValues)
         {
             if (currentValues == null) return;
-
-            var entity = obj as IEntity<idT>;
-            if (entity == null) return;
-            if (entity.SkipAudit) return;
-
-            if (entity.InstitutionCode == null || entity.InstitutionCode == Utilities.INST_DEFAULT_CODE) entity.InstitutionCode = string.Empty;
-
-            if (typeof(IDoNotNeedAudit).IsAssignableFrom(entity.GetType())) return;
-
+            
             entity.LastDateModified = DateTime.Now.GetLocalTime();
             var audit = CreateLogRecord(entity.InstitutionCode, NHUtils.CurrentUser, entity, entity.LastDateModified, eventType);
             if (audit != null)
@@ -142,7 +150,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
 
             return auditLog;
         }
-        
+
         private void SaveAuditLogs(IEventSource session)
         {
             if (_auditLogItems.Count == 0) return;

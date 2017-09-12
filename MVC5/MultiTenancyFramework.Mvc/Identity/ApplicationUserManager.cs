@@ -16,11 +16,11 @@ namespace MultiTenancyFramework.Mvc.Identity
 
         }
 
-        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
+        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context, UsernameAndPasswordRule UsernameAndPasswordRule)
         {
             var userStore = new UserStore<IdentityUser>();
             var manager = new ApplicationUserManager(userStore);
-            var UsernameAndPasswordRule = Utilities.SystemSettings.UsernameAndPasswordRule;
+
             // Configure validation logic for usernames
             manager.UserValidator = new UserValidator<IdentityUser, long>(manager)
             {
@@ -62,7 +62,7 @@ namespace MultiTenancyFramework.Mvc.Identity
                 manager.UserTokenProvider =
                     new DataProtectorTokenProvider<IdentityUser, long>(dataProtectionProvider.Create("ASP.NET Identity"));
             }
-            userStore = null;
+
             return manager;
         }
 

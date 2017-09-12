@@ -257,17 +257,26 @@ namespace MultiTenancyFramework.Mvc
 
         protected void AlertWarning(string message, bool dismissable = false)
         {
+            Logger.Log(LoggingLevel.Warn, message);
             AddAlert(AlertStyles.Warning, message, dismissable);
         }
 
         protected void AlertFailure(string message = "Failure processing request", bool dismissable = false)
         {
+            Logger.Log(LoggingLevel.Error, message);
             AddAlert(AlertStyles.Danger, message, dismissable);
         }
 
         protected virtual void AlertFailureInvalidModel(bool dismissable = false)
         {
-            AddAlert(AlertStyles.Danger, "One or more data items received is invalid", dismissable);
+            foreach (ModelState modelState in ModelState.Values)
+            {
+                foreach (ModelError error in modelState.Errors)
+                {
+                    AddAlert(AlertStyles.Danger, error.ErrorMessage, dismissable);
+                }
+            }
+            //AddAlert(AlertStyles.Danger, "One or more data items received is invalid", dismissable);
         }
 
         private void AddAlert(string alertStyle, string message, bool dismissable)

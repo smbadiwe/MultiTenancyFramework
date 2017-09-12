@@ -62,6 +62,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             var logger = Utilities.Logger;
             try
             {
+                logger.Log("Application_Error", true);
                 logger.Log(lastError, true);
 
                 NHSessionManager.CloseStorage();

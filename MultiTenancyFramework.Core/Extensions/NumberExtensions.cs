@@ -72,12 +72,20 @@ namespace MultiTenancyFramework
         /// <returns></returns>
         public static string ToMoney(this decimal amount)
         {
-            //if (amount < 0)
-            //{
-            //    return (Math.Floor(amount)).ToString("N2");
-            //}
-            //return (Math.Ceiling(amount)).ToString("N2");
             return amount.ToString("N2");
+        }
+
+        /// <summary>
+        /// Reformats a given amount to remove trailing zeros. NB: This does not multiply by 100.
+        /// E.g. 34.4567 => 34.46; 23.00 => 23; 25.56 => 25.56; 1234.34 => 1234.34. Negative numbers will throw 
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        public static decimal ToMoneyWithoutTrailingZeros(this decimal amount)
+        {
+            if (amount < 0) throw new ArgumentOutOfRangeException("amount", amount, "Value cannot be negative");
+            //return (Math.Round(amount, 2) / 1.000000000000000000000000000000000m).ToString();
+            return (Math.Round(amount, 2) / 1M);
         }
 
         /// <summary>

@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Extensions\NumberExtensionsTests.cs" />
     <Compile Include="Extensions\OtherExtensionsTests.cs" />
     <Compile Include="Extensions\ReflectionExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
