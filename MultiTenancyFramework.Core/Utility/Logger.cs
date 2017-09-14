@@ -90,39 +90,33 @@ namespace MultiTenancyFramework
 
         public virtual void Log(Exception ex, bool isFatal = false)
         {
-            try
-            {
-                LogToFile(ex, isFatal, null);
-            }
-            catch { }
-        }
-
-        private void LogToFile(Exception ex, bool isFatal, HttpContext context) //, out bool isDone
-        {
             if (ex == null) return;
             if (ex is System.Threading.ThreadAbortException) return;
-            if (context == null) context = HttpContext.Current;
+            var context = HttpContext.Current;
 
             LoggerConfigurationManager.LoadConfigFileAndSetLoggerConfigProp(context?.Server);
-
-            var isInfo = !isFatal;
-            var exMsg = BuildErrorMsg(ex, context, false);
+            
+            var genEx = ex as GeneralException;
+            bool doNotSendEmail = genEx != null && 
+                (genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode ||
+                genEx.ExceptionType == ExceptionType.DoNothing ||
+                genEx.ExceptionType == ExceptionType.SetupFailure);
+            var exMsg = BuildErrorMsg(ex, context);
 
             if (!string.IsNullOrWhiteSpace(exMsg))
             {
-                _logger.Log(isInfo ? LogLevel.Error : LogLevel.Fatal, exMsg);
-                Emailer.EmailLogMessage(exMsg, false);
-
-                //WriteToFile(exMsg, context, false, isInfo);
+                _logger.Log(isFatal ? LogLevel.Fatal : LogLevel.Error, exMsg);
+                if (false == doNotSendEmail)
+                    Emailer.EmailLogMessage(exMsg, false);
             }
         }
 
-        private string BuildErrorMsg(Exception ex, HttpContext context, bool isInfo)
+        private string BuildErrorMsg(Exception ex, HttpContext context)
         {
             if (ex != null)
             {
                 if (context == null) context = HttpContext.Current;
-                if (!isInfo) ex = ex.GetBaseException();
+                ex = ex.GetBaseException();
 
                 if (ex == null) return string.Empty;
 

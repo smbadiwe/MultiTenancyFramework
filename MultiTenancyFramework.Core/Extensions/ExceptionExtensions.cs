@@ -54,9 +54,10 @@ namespace MultiTenancyFramework
                     catch { }
                 }
             }
-            if (ex.InnerException != null)
+            var inner = ex.InnerException;
+            if (inner != null)
             {
-                var loaderEx = ex.InnerException as System.Reflection.ReflectionTypeLoadException;
+                var loaderEx = inner as System.Reflection.ReflectionTypeLoadException;
                 if (loaderEx != null)
                 {
                     var loaderInnerExes = loaderEx.LoaderExceptions;
@@ -65,10 +66,10 @@ namespace MultiTenancyFramework
                         sbMessages.AppendFormat(" and Loader Exception {0}: {1}\n", (i + 1), loaderInnerExes[i].Message);
                     }
                 }
-                while (ex.InnerException != null)
+                while (inner != null)
                 {
-                    sbMessages.AppendFormat(" because {0} ", ex.InnerException.GetFullExceptionMessage(includeStackTrace));
-                    ex = ex.InnerException;
+                    sbMessages.AppendFormat(" because {0} ", inner.GetFullExceptionMessage(includeStackTrace));
+                    inner = inner.InnerException;
                 }
             }
             return string.Format("{0}\n{1}", sbMessages, sbStackTraces);
