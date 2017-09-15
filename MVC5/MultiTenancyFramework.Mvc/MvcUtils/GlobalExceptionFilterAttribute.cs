@@ -19,9 +19,33 @@ namespace MultiTenancyFramework.Mvc
             {
                 filterContext.ExceptionHandled = true;
                 var values = filterContext.RouteData.Values;
-                string instCode = Convert.ToString(values["institution"]);
-
                 var Logger = Utilities.Logger;
+                string instCode = Convert.ToString(values["institution"]);
+                string area = Convert.ToString(values["area"]);
+                string controller = Convert.ToString(values["controller"]);
+                string action = Convert.ToString(values["action"]);
+                var urlAccessed = string.Format("{0}/{1}/{2}/{3}", instCode, area, controller, action);
+                Logger.Log(new GeneralException(string.Format("Crash from {0}", urlAccessed), filterContext.Exception));
+
+                bool doLogout = false;
+                try
+                {
+                    var _instCode = WebUtilities.InstitutionCode ?? Utilities.INST_DEFAULT_CODE;
+                    if (!instCode.Equals(_instCode, StringComparison.OrdinalIgnoreCase))
+                    {
+                        instCode = Utilities.INST_DEFAULT_CODE;
+                        doLogout = true;
+                    }
+                }
+                catch (LogOutUserException)
+                {
+                    doLogout = true;
+                }
+                catch (Exception) //(GeneralException ex) when (ex.ExceptionType == ExceptionType.UnidentifiedInstitutionCode)
+                {
+                    instCode = Utilities.INST_DEFAULT_CODE;
+                }
+
                 // When view is not found, it usually throws 
                 //Exception Details: System.InvalidOperationException: 
                 // The view '~/Views/my-category/my-article-with-long-name.aspx' or its master could not be found. The following locations were searched: ~/Views/my-category/my-article-with-long-name.aspx
@@ -32,17 +56,12 @@ namespace MultiTenancyFramework.Mvc
                     return;
                 }
 
-                string area = Convert.ToString(values["area"]);
-                string controller = Convert.ToString(values["controller"]);
-                string action = Convert.ToString(values["action"]);
-                var urlAccessed = string.Format("{0}/{1}/{2}/{3}", instCode, area, controller, action);
-                Logger.Log(new GeneralException(string.Format("Crash from {0}", urlAccessed), filterContext.Exception));
-
                 var genEx = filterContext.Exception as GeneralException;
                 if (genEx != null)
                 {
                     if (genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode)
                     {
+                        instCode = Utilities.INST_DEFAULT_CODE;
                         filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("Invalid Url. Please cross-check.", controller, action)
                         {
                             ErrorType = ExceptionType.UnidentifiedInstitutionCode,
@@ -73,15 +92,6 @@ namespace MultiTenancyFramework.Mvc
                     return;
                 }
 
-                bool doLogout = false;
-                try
-                {
-                    instCode = WebUtilities.InstitutionCode ?? Utilities.INST_DEFAULT_CODE;
-                }
-                catch (LogOutUserException)
-                {
-                    doLogout = true;
-                }
                 if (doLogout || filterContext.Exception is LogOutUserException)
                 {
                     WebUtilities.LogOut();
