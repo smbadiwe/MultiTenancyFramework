@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{9644F30C-E238-49F0-A9CC-A5BCEAB3E3CC}"
 	ProjectSection(SolutionItems) = preProject
 		SolutionItems\ArchitectureDiagram.odg = SolutionItems\ArchitectureDiagram.odg
+		postbuilds.bat = postbuilds.bat
 		SolutionItems\SolutionArchitecture.PNG = SolutionItems\SolutionArchitecture.PNG
 	EndProjectSection
 EndProject

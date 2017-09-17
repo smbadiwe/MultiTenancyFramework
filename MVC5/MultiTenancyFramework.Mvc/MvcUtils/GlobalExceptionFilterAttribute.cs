@@ -18,118 +18,123 @@ namespace MultiTenancyFramework.Mvc
             if (!filterContext.ExceptionHandled)
             {
                 filterContext.ExceptionHandled = true;
-                var values = filterContext.RouteData.Values;
-                var Logger = Utilities.Logger;
-                string instCode = Convert.ToString(values["institution"]);
-                string area = Convert.ToString(values["area"]);
-                string controller = Convert.ToString(values["controller"]);
-                string action = Convert.ToString(values["action"]);
-                var urlAccessed = string.Format("{0}/{1}/{2}/{3}", instCode, area, controller, action);
-                Logger.Log(new GeneralException(string.Format("Crash from {0}", urlAccessed), filterContext.Exception));
-
-                bool doLogout = false;
+                bool isFatal = false;
                 try
                 {
-                    var _instCode = WebUtilities.InstitutionCode ?? Utilities.INST_DEFAULT_CODE;
-                    if (!instCode.Equals(_instCode, StringComparison.OrdinalIgnoreCase))
+                    bool doLogout = false;
+                    var values = filterContext.RouteData.Values;
+                    string instCode = Convert.ToString(values["institution"]);
+                    try
                     {
-                        instCode = Utilities.INST_DEFAULT_CODE;
+                        var _instCode = WebUtilities.InstitutionCode ?? Utilities.INST_DEFAULT_CODE;
+                        if (!instCode.Equals(_instCode, StringComparison.OrdinalIgnoreCase))
+                        {
+                            instCode = Utilities.INST_DEFAULT_CODE;
+                            doLogout = true;
+                        }
+                    }
+                    catch (LogOutUserException)
+                    {
                         doLogout = true;
                     }
-                }
-                catch (LogOutUserException)
-                {
-                    doLogout = true;
-                }
-                catch (Exception) //(GeneralException ex) when (ex.ExceptionType == ExceptionType.UnidentifiedInstitutionCode)
-                {
-                    instCode = Utilities.INST_DEFAULT_CODE;
-                }
-
-                // When view is not found, it usually throws 
-                //Exception Details: System.InvalidOperationException: 
-                // The view '~/Views/my-category/my-article-with-long-name.aspx' or its master could not be found. The following locations were searched: ~/Views/my-category/my-article-with-long-name.aspx
-                if (filterContext.Exception is InvalidOperationException && filterContext.Exception.Message.Contains("The view '~/Views"))
-                {
-                    Logger.Log(filterContext.Exception, true);
-                    filterContext.Result = MvcUtility.GetPageResult("ViewNotFound", "Error", "", instCode);
-                    return;
-                }
-
-                var genEx = filterContext.Exception as GeneralException;
-                if (genEx != null)
-                {
-                    if (genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode)
+                    catch (Exception) //(GeneralException ex) when (ex.ExceptionType == ExceptionType.UnidentifiedInstitutionCode)
                     {
                         instCode = Utilities.INST_DEFAULT_CODE;
-                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("Invalid Url. Please cross-check.", controller, action)
-                        {
-                            ErrorType = ExceptionType.UnidentifiedInstitutionCode,
-                            AreaName = area,
-                            FromUrl = urlAccessed,
-                            ResponseCode = HttpStatusCode.NotFound,
-                        };
                     }
-                    else if (genEx.ExceptionType == ExceptionType.DatabaseRelated)
-                    {
-                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("A database error has occurred. Contact the administrator", controller, action)
-                        {
-                            ErrorType = ExceptionType.DatabaseRelated,
-                            AreaName = area,
-                            FromUrl = urlAccessed,
-                            ResponseCode = HttpStatusCode.InternalServerError,
-                        };
-                    }
-                    else
-                    {
-                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(genEx, controller, action)
-                        {
-                            AreaName = area,
-                            FromUrl = urlAccessed
-                        };
-                    }
-                    filterContext.Result = MvcUtility.GetPageResult("Index", "Error", "", instCode);
-                    return;
-                }
 
-                if (doLogout || filterContext.Exception is LogOutUserException)
-                {
-                    WebUtilities.LogOut();
-                    filterContext.Result = MvcUtility.GetLoginPageResult(instCode);
-                }
-                else
-                {
-                    var dbExType = typeof(System.Data.Common.DbException);
-                    if (dbExType.IsAssignableFrom(filterContext.Exception.GetType())
-                        || (filterContext.Exception.GetBaseException() != null && dbExType.IsAssignableFrom(filterContext.Exception.GetBaseException().GetType())))
+                    // When view is not found, it usually throws 
+                    //Exception Details: System.InvalidOperationException: 
+                    // The view '~/Views/my-category/my-article-with-long-name.aspx' or its master could not be found. The following locations were searched: ~/Views/my-category/my-article-with-long-name.aspx
+                    if (filterContext.Exception is InvalidOperationException && filterContext.Exception.Message.Contains("The view '~/Views"))
                     {
-                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("A database error has occurred. Contact the administrator", controller, action)
-                        {
-                            ErrorType = ExceptionType.DatabaseRelated,
-                            AreaName = area,
-                            FromUrl = urlAccessed,
-                            ResponseCode = HttpStatusCode.InternalServerError,
-                        };
+                        isFatal = true;
+                        filterContext.Result = MvcUtility.GetPageResult("ViewNotFound", "Error", "", instCode);
+                        return;
                     }
-                    else if (filterContext.Exception is HttpAntiForgeryException)
+
+                    var urlAccessed = filterContext.RequestContext.HttpContext.Request.RawUrl; // string.Format("/{0}{1}/{2}/{3}", instCode, string.IsNullOrWhiteSpace(area) ? "" : ("/" + area), controller, action);
+
+                    string area = Convert.ToString(values["area"]);
+                    string controller = Convert.ToString(values["controller"]);
+                    string action = Convert.ToString(values["action"]);
+                    var genEx = filterContext.Exception as GeneralException;
+                    if (genEx != null)
                     {
-                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("Looks like this is a cross-site request forgery. We can't find the token.", controller, action)
+                        if (genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode)
                         {
-                            AreaName = area,
-                            FromUrl = urlAccessed
-                        };
+                            instCode = Utilities.INST_DEFAULT_CODE;
+                            filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("Invalid Url. Please cross-check.", controller, action)
+                            {
+                                ErrorType = ExceptionType.UnidentifiedInstitutionCode,
+                                AreaName = area,
+                                FromUrl = urlAccessed,
+                                ResponseCode = HttpStatusCode.NotFound,
+                            };
+                        }
+                        else if (genEx.ExceptionType == ExceptionType.DatabaseRelated)
+                        {
+                            filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("A database error has occurred. Contact the administrator", controller, action)
+                            {
+                                ErrorType = ExceptionType.DatabaseRelated,
+                                AreaName = area,
+                                FromUrl = urlAccessed,
+                                ResponseCode = HttpStatusCode.InternalServerError,
+                            };
+                        }
+                        else
+                        {
+                            filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(genEx, controller, action)
+                            {
+                                AreaName = area,
+                                FromUrl = urlAccessed
+                            };
+                        }
+                        filterContext.Result = MvcUtility.GetPageResult("Index", "Error", "", instCode);
+                        return;
+                    }
+
+                    if (doLogout || filterContext.Exception is LogOutUserException)
+                    {
+                        WebUtilities.LogOut();
+                        filterContext.Result = MvcUtility.GetLoginPageResult(instCode);
                     }
                     else
                     {
-                        filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception, controller, action)
+                        var dbExType = typeof(System.Data.Common.DbException);
+                        if (dbExType.IsAssignableFrom(filterContext.Exception.GetType())
+                            || (filterContext.Exception.GetBaseException() != null && dbExType.IsAssignableFrom(filterContext.Exception.GetBaseException().GetType())))
                         {
-                            AreaName = area,
-                            FromUrl = urlAccessed
-                        };
+                            filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("A database error has occurred. Contact the administrator", controller, action)
+                            {
+                                ErrorType = ExceptionType.DatabaseRelated,
+                                AreaName = area,
+                                FromUrl = urlAccessed,
+                                ResponseCode = HttpStatusCode.InternalServerError,
+                            };
+                        }
+                        else if (filterContext.Exception is HttpAntiForgeryException)
+                        {
+                            filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("Looks like this is a cross-site request forgery. We can't find the token.", controller, action)
+                            {
+                                AreaName = area,
+                                FromUrl = urlAccessed
+                            };
+                        }
+                        else
+                        {
+                            filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel(filterContext.Exception, controller, action)
+                            {
+                                AreaName = area,
+                                FromUrl = urlAccessed
+                            };
+                        }
+                        filterContext.Result = MvcUtility.GetPageResult("Index", "Error", "", instCode);
                     }
-                    filterContext.Result = MvcUtility.GetPageResult("Index", "Error", "", instCode);
                 }
-                return;
+                finally
+                {
+                    Utilities.Logger.Log(filterContext.Exception, isFatal);
+                }
             }
 
         }

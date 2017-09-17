@@ -75,6 +75,8 @@ namespace WebTests.Controllers
             //}
             //dao.Update(thatLogin);
             //Logger.Log("Testing stuffs in Index");
+            ViewBag.Title = "Home";
+            var isc = WebUtilities.IsCentralInstitution;
             return View();
         }
 

@@ -11,7 +11,7 @@ namespace MultiTenancyFramework
     public class Logger : ILogger
     {
         private static NLog.Logger _logger = LogManager.GetLogger(ConfigurationHelper.AppSettingsItem<string>("AppName") ?? "MultiTenancyFramework");
-        
+
         public void SetLogger(object logger)
         {
             if (logger != null)
@@ -95,13 +95,8 @@ namespace MultiTenancyFramework
             var context = HttpContext.Current;
 
             LoggerConfigurationManager.LoadConfigFileAndSetLoggerConfigProp(context?.Server);
-            
-            var genEx = ex as GeneralException;
-            bool doNotSendEmail = genEx != null && 
-                (genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode ||
-                genEx.ExceptionType == ExceptionType.DoNothing ||
-                genEx.ExceptionType == ExceptionType.SetupFailure);
-            var exMsg = BuildErrorMsg(ex, context);
+            bool doNotSendEmail;
+            var exMsg = BuildErrorMsg(ex, context, out doNotSendEmail);
 
             if (!string.IsNullOrWhiteSpace(exMsg))
             {
@@ -111,36 +106,32 @@ namespace MultiTenancyFramework
             }
         }
 
-        private string BuildErrorMsg(Exception ex, HttpContext context)
+        private string BuildErrorMsg(Exception ex, HttpContext context, out bool doNotSendEmail)
         {
+            doNotSendEmail = false;
             if (ex != null)
             {
-                if (context == null) context = HttpContext.Current;
-                ex = ex.GetBaseException();
-
-                if (ex == null) return string.Empty;
-
-                string msg = ex.GetFullExceptionMessage(true);
-                if (string.IsNullOrWhiteSpace(msg)) return string.Empty;
-
-                string page = string.Empty;
-                if (ex.TargetSite != null && !string.IsNullOrWhiteSpace(ex.TargetSite.Name))
+                var genEx = ex as GeneralException;
+                if (genEx != null)
                 {
-                    page = ex.TargetSite.Name;
-                }
-                else if (context != null)
-                {
-                    try
+                    doNotSendEmail = (genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode ||
+                        genEx.ExceptionType == ExceptionType.DoNothing ||
+                        genEx.ExceptionType == ExceptionType.SetupFailure);
+                    if (!doNotSendEmail)
                     {
-                        page += string.Format("[Source - {2}] Request From: {0} | Url: {1}", context.Request?.UserHostAddress, context.Request?.RawUrl, ex.Source);
-                    }
-                    catch
-                    {
-                        page += string.Format("[Source - {0}]", ex.Source);
+                        genEx = genEx.InnerException as GeneralException;
+                        doNotSendEmail = genEx != null && (genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode ||
+                            genEx.ExceptionType == ExceptionType.DoNothing ||
+                            genEx.ExceptionType == ExceptionType.SetupFailure);
                     }
                 }
-                //string trace = ex.StackTrace;
-                return string.Format("{0}{1}", msg, string.IsNullOrWhiteSpace(page) ? "" : ("\n\t Method Called: \t" + page));
+                else
+                {
+                    ex = ex.GetBaseException();
+                    if (ex == null) return string.Empty;
+                }
+
+                return ex.GetFullExceptionMessage(true, context);
             }
             return string.Empty;
         }

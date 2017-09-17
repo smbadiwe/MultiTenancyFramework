@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Web;
 
 namespace MultiTenancyFramework
 {
@@ -11,7 +12,7 @@ namespace MultiTenancyFramework
         /// <param name="ex">The exception thrown.</param>
         /// <param name="includeStackTrace"></param>
         /// <returns></returns>
-        public static string GetFullExceptionMessage(this Exception ex, bool includeStackTrace = false)
+        public static string GetFullExceptionMessage(this Exception ex, bool includeStackTrace = false, HttpContext context = null)
         {
             StringBuilder sbMessages = new StringBuilder();
             StringBuilder sbStackTraces = new StringBuilder();
@@ -19,6 +20,33 @@ namespace MultiTenancyFramework
             {
                 sbStackTraces.AppendFormat("\nEXCEPTION TYPE: {0}; STACK TRACE: {1}", ex.GetType().FullName, ex.StackTrace);
             }
+
+            string source = ex.Source;
+            if (string.IsNullOrWhiteSpace(source))
+            {
+                source = ex.TargetSite?.Name;
+            }
+            string page = string.Empty;
+            if (context == null) context = HttpContext.Current;
+            if (context != null)
+            {
+                try
+                {
+                    if (context.Request == null)
+                    {
+                        page += string.Format("[Source - {0}]", source);
+                    }
+                    else
+                    {
+                        page += string.Format("[Source - {0}] Request From: {1} | Url: {2} {3}", source, context.Request.UserHostAddress, context.Request.HttpMethod, context.Request.RawUrl);
+                    }
+                }
+                catch
+                {
+                    page += string.Format("[Source - {0}]", source);
+                }
+            }
+
             sbMessages.Append(ex.Message);
             var aggEx = ex as AggregateException;
             if (aggEx != null)
@@ -31,18 +59,7 @@ namespace MultiTenancyFramework
             var sqlClientEx = ex as System.Data.Common.DbException;
             if (sqlClientEx != null)
             {
-                if (sqlClientEx is System.Data.SqlClient.SqlException)
-                {
-                    var sqlClientExErrors = (sqlClientEx as System.Data.SqlClient.SqlException).Errors;
-                    if (sqlClientExErrors != null && sqlClientExErrors.Count > 0)
-                    {
-                        sbMessages.AppendLine(" \nSQL CLIENT ERRORS: ");
-                        for (int i = 0; i < sqlClientExErrors.Count; i++)
-                        {
-                            sbMessages.AppendFormat("\t{0}: Message - {1};\n", (i + 1), sqlClientExErrors[i]);
-                        }
-                    }
-                }
+                sbMessages.AppendLine(sqlClientEx.ToString());
 
                 var sqlClientExData = sqlClientEx.Data;
                 if (sqlClientExData != null && sqlClientExData.Count > 0)
@@ -54,25 +71,22 @@ namespace MultiTenancyFramework
                     catch { }
                 }
             }
-            var inner = ex.InnerException;
-            if (inner != null)
+            var loaderEx = ex as System.Reflection.ReflectionTypeLoadException;
+            if (loaderEx != null)
             {
-                var loaderEx = inner as System.Reflection.ReflectionTypeLoadException;
-                if (loaderEx != null)
+                var loaderInnerExes = loaderEx.LoaderExceptions;
+                for (int i = 0; i < loaderInnerExes.Length; i++)
                 {
-                    var loaderInnerExes = loaderEx.LoaderExceptions;
-                    for (int i = 0; i < loaderInnerExes.Length; i++)
-                    {
-                        sbMessages.AppendFormat(" and Loader Exception {0}: {1}\n", (i + 1), loaderInnerExes[i].Message);
-                    }
-                }
-                while (inner != null)
-                {
-                    sbMessages.AppendFormat(" because {0} ", inner.GetFullExceptionMessage(includeStackTrace));
-                    inner = inner.InnerException;
+                    sbMessages.AppendFormat(" and Loader Exception {0}: {1}\n", (i + 1), loaderInnerExes[i].Message);
                 }
             }
-            return string.Format("{0}\n{1}", sbMessages, sbStackTraces);
+            var inner = ex.InnerException;
+            while (inner != null)
+            {
+                sbMessages.AppendFormat(" because {0} ", inner.GetFullExceptionMessage(includeStackTrace, context));
+                inner = inner.InnerException;
+            }
+            return string.Format("{0}{1}\n{2}", sbMessages, page == string.Empty ? "" : ("\n" + page), sbStackTraces);
         }
     }
 }

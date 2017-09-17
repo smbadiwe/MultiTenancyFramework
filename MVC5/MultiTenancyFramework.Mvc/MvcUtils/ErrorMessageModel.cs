@@ -86,21 +86,21 @@ namespace MultiTenancyFramework.Mvc
         public ErrorMessageModel(Exception ex, string controllerName, string actionName, bool renderErrorPageFully = false)
             : base(ex, controllerName, actionName)
         {
+            var context = System.Web.HttpContext.Current;
             if (string.IsNullOrWhiteSpace(FromUrl))
             {
-                var routes = System.Web.HttpContext.Current.Request.RequestContext.RouteData.Values;
-                FromUrl = $"/{routes["institution"]}/{routes["area"]}/{routes["controller"]}/{routes["action"]}";
+                FromUrl = context.Request.RawUrl;
             }
             RenderErrorPageFully = renderErrorPageFully;
             ExceptionType = ex.GetType();
             StackTrace = ex.StackTrace;
             if (string.IsNullOrWhiteSpace(StackTrace))
             {
-                ErrorMessage = WebUtility.HtmlDecode(ex.GetFullExceptionMessage());
+                ErrorMessage = WebUtility.HtmlDecode(ex.GetFullExceptionMessage(context: context));
             }
             else
             {
-                ErrorMessage = ex.GetFullExceptionMessage();
+                ErrorMessage = ex.GetFullExceptionMessage(context: context);
             }
             if (ExceptionType == typeof(GeneralException))
             {
