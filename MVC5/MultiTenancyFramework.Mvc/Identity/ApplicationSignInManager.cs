@@ -58,6 +58,7 @@ namespace MultiTenancyFramework.Mvc.Identity
             var user = await UserManager.FindByNameAsync(userName);
             if (user == null)
             {
+                logger.Log(LoggingLevel.Error, "Username '{0}' tried signing in but no such user exists.", userName);
                 return SignInStatus.Failure;
             }
             if (user.LockoutEnabled) //  (await UserManager.IsLockedOutAsync(user.Id))

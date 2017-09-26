@@ -69,6 +69,7 @@ namespace MultiTenancyFramework.Mvc
                                 AreaName = area,
                                 FromUrl = urlAccessed,
                                 ResponseCode = HttpStatusCode.NotFound,
+                                RenderErrorPageFully = true,
                             };
                         }
                         else if (genEx.ExceptionType == ExceptionType.DatabaseRelated)
