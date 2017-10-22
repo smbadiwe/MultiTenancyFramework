@@ -303,7 +303,7 @@ namespace MultiTenancyFramework.NHibernate
         public IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false) where U : class, IBaseEntity<idT>
         {
             var session = BuildSession();
-            return session.CreateSQLQuery(query).List<U>();
+            return session.CreateSQLQuery(query).AddEntity(typeof(U)).List<U>();
         }
 
         /// <summary>

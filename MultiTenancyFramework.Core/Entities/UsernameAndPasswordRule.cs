@@ -3,7 +3,13 @@
     [System.ComponentModel.DataAnnotations.Schema.ComplexType]
     public class UsernameAndPasswordRule
     {
+        /// <summary>
+        /// Only allow [A-Za-z0-9@_] in UserNames
+        /// </summary>
         public virtual bool AllowOnlyAlphanumericUserNames { get; set; }
+        /// <summary>
+        /// If true, enforces that emails are non empty, valid, and unique
+        /// </summary>
         public virtual bool RequireUniqueEmail { get; set; } = true;
         public virtual bool UserLockoutEnabledByDefault { get; set; } = true;
         public virtual int MaxFailedAccessAttemptsBeforeLockout { get; set; } = 5;
