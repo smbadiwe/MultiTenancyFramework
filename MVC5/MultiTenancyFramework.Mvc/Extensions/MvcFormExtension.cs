@@ -51,6 +51,16 @@ namespace System.Web.Mvc.Html
             return BeginFormGeneral(htmlHelper, actionName, null, null, FormMethod.Post, null);
         }
 
+        /// <summary>Writes an opening &lt;form&gt; tag to the response and sets the action tag to the specified action. The form uses the POST method.</summary>
+        /// <returns>An opening &lt;form&gt; tag.</returns>
+        /// <param name="htmlHelper">The HTML helper instance that this method extends.</param>
+        /// <param name="actionName">The name of the action method.</param>
+        /// <param name="htmlAttributes">An object that contains the HTML attributes to set for the element.</param>
+        public static MvcForm BeginFormWithXsrf(this HtmlHelper htmlHelper, string actionName, object htmlAttributes)
+        {
+            return BeginFormGeneral(htmlHelper, actionName, null, null, FormMethod.Post, htmlAttributes);
+        }
+
         /// <summary>Writes an opening &lt;form&gt; tag to the response and includes the route values from the route value dictionary in the action attribute. The form uses the POST method, and the request is processed by the action method for the view.</summary>
         /// <returns>An opening &lt;form&gt; tag.</returns>
         /// <param name="htmlHelper">The HTML helper instance that this method extends.</param>
