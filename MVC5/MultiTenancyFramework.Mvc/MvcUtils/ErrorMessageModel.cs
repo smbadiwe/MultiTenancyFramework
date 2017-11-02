@@ -94,14 +94,7 @@ namespace MultiTenancyFramework.Mvc
             RenderErrorPageFully = renderErrorPageFully;
             ExceptionType = ex.GetType();
             StackTrace = ex.StackTrace;
-            if (string.IsNullOrWhiteSpace(StackTrace))
-            {
-                ErrorMessage = WebUtility.HtmlDecode(ex.GetFullExceptionMessage(context: context));
-            }
-            else
-            {
-                ErrorMessage = ex.GetFullExceptionMessage(context: context);
-            }
+
             if (ExceptionType == typeof(GeneralException))
             {
                 ErrorType = (ex as GeneralException).ExceptionType;
@@ -113,6 +106,24 @@ namespace MultiTenancyFramework.Mvc
             else
             {
                 ErrorType = MultiTenancyFramework.ExceptionType.DoNothing;
+            }
+            if (string.IsNullOrWhiteSpace(StackTrace))
+            {
+                ErrorMessage = WebUtility.HtmlDecode(ex.GetFullExceptionMessage(context: context));
+            }
+            else
+            {
+                var nhBaseType = Type.ReflectionOnlyGetType("NHibernate.HibernateException, NHibernate", false, true);
+                var isNHException = nhBaseType != null && nhBaseType.IsAssignableFrom(ExceptionType);
+                if (isNHException)
+                {
+                    ErrorType = MultiTenancyFramework.ExceptionType.DatabaseRelated;
+                    ErrorMessage = ex.Message;
+                }
+                else
+                {
+                    ErrorMessage = ex.GetFullExceptionMessage(context: context);
+                }
             }
         }
     }

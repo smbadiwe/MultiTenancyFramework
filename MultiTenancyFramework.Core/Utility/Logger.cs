@@ -102,7 +102,16 @@ namespace MultiTenancyFramework
             {
                 _logger.Log(isFatal ? LogLevel.Fatal : LogLevel.Error, exMsg);
                 if (false == doNotSendEmail)
-                    Emailer.EmailLogMessage(exMsg, false);
+                {
+                    try
+                    {
+                        Emailer.EmailLogMessage(exMsg, false);
+                    }
+                    catch (Exception ex2)
+                    {
+                        Log(LoggingLevel.Warn, "Error sending log email: " + ex2.GetFullExceptionMessage());
+                    }
+                }
             }
         }
 

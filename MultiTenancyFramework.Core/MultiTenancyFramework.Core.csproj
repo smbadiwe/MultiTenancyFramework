@@ -78,11 +78,13 @@
     <Compile Include="Data\Queries\GetPhotosByOwnerIdAndImageTypeQuery.cs" />
     <Compile Include="Data\Queries\GetUserRoleByNameQuery.cs" />
     <Compile Include="Data\Queries\GetPrivilegesByGridSearchParamsQuery.cs" />
+    <Compile Include="DisplayHintAttribute.cs" />
     <Compile Include="Entities\Privilege.cs" />
     <Compile Include="Entities\UserClaim.cs" />
     <Compile Include="Entities\UserLogin.cs" />
     <Compile Include="Extensions\CacheExtensions.cs" />
     <Compile Include="Extensions\EntityExtensions.cs" />
+    <Compile Include="IModelAttribute.cs" />
     <Compile Include="IoC\IoCUtility.cs" />
     <Compile Include="Data\Queries\DbPagingQuery.cs" />
     <Compile Include="Data\Queries\DbQueryProcessor.cs" />

@@ -110,6 +110,10 @@ namespace ConsoleTests
 
         static void Main(string[] args)
         {
+            var t = Type.ReflectionOnlyGetType("NHibernate.HibernateException, NHibernate", false, true);
+
+            var isIt = t != null && typeof(ApplicationException).IsAssignableFrom(t);
+            return;
             Init();
             //var list = new List<Somadina>();
             //list.Add(new Somadina
