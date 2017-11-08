@@ -108,7 +108,7 @@ namespace MultiTenancyFramework
             }
             catch (Exception ex)
             {
-                Logger.Log(new ApplicationException("[Swallowed] error sending mail: ", ex));
+                Logger.Log("[Swallowed] error sending mail: {0}", ex.Message);
             }
             return false;
         }
@@ -182,7 +182,7 @@ namespace MultiTenancyFramework
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Log("[Swallowed] error sending mail: {0}.", ex.Message);
                 return false;
             }
         }
@@ -210,7 +210,7 @@ namespace MultiTenancyFramework
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Log("[Swallowed] error sending mail: {0}", ex.Message);
                 return false;
             }
         }
