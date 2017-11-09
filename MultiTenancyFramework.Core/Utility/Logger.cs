@@ -123,15 +123,19 @@ namespace MultiTenancyFramework
                 var genEx = ex as GeneralException;
                 if (genEx != null)
                 {
-                    doNotSendEmail = (genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode ||
-                        genEx.ExceptionType == ExceptionType.DoNothing ||
-                        genEx.ExceptionType == ExceptionType.SetupFailure);
+                    var excepts = new[]
+                    {
+                        ExceptionType.UnidentifiedInstitutionCode,
+                        //ExceptionType.DoNothing,
+                        ExceptionType.SetupFailure,
+                        ExceptionType.SessionTimeOut,
+                        ExceptionType.InvalidUserActionOrInput
+                    };
+                    doNotSendEmail = genEx.ExceptionType.IsContainedIn(excepts);
                     if (!doNotSendEmail)
                     {
                         genEx = genEx.InnerException as GeneralException;
-                        doNotSendEmail = genEx != null && (genEx.ExceptionType == ExceptionType.UnidentifiedInstitutionCode ||
-                            genEx.ExceptionType == ExceptionType.DoNothing ||
-                            genEx.ExceptionType == ExceptionType.SetupFailure);
+                        doNotSendEmail = genEx != null && genEx.ExceptionType.IsContainedIn(excepts);
                     }
                 }
                 else

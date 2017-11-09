@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace ConsoleTests
 {
@@ -110,11 +111,36 @@ namespace ConsoleTests
 
         static void Main(string[] args)
         {
-            var t = Type.ReflectionOnlyGetType("NHibernate.HibernateException, NHibernate", false, true);
+            Dictionary<string, int> dictionary = new Dictionary<string, int>();
 
-            var isIt = t != null && typeof(ApplicationException).IsAssignableFrom(t);
-            return;
-            Init();
+            dictionary.Add("cat1", 1);
+            dictionary.Add("dog2", 2);
+            dictionary.Add("cat3", 3);
+            dictionary.Add("dog4", 4);
+            dictionary.Add("cat5", 5);
+            dictionary.Add("dog6", 6);
+            dictionary.Add("cat7", 7);
+            dictionary.Add("dog8", 8);
+            dictionary.Add("cat9", 9);
+            dictionary.Add("dog10", 10);
+            dictionary.Add("dog11", 11);
+
+            dictionary.Add("dog100", 100);
+
+            var firstHalf = new Dictionary<string, int>();
+            int i = 0, count = dictionary.Count;
+            foreach (var item in dictionary.Keys.ToList())
+            {
+                firstHalf.Add(item, dictionary[item]);
+                dictionary.Remove(item);
+                if (++i == count / 2) break;
+            }
+            Console.ReadKey();
+            //var t = Type.ReflectionOnlyGetType("NHibernate.HibernateException, NHibernate", false, true);
+
+            //var isIt = t != null && typeof(ApplicationException).IsAssignableFrom(t);
+            //return;
+            //Init();
             //var list = new List<Somadina>();
             //list.Add(new Somadina
             //{
@@ -140,18 +166,18 @@ namespace ConsoleTests
             //    InstitutionCode = "mel2q"
             //};
             //var res = handler.Handle(new MultiTenancyFramework.Data.Queries.GetAppUserByUsernameQuery { Username = "Super User" });
-            try
-            {
-                var dao = new MultiTenancyFramework.NHibernate.CoreDAO<UserRole>();
-                dao.InstitutionCode = "mel2q";
-                var ite = dao.RetrieveAll();
-                var ite2 = dao.Retrieve(1);
+            //try
+            //{
+            //    var dao = new MultiTenancyFramework.NHibernate.CoreDAO<UserRole>();
+            //    dao.InstitutionCode = "mel2q";
+            //    var ite = dao.RetrieveAll();
+            //    var ite2 = dao.Retrieve(1);
 
-            }
-            catch (Exception ex)
-            {
-                Utilities.Logger.Log(ex);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Utilities.Logger.Log(ex);
+            //}
             Console.ReadKey();
         }
 
