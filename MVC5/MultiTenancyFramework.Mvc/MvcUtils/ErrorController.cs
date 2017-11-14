@@ -1,5 +1,8 @@
 ﻿using System.Net;
 using System.Web.Mvc;
+using MultiTenancyFramework;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace MultiTenancyFramework.Mvc
 {
@@ -11,13 +14,34 @@ namespace MultiTenancyFramework.Mvc
         /// but you may want to set the full path: ~/Views/...
         /// </summary>
         public static string SharedErrorViewName { get; set; } = "Error";
+        /// <summary>
+        /// The name of the ReLogin View (view used to ask a user to enter password again to reauthenticate)
+        /// under Shared Folder. It's "ReLogin" by default, but you may want to set the full path: ~/Views/...
+        /// </summary>
+        public static string ReLoginViewName { get; set; } = "ReLogin";
 
+        private ILogger Logger = Utilities.Logger;
         // GET: Error
         public virtual ActionResult Index()
         {
             return ErrorView();
         }
 
+        // GET: Error/ReLogin
+        public virtual ActionResult ReLogin()
+        {
+            var currentUser = WebUtilities.GetCurrentlyLoggedInUser();
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Account", new { area = "", institution = WebUtilities.InstitutionCode });
+            }
+            var model = new ReLoginModel
+            {
+                Username = currentUser.UserName
+            };
+            return View(ReLoginViewName, model);
+        }
+        
         public virtual ActionResult DenyInstitutionAccess()
         {
             WebUtilities.LogOut();

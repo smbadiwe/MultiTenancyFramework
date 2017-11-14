@@ -115,11 +115,15 @@ namespace MultiTenancyFramework.Mvc
                         }
                         else if (filterContext.Exception is HttpAntiForgeryException)
                         {
-                            filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("Looks like this is a cross-site request forgery. We can't find the token.", controller, action)
-                            {
-                                AreaName = area,
-                                FromUrl = urlAccessed
-                            };
+                            filterContext.Result = MvcUtility.GetPageResult("ReLogin", "Error", "", instCode);
+
+                            //filterContext.Controller.TempData[ErrorMessageModel.ErrorMessageKey] = new ErrorMessageModel("Looks like this is a cross-site request forgery. We can't find the token.", controller, action)
+                            //{
+                            //    AreaName = area,
+                            //    FromUrl = urlAccessed,
+                            //    ErrorType = ExceptionType.Security,
+                            //    ResponseCode = HttpStatusCode.PreconditionFailed,
+                            //};
                         }
                         else
                         {
