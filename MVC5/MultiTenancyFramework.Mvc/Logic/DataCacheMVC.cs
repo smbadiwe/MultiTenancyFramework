@@ -49,7 +49,10 @@ namespace MultiTenancyFramework.Mvc.Logic
             }
             set
             {
-                MemoryCache.Default[ALL_PRIVILEGES] = value;
+                if (value == null)
+                    MemoryCache.Default.Remove(ALL_PRIVILEGES);
+                else
+                    MemoryCache.Default[ALL_PRIVILEGES] = value;
             }
         }
 
@@ -61,7 +64,10 @@ namespace MultiTenancyFramework.Mvc.Logic
             }
             set
             {
-                MemoryCache.Default["::MultiTenancyFrameworkSettings::"] = value;
+                if (value == null)
+                    MemoryCache.Default.Remove("::MultiTenancyFrameworkSettings::");
+                else
+                    MemoryCache.Default["::MultiTenancyFrameworkSettings::"] = value;
             }
         }
     }

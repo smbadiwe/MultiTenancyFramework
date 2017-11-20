@@ -57,7 +57,7 @@ namespace MultiTenancyFramework
 
             SetLoggedInUsersPrivileges(user);
 
-            if (manager.SupportsUserClaim)
+            if (manager.SupportsUserClaim && user.Id > 0)
             {
                 claimsIdentity.AddClaims(await manager.GetClaimsAsync(user.Id));
             }
