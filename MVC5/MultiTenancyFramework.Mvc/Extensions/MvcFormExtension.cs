@@ -16,6 +16,15 @@ namespace System.Web.Mvc.Html
         /// <summary>Writes an opening &lt;form&gt; tag to the response. The form uses the GET method, and the request is processed by the action method for the view.</summary>
         /// <returns>An opening &lt;form&gt; tag. </returns>
         /// <param name="htmlHelper">The HTML helper instance that this method extends.</param>
+        /// <param name="htmlAttributes">An object that contains the HTML attributes to set for the element.</param>
+        public static MvcForm BeginGETForm(this HtmlHelper htmlHelper, object htmlAttributes)
+        {
+            return BeginFormGeneral(htmlHelper, null, null, null, FormMethod.Get, htmlAttributes);
+        }
+
+        /// <summary>Writes an opening &lt;form&gt; tag to the response. The form uses the GET method, and the request is processed by the action method for the view.</summary>
+        /// <returns>An opening &lt;form&gt; tag. </returns>
+        /// <param name="htmlHelper">The HTML helper instance that this method extends.</param>
         /// <param name="actionName">The name of the action method.</param>
         public static MvcForm BeginGETForm(this HtmlHelper htmlHelper, string actionName)
         {
