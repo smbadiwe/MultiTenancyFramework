@@ -23,7 +23,7 @@ namespace MultiTenancyFramework
     public enum ExceptionType
     {
         InvalidUserActionOrInput,
-        NoMoreDbForSchools,
+        NoMoreDbForOrganizations,
         UnidentifiedInstitutionCode,
         DatabaseRelated,
         AccessDeniedInstitution,
