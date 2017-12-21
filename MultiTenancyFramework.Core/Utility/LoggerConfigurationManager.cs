@@ -125,39 +125,52 @@ namespace MultiTenancyFramework
             {
                 xmlFilePath = server.MapPath("~/LoggingConfig.xml");
             }
-            if (string.IsNullOrWhiteSpace(xmlFilePath)) throw new ApplicationException("Could not get any LoggingConfig file.");
-            if (!xmlFilePath.EndsWith("LoggingConfig.xml")) throw new ApplicationException("No LoggingConfig file supplied");
 
             XDocument doc;
             try
             {
-                doc = XDocument.Load(xmlFilePath);
-            }
-            catch
-            {
-                xmlFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LoggingConfig.xml"); //HttpContext.Current != null ? HttpContext.Current.Server.MapPath("bin/LoggingConfig.xml") : ;
+                if (!File.Exists(xmlFilePath))
+                {
+                    // Paranoia
+                    xmlFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LoggingConfig.xml");
 
-                try
+                    if (!File.Exists(xmlFilePath))
+                    {
+                        doc = XDocument.Parse(@"<LoggingConfig>
+                                                  <!--Where the log files are -->
+                                                  <LogDirectory>Logs</LogDirectory>
+                                                  <!--When false, only actual errors are logged-->
+                                                  <Enabled>true</Enabled>
+                                                  <!--in MB. The system must have at least this amount of space-->
+                                                  <SizeLimit>100</SizeLimit>
+                                                </LoggingConfig>");
+                        doc.Save(xmlFilePath);
+                    }
+                    else
+                    {
+                        doc = XDocument.Load(xmlFilePath);
+                    }
+                }
+                else
                 {
                     doc = XDocument.Load(xmlFilePath);
                 }
-                catch
+            }
+            catch
+            {
+                doc = XDocument.Parse(@"<LoggingConfig>
+                                            <!--Where the log files are -->
+                                            <LogDirectory>Logs</LogDirectory>
+                                            <!--When false, only actual errors are logged-->
+                                            <Enabled>true</Enabled>
+                                            <!--in MB. The system must have at least this amount of space-->
+                                            <SizeLimit>100</SizeLimit>
+                                        </LoggingConfig>");
+                try
                 {
-                    doc = XDocument.Parse(string.Format(@"
-                                            <LoggingConfig>
-                                              <!--Where the log files are -->
-                                              <LogDirectory>Logs</LogDirectory>
-                                              <!--When false, only actual errors are logged-->
-                                              <Enabled>true</Enabled>
-                                              <!--in MB. The system must have at least this amount of space-->
-                                              <SizeLimit>100</SizeLimit>
-                                            </LoggingConfig>", AppDomain.CurrentDomain.FriendlyName));
-                    try
-                    {
-                        doc.Save(xmlFilePath);
-                    }
-                    catch { }
+                    doc.Save(xmlFilePath);
                 }
+                catch { }
             }
             XElement rootNode = doc.Root;
             if (rootNode.Name.LocalName != "LoggingConfig") throw new ApplicationException("Invalid root node. The root node should be named 'LoggingConfig'.");

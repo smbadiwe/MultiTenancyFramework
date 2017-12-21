@@ -19,6 +19,9 @@ namespace MultiTenancyFramework.NHibernate.Maps
                 y.Map(z => z.SmtpHost);
                 y.Map(z => z.SmtpPort);
                 y.Map(z => z.EnableSSL);
+                y.Map(z => z.ApiBaseUrl);
+                y.Map(z => z.ApiRequestUrl);
+                y.Map(z => z.ApiKey);
             });
             Component(x => x.UsernameAndPasswordRule, y =>
             {

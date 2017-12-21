@@ -12,5 +12,10 @@
         public virtual string SmtpHost { get; set; } = "smtp.gmail.com";
         public virtual int SmtpPort { get; set; } = 587;
         public virtual bool EnableSSL { get; set; } = true;
+
+        // for API
+        public virtual string ApiKey { get; set; }
+        public virtual string ApiBaseUrl { get; set; }
+        public virtual string ApiRequestUrl { get; set; }
     }
 }

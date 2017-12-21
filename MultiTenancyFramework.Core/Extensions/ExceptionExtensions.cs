@@ -14,6 +14,8 @@ namespace MultiTenancyFramework
         /// <returns></returns>
         public static string GetFullExceptionMessage(this Exception ex, bool includeStackTrace = false, HttpContext context = null)
         {
+            if (ex == null) return string.Empty;
+
             StringBuilder sbMessages = new StringBuilder();
             StringBuilder sbStackTraces = new StringBuilder();
             if (includeStackTrace && !string.IsNullOrWhiteSpace(ex.StackTrace))

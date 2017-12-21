@@ -9,6 +9,9 @@ using System.Text.RegularExpressions;
 
 namespace MultiTenancyFramework
 {
+    /// <summary>
+    /// Send email using SMTP
+    /// </summary>
     public static class Emailer
     {
         public static EmailAndSmtpSetting EmailAndSmtpSetting { get; private set; }
