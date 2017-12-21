@@ -12,6 +12,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
             {
                 y.Map(z => z.DefaultEmailSender);
                 y.Map(z => z.DefaultEmailReceiver);
+                y.Map(z => z.DefaultBccEmailReceiver);
                 y.Map(z => z.DefaultEmailSubject);
                 y.Map(z => z.DefaultSenderDisplayName);
                 y.Map(z => z.SmtpUsername);

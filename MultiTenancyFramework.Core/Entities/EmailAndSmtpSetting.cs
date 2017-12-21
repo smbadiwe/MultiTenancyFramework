@@ -3,8 +3,21 @@
     [System.ComponentModel.DataAnnotations.Schema.ComplexType]
     public class EmailAndSmtpSetting
     {
-        public virtual string DefaultEmailSubject { get; set; } = "Alert";
+        public virtual string DefaultEmailSubject { get; set; } = "Attention Please!";
+        /// <summary>
+        /// Gets or sets the default email receiver. If more than one, separate by comma
+        /// </summary>
+        /// <value>
+        /// The default email receiver.
+        /// </value>
         public virtual string DefaultEmailReceiver { get; set; }
+        /// <summary>
+        /// Gets or sets the default BCC email receiver. If more than one, separate by comma. This is mailny used for testing that email was actually delivered.
+        /// </summary>
+        /// <value>
+        /// The default BCC email receiver.
+        /// </value>
+        public virtual string DefaultBccEmailReceiver { get; set; }
         public virtual string DefaultEmailSender { get; set; }
         public virtual string DefaultSenderDisplayName { get; set; }
         public virtual string SmtpUsername { get; set; }
