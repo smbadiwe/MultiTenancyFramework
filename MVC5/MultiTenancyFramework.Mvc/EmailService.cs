@@ -24,32 +24,22 @@ namespace MultiTenancyFramework.Mvc
             if (string.IsNullOrWhiteSpace(message.Body)) return Task.FromResult(false);
 
             if (string.IsNullOrWhiteSpace(message.Destination)) message.Destination = EmailAndSmtpSetting.DefaultEmailReceiver;
-            var toEmails = message.Destination?.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-            if (toEmails == null || toEmails.Length == 0) return Task.FromResult(false);
 
-            string[] ccEmails, bccEmails;
-            bool isBodyHtml = false;
-            string fromEmail, displayName;
+            var settings = Utilities.SystemSettings?.EmailAndSmtpSetting ?? new EmailAndSmtpSetting();
+            if (!string.IsNullOrWhiteSpace(message.Subject))
+                settings.DefaultEmailSubject = message.Subject;
+
             EmailMessage emailMsg = message as EmailMessage;
             if (emailMsg != null)
             {
-                fromEmail = emailMsg.SenderEmail;
-                displayName = emailMsg.SenderDisplayName;
-                isBodyHtml = emailMsg.IsBodyHtml;
+                if (!string.IsNullOrWhiteSpace(emailMsg.SenderEmail))
+                    settings.DefaultEmailSender = emailMsg.SenderEmail;
+                if (!string.IsNullOrWhiteSpace(emailMsg.SenderDisplayName))
+                    settings.DefaultSenderDisplayName = emailMsg.SenderDisplayName;
+            }
 
-                ccEmails = emailMsg.CC.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                bccEmails = emailMsg.BCC.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-            }
-            else
-            {
-                ccEmails = null;
-                bccEmails = null;
-                fromEmail = null; // we'll use the default
-                displayName = null; // we'll use the default
-            }
-            var sent = Emailer.SendEmail(fromEmail, message.Body, message.Subject, null, toEmails, ccEmails, bccEmails, isBodyHtml, displayName);
-            
-            return Task.FromResult(sent);
+            return new EmailSender(settings)
+                .SendAsync(message.Destination, message.Body, ccEmails: emailMsg.CC, bccEmails: emailMsg.BCC);
         }
     }
 

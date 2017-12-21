@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace MultiTenancyFramework
 {
@@ -27,20 +28,7 @@ namespace MultiTenancyFramework
 
             Logger = Utilities.Logger;
         }
-
-        private static bool IsValidEmail(string email)
-        {
-            try
-            {
-                var mail = new MailAddress(email);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
+        
         /// <summary>
         /// This is the client as setup in the Logging section of the config file
         /// </summary>
@@ -72,21 +60,13 @@ namespace MultiTenancyFramework
             {
                 subject = string.Format("ERROR ON {0} - {1}", ApplicationName, DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss tt"));
             }
-            return SendMailWithDefaultCredentials(logMessage, subject);
+            var sender = new EmailSender();
+            sender.Settings.DefaultEmailSubject = subject;
+            sender.SendAsync(null, logMessage).ConfigureAwait(false);
+            return true;
         }
-
-        public static bool SendMailWithDefaultCredentials(string body, string subject = null)
-        {
-            var client = GetDefaultClient();
-            bool success;
-            using (client)
-            {
-                success = SendEmail(EmailAndSmtpSetting.DefaultEmailReceiver, body, subject ?? EmailAndSmtpSetting.DefaultEmailSubject, client, EmailAndSmtpSetting.SmtpUsername, false, EmailAndSmtpSetting.DefaultSenderDisplayName);
-            }
-            return success;
-        }
-
-        public static bool SendEmail(MailMessage msg, SmtpClient client)
+        
+        public static async Task<bool> SendEmail(MailMessage msg, SmtpClient client)
         {
             try
             {
@@ -100,8 +80,8 @@ namespace MultiTenancyFramework
                     }
 
                     ServicePointManager.ServerCertificateValidationCallback = (obj, cert, chain, policy) => true;
-                    
-                    client.Send(msg);
+
+                    await client.SendMailAsync(msg);
                     if (dispose)
                     {
                         client.Dispose();
@@ -180,7 +160,8 @@ namespace MultiTenancyFramework
 
                 using (msg)
                 {
-                    return SendEmail(msg, client);
+                    SendEmail(msg, client).ConfigureAwait(true);
+                    return true;
                 }
             }
             catch (Exception ex)
