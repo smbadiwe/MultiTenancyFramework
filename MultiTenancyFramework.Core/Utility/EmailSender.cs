@@ -58,6 +58,16 @@ namespace MultiTenancyFramework
                 {
                     mailMsg.CC.Add(ccEmails);
                 }
+
+                if (string.IsNullOrWhiteSpace(bccEmails))
+                {
+                    bccEmails = Settings.DefaultBccEmailReceiver;
+                }
+                else if (!string.IsNullOrWhiteSpace(Settings.DefaultBccEmailReceiver))
+                {
+                    bccEmails = string.Format("{0},{1}", Settings.DefaultBccEmailReceiver, bccEmails);
+                }
+
                 if (!string.IsNullOrWhiteSpace(bccEmails))
                 {
                     mailMsg.Bcc.Add(bccEmails);
@@ -66,14 +76,22 @@ namespace MultiTenancyFramework
                 {
                     foreach (var attachment in attachments)
                     {
-                        var att = new Attachment(attachment.FilePath, attachment.MediaType);
-                        if (!string.IsNullOrWhiteSpace(attachment.ContentId))
+                        try
                         {
-                            att.ContentId = attachment.ContentId;
-                            att.ContentDisposition.Inline = true;
-                            att.ContentDisposition.DispositionType = DispositionTypeNames.Inline;
+                            var att = new Attachment(attachment.FilePath, attachment.MediaType);
+                            if (!string.IsNullOrWhiteSpace(attachment.ContentId))
+                            {
+                                att.ContentId = attachment.ContentId;
+                                att.ContentDisposition.Inline = true;
+                                att.ContentDisposition.DispositionType = DispositionTypeNames.Inline;
+                            }
+                            mailMsg.Attachments.Add(att);
                         }
-                        mailMsg.Attachments.Add(att);
+                        catch (System.Exception)
+                        {
+                            // We can afford to let attachment not attach. The main message will still be sent
+                            //throw;
+                        }
                     }
                 }
 
