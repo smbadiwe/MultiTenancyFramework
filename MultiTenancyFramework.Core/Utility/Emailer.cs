@@ -62,8 +62,8 @@ namespace MultiTenancyFramework
             }
             var sender = new EmailSender();
             sender.Settings.DefaultEmailSubject = subject;
-            sender.SendAsync(null, logMessage).ConfigureAwait(false);
-            return true;
+            var good = AsyncHelper.RunSync(() => sender.SendAsync(null, logMessage));
+            return good;
         }
         
         public static async Task<bool> SendEmail(MailMessage msg, SmtpClient client)
@@ -160,8 +160,8 @@ namespace MultiTenancyFramework
 
                 using (msg)
                 {
-                    SendEmail(msg, client).ConfigureAwait(true);
-                    return true;
+                    var good = AsyncHelper.RunSync(() => SendEmail(msg, client));
+                    return good;
                 }
             }
             catch (Exception ex)

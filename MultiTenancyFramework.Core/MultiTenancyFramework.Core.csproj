@@ -152,6 +152,7 @@
     <Compile Include="Logic\UserLoginLogic.cs" />
     <Compile Include="Logic\UserRoleLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\AsyncHelper.cs" />
     <Compile Include="Utility\ConfigurationHelper.cs" />
     <Compile Include="Utility\Emailer.cs" />
     <Compile Include="Utility\EmailSender.cs" />
