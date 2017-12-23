@@ -18,21 +18,6 @@ namespace MultiTenancyFramework.Data
         IList<T> RetrieveByIDs(idT[] IDs, params string[] fields);
 
         /// <summary>
-        /// This one is when you need it as List of T.
-        /// <para>Be sure to send in parametized query, else you're on your own!</para>
-        /// </summary>
-        /// <param name="query">WARNING: Be sure to send in parametized query, else you're on your own!</param>
-        /// <returns></returns>
-        IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false) where U : class, IBaseEntity<idT>;
-
-        /// <summary>
-        /// This one is only for when an IList will do.
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        IList RetrieveUsingDirectQuery2(string query, bool clearSession = false);
-
-        /// <summary>
         /// Retrieves all.
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>

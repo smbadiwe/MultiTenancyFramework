@@ -299,24 +299,7 @@ namespace MultiTenancyFramework.NHibernate
             }
             return session.QueryOver<T>(EntityName).Select(x => x.Id).List<idT>();
         }
-
-        public IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false) where U : class, IBaseEntity<idT>
-        {
-            var session = BuildSession();
-            return session.CreateSQLQuery(query).AddEntity(typeof(U)).List<U>();
-        }
-
-        /// <summary>
-        /// This one is only for when an IList will do.
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public IList RetrieveUsingDirectQuery2(string query, bool clearSession = false)
-        {
-            var session = BuildSession();
-            return session.CreateSQLQuery(query).List();
-        }
-
+        
         public void SqlBulkInsert(IList<T> items, bool isDataMigration = false, string schema = "dbo")
         {
             SqlBulkInsert(items, string.Empty, isDataMigration, schema);

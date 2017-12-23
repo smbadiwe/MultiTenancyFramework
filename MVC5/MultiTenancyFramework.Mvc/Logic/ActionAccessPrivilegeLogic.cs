@@ -52,6 +52,5 @@ namespace MultiTenancyFramework.Logic
             }
             base.OnAfterCommittingChanges(e);
         }
-
     }
 }

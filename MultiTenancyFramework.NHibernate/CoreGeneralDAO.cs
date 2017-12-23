@@ -1,6 +1,9 @@
 ﻿using MultiTenancyFramework.Data;
+using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.NHibernate.NHManager;
 using NHibernate;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 
 namespace MultiTenancyFramework.NHibernate
@@ -62,6 +65,23 @@ namespace MultiTenancyFramework.NHibernate
         public void CloseSession()
         {
             NHSessionManager.CloseStorage(_institutionCode);
+        }
+
+        public IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false) where U : class, IBaseEntity<long>
+        {
+            var session = BuildSession();
+            return session.CreateSQLQuery(query).AddEntity(typeof(U)).List<U>();
+        }
+
+        /// <summary>
+        /// This one is only for when an IList will do.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public IList RetrieveUsingDirectQuery2(string query, bool clearSession = false)
+        {
+            var session = BuildSession();
+            return session.CreateSQLQuery(query).List();
         }
 
         public void RunDirectQuery(string query, bool clearSession = false)

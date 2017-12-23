@@ -1,4 +1,7 @@
-﻿using System.Data;
+﻿using MultiTenancyFramework.Entities;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
 
 namespace MultiTenancyFramework.Data
 {
@@ -39,6 +42,21 @@ namespace MultiTenancyFramework.Data
         /// </summary>
         /// <param name="query">The query to run.</param>
         void RunDirectQueryADODotNET(string query, bool closeConnection = false);
+
+        /// <summary>
+        /// This one is when you need it as List of T.
+        /// <para>Be sure to send in parametized query, else you're on your own!</para>
+        /// </summary>
+        /// <param name="query">WARNING: Be sure to send in parametized query, else you're on your own!</param>
+        /// <returns></returns>
+        IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false) where U : class, IBaseEntity<long>;
+
+        /// <summary>
+        /// This one is only for when an IList will do.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        IList RetrieveUsingDirectQuery2(string query, bool clearSession = false);
 
         /// <summary>
         /// When more than one entity can be mapped to a table, this will scan and select the correct one, based mostly on the inheritance structure.
