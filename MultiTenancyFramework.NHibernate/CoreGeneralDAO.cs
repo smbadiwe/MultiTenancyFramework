@@ -67,10 +67,14 @@ namespace MultiTenancyFramework.NHibernate
             NHSessionManager.CloseStorage(_institutionCode);
         }
 
-        public IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false) where U : class, IBaseEntity<long>
+        public IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false, string entityName = null) where U : class, IBaseEntity<long>
         {
             var session = BuildSession();
-            return session.CreateSQLQuery(query).AddEntity(typeof(U)).List<U>();
+
+            if (string.IsNullOrWhiteSpace(entityName))
+                return session.CreateSQLQuery(query).AddEntity(typeof(U)).List<U>();
+
+            return session.CreateSQLQuery(query).AddEntity(entityName).List<U>();
         }
 
         /// <summary>

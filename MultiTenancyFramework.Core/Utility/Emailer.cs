@@ -62,8 +62,8 @@ namespace MultiTenancyFramework
             }
             var sender = new EmailSender();
             sender.Settings.DefaultEmailSubject = subject;
-            var good = AsyncHelper.RunSync(() => sender.SendAsync(null, logMessage));
-            return good;
+            BackgroundTaskRunner.Run(async () => await sender.SendAsync(null, logMessage));
+            return true;
         }
         
         public static async Task<bool> SendEmail(MailMessage msg, SmtpClient client)
@@ -91,7 +91,7 @@ namespace MultiTenancyFramework
             }
             catch (Exception ex)
             {
-                Logger.Log("[Swallowed] error sending mail: {0}", ex.Message);
+                Logger.Log("[Swallowed] error sending mail: {0}", ex.GetFullExceptionMessage());
             }
             return false;
         }
@@ -166,7 +166,7 @@ namespace MultiTenancyFramework
             }
             catch (Exception ex)
             {
-                Logger.Log("[Swallowed] error sending mail: {0}.", ex.Message);
+                Logger.Log("[Swallowed] error sending mail: {0}.", ex.GetFullExceptionMessage());
                 return false;
             }
         }
@@ -194,7 +194,7 @@ namespace MultiTenancyFramework
             }
             catch (Exception ex)
             {
-                Logger.Log("[Swallowed] error sending mail: {0}", ex.Message);
+                Logger.Log("[Swallowed] error sending mail: {0}", ex.GetFullExceptionMessage());
                 return false;
             }
         }

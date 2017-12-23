@@ -42,7 +42,8 @@ namespace MultiTenancyFramework.Mvc.NHibernate.Queries
                         query += string.Format(" OR (UserRoles LIKE '%,{0},%' OR UserRoles LIKE '{0},%')", userRoles[i].Id);
                     }
                     query += ");";
-                    var users = RetrieveUsingDirectQuery<AppUser>(query);
+
+                    var users = RetrieveUsingDirectQuery<AppUser>(query, entityName: theQuery.PreferredEntityName);
                     return users;
                 }
             }
