@@ -62,7 +62,8 @@ namespace MultiTenancyFramework
             }
             var sender = new EmailSender();
             sender.Settings.DefaultEmailSubject = subject;
-            BackgroundTaskRunner.Run(async () => await sender.SendAsync(null, logMessage));
+            sender.SendAsync(null, logMessage).ConfigureAwait(false);
+            //BackgroundTaskRunner.Run(async () => await sender.SendAsync(null, logMessage));
             return true;
         }
         

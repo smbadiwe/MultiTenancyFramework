@@ -127,6 +127,7 @@
     <Compile Include="Data\Queries\GetActionsQuery.cs" />
     <Compile Include="Data\Queries\GetAreasQuery.cs" />
     <Compile Include="Data\Queries\GetUsersWithThesePrivilegesQuery.cs" />
+    <Compile Include="EmailMessage.cs" />
     <Compile Include="EmailService.cs" />
     <Compile Include="Entities\ActionAccessPrivilege.cs" />
     <Compile Include="Entities\InstitutionAccessValidationResult.cs" />
