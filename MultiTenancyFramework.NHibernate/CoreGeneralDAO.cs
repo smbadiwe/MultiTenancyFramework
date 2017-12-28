@@ -2,6 +2,7 @@
 using MultiTenancyFramework.Entities;
 using MultiTenancyFramework.NHibernate.NHManager;
 using NHibernate;
+using NHibernate.Transform;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -67,13 +68,18 @@ namespace MultiTenancyFramework.NHibernate
             NHSessionManager.CloseStorage(_institutionCode);
         }
 
-        public IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false, string entityName = null) where U : class, IBaseEntity<long>
+        public IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false, string entityName = null) where U : class //, IBaseEntity<long>
         {
             var session = BuildSession();
 
             if (string.IsNullOrWhiteSpace(entityName))
-                return session.CreateSQLQuery(query).AddEntity(typeof(U)).List<U>();
+            {
+                var typeofU = typeof(U);
+                if (typeof(IBaseEntity<long>).IsAssignableFrom(typeofU))
+                    return session.CreateSQLQuery(query).AddEntity(typeofU).List<U>();
 
+                return session.CreateSQLQuery(query).SetResultTransformer(Transformers.AliasToBean(typeofU)).List<U>();
+            }
             return session.CreateSQLQuery(query).AddEntity(entityName).List<U>();
         }
 

@@ -51,8 +51,8 @@ namespace MultiTenancyFramework.Data
         /// <param name="clearSession"></param>
         /// <param name="entityName">If null, we use typeof(U). Set this if U has a child class you prefer to get results with, but is not available in this assembly</param>
         /// <returns></returns>
-        IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false, string entityName = null) where U : class, IBaseEntity<long>;
-
+        IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false, string entityName = null) where U : class; //, IBaseEntity<long>;
+        
         /// <summary>
         /// This one is only for when an IList will do.
         /// </summary>
