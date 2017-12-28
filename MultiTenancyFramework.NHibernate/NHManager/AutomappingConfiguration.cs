@@ -7,6 +7,7 @@ using MultiTenancyFramework.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using FluentNHibernate.Mapping;
+using MultiTenancyFramework;
 
 namespace MultiTenancyFramework.NHibernate.NHManager
 {
@@ -49,13 +50,10 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             if (base.ShouldMap(member) && member.CanWrite
                 && member.MemberInfo.GetCustomAttribute<NotMappedAttribute>() == null)
             {
-                // Check if the property is overridden in a child class. If it is, return false.
-                if (member.MemberInfo.DeclaringType == member.MemberInfo.ReflectedType)
-                {
-                    var classProps = member.MemberInfo.ReflectedType.BaseType.GetProperty(member.Name, BindingFlags.Instance | BindingFlags.Public);
-                    return classProps == null;
-                }
-                return true;
+                // Check if the property is overridden in a child class. 
+                // If it is, return false, otherwise, return true.
+                // The idea is that if this property is overridden, then we'll map it in the parent class.
+                return false == (member.MemberInfo as PropertyInfo).IsOverridden();
             }
             return false;
         }

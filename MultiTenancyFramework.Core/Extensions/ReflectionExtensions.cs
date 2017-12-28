@@ -135,5 +135,18 @@ namespace MultiTenancyFramework
             throw new ArgumentException($"Expression '{propertyLambda.Name}' refers is not a member expression or unary expression.");
         }
 
+        /// <summary>
+        /// Determines whether the specified property is overridden from a base class.
+        /// </summary>
+        /// <param name="property">The property.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified property is overridden from a base class; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool IsOverridden(this PropertyInfo property)
+        {
+            // If the property is overridden, its 'getter' MethodInfo will 
+            // return a different MethodInfo from GetBaseDefinition.
+            return property != null && property.GetGetMethod().GetBaseDefinition().DeclaringType != property.DeclaringType;
+        }
     }
 }
