@@ -13,9 +13,11 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
 using System.Web;
 using Environment = NHibernate.Cfg.Environment;
 
@@ -300,7 +302,29 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 //Begin a transaction
                 if (!session.IsConnected || session.Transaction == null || !session.Transaction.IsActive || session.Transaction.WasCommitted || session.Transaction.WasRolledBack) //if (storage is WebSessionStorage)
                 {
-                    session.BeginTransaction();
+                    int retryCount = 3;
+                    while (retryCount > 0)
+                    {
+                        try
+                        {
+                            session.BeginTransaction();
+                        }
+                        catch (Exception)
+                        {
+                            if (retryCount > 0)
+                            {
+                                Thread.Sleep(1000);
+                                retryCount--;
+                                continue;
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+
+                        break;
+                    }
                 }
             }
             if (!doFreshSession)

@@ -10,7 +10,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
     {
         public AppUserMap()
         {
-            Table("Users");
+            Table(ConfigurationHelper.AppSettingsItem<bool>("UseLowercaseTableNames") ? "users" : "Users");
             Map(x => x.UserName).Index("ind_username");
             Map(x => x.PasswordHash);
             Map(x => x.UserRoles);

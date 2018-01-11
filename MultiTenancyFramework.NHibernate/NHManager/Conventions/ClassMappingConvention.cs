@@ -9,7 +9,12 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Conventions
         public void Apply(IClassInstance instance)
         {
             //Table name rule
-            instance.Table(instance.EntityType.Name.ToPlural());
+            var tableName = instance.EntityType.Name.ToPlural();
+            if (ConfigurationHelper.AppSettingsItem<bool>("UseLowercaseTableNames"))
+            {
+                tableName = tableName.ToLowerInvariant();
+            }
+            instance.Table(tableName);
             //To filter queries based on what I've defined in the Tenant filter definition
             instance.ApplyFilter<AppFilterDefinition>();
         }

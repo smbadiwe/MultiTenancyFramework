@@ -11,7 +11,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
     {
         public InstitutionMap()
         {
-            Table("Institutions");
+            Table(typeof(Institution).GetTableName());
             
             Map(x => x.ShortName);
             Map(x => x.Code).Index("ind_code");

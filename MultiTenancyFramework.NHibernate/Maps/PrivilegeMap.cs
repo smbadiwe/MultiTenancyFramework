@@ -10,7 +10,7 @@ namespace MultiTenancyFramework.NHibernate.Maps
     {
         public PrivilegeMap()
         {
-            Table("Privileges");
+            Table(typeof(Privilege).GetTableName());
             Map(x => x.Description);
             Map(x => x.Scope);
             Map(x => x.DisplayName);

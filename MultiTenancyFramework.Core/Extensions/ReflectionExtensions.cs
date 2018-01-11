@@ -45,8 +45,15 @@ namespace MultiTenancyFramework
         public static string GetTableName(this Type type)
         {
             var attr = type.GetCustomAttribute<TableAttribute>();
-            if (attr == null) return type.Name.ToPlural();
-
+            if (attr == null)
+            {
+                var tableName = type.Name.ToPlural();
+                if (ConfigurationHelper.AppSettingsItem<bool>("UseLowercaseTableNames"))
+                {
+                    tableName = tableName.ToLowerInvariant();
+                }
+                return tableName;
+            }
             return attr.Name;
         }
 
