@@ -78,6 +78,9 @@ namespace MultiTenancyFramework.NHibernate
                 if (typeof(IBaseEntity<long>).IsAssignableFrom(typeofU))
                     return session.CreateSQLQuery(query).AddEntity(typeofU).List<U>();
 
+                if (typeofU.IsPrimitiveType())
+                    return session.CreateSQLQuery(query).List<U>();
+
                 return session.CreateSQLQuery(query).SetResultTransformer(Transformers.AliasToBean(typeofU)).List<U>();
             }
             return session.CreateSQLQuery(query).AddEntity(entityName).List<U>();

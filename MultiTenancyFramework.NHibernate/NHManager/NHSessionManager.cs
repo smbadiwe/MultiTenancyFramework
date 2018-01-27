@@ -366,12 +366,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             return null;
         }
 
-        internal static ISessionFactory Init(string cfgFile, string sessionKey)
-        {
-            return Init(cfgFile, sessionKey, null);
-        }
-
-        private static ISessionFactory Init(string cfgFile, string sessionKey, IDictionary<string, string> cfgProperties)
+        internal static ISessionFactory Init(string cfgFile, string sessionKey, IDictionary<string, string> cfgProperties = null)
         {
             Configuration cfg = ConfigureNHibernate(cfgFile, cfgProperties);
 
@@ -397,11 +392,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 //    .Mappings(val => val.AutoMappings.Add(autoPersistenceModel));
                 var factory = cfg.BuildSessionFactory();
 
-                try
-                {
-                    SessionFactoryCreated?.Invoke(factory);
-                }
-                catch { }
+                SessionFactoryCreated?.Invoke(factory);
 
                 SessionFactories[instCode] = factory;
 
@@ -420,47 +411,57 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// <param name="sessionKey"></param>
         private static ISessionFactory BuildFactory(string instCode, string sessionKey)
         {
-            if (!Utilities.INST_DEFAULT_CODE.Equals(instCode, StringComparison.OrdinalIgnoreCase))
+            var logger = Utilities.Logger;
+            logger.Log("Building session factory for {0} with key: {1}...", instCode, sessionKey);
+            try
             {
-                var institution = new GetInstitutionByCodeQueryHandler().Handle(new GetInstitutionByCodeQuery { Code = instCode });
-                if (institution == null) throw new GeneralException($"No institution with Code - {instCode}", ExceptionType.UnidentifiedInstitutionCode);
+                if (!Utilities.INST_DEFAULT_CODE.Equals(instCode, StringComparison.OrdinalIgnoreCase))
+                {
+                    var institution = new GetInstitutionByCodeQueryHandler().Handle(new GetInstitutionByCodeQuery { Code = instCode });
+                    if (institution == null) throw new GeneralException($"No institution with Code - {instCode}", ExceptionType.UnidentifiedInstitutionCode);
 
-                DatabaseConnection dbConn = null;
-                if (institution.DatabaseConnectionId > 0)
-                {
-                    dbConn = new CoreDAO<DatabaseConnection>().Retrieve(institution.DatabaseConnectionId);
-                }
-                if (dbConn == null)
-                {
-                    throw new GeneralException($"Database has not been setup for Institution: '{institution.Name}'");
-                }
-                if (dbConn.IsDisabled)
-                {
-                    throw new GeneralException($"The requested database for '{institution.Name}' no longer exists. Please contact administrator");
-                }
-
-                // Sometimes, you just want to use the same DB for all the tenants. In that case, simply use one session factory
-                if (string.Equals(dbConn.ConnectionString, GetConnectionString(), StringComparison.InvariantCultureIgnoreCase))
-                {
-                    ISessionFactory fac = null;
-                    // if we can't get the session factory for the central institution.
-                    // This should never happen 'cos the central would have been contacted earlier; but just in case...
-                    if (false == (SessionFactories.TryGetValue(Utilities.INST_DEFAULT_CODE, out fac) && fac != null))
+                    DatabaseConnection dbConn = null;
+                    if (institution.DatabaseConnectionId > 0)
                     {
-                        // Like I said above, this should never be reached
-                        fac = Init(null, GetSessionKey(null, IsWeb())); // build and return session key for central institution
+                        dbConn = new CoreDAO<DatabaseConnection>().Retrieve(institution.DatabaseConnectionId);
                     }
-                    SessionFactories[instCode] = fac;
-                    return fac;
-                }
-                var cfgProps = new Dictionary<string, string>();
-                cfgProps.Add(Environment.ConnectionString, dbConn.ConnectionString);
+                    if (dbConn == null)
+                    {
+                        throw new GeneralException($"Database has not been setup for Institution: '{institution.Name}'");
+                    }
+                    if (dbConn.IsDisabled)
+                    {
+                        throw new GeneralException($"The requested database for '{institution.Name}' no longer exists. Please contact administrator");
+                    }
 
-                return Init(null, sessionKey, cfgProps);
+                    // Sometimes, you just want to use the same DB for all the tenants. In that case, simply use one session factory
+                    if (string.Equals(dbConn.ConnectionString, GetConnectionString(), StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        ISessionFactory fac = null;
+                        // if we can't get the session factory for the central institution.
+                        // This should never happen 'cos the central would have been contacted earlier; but just in case...
+                        if (false == (SessionFactories.TryGetValue(Utilities.INST_DEFAULT_CODE, out fac) && fac != null))
+                        {
+                            // Like I said above, this should never be reached
+                            fac = Init(null, GetSessionKey(null, IsWeb())); // build and return session key for central institution
+                        }
+                        SessionFactories[instCode] = fac;
+                        return fac;
+                    }
+                    var cfgProps = new Dictionary<string, string>();
+                    cfgProps.Add(Environment.ConnectionString, dbConn.ConnectionString);
+
+                    return Init(null, sessionKey, cfgProps);
+                }
+                else
+                {
+                    return Init(null, sessionKey);
+                }
             }
-            else
+            catch (Exception ex) // I just want to make sure I caught and logged the error
             {
-                return Init(null, sessionKey);
+                logger.Log(ex, true);
+                throw ex;
             }
         }
 

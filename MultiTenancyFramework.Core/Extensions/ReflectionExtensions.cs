@@ -23,9 +23,16 @@ namespace MultiTenancyFramework
                 && !testType.IsGenericType;
         }
 
+        /// <summary>
+        /// Determines whether the given type is primitive. Here, strings and value types are treated as primitive.
+        /// </summary>
+        /// <param name="t">The type t.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified type is primitive; otherwise, <c>false</c>.
+        /// </returns>
         public static bool IsPrimitiveType(this Type t)
         {
-            return t.IsPrimitive || t.IsValueType || (t == typeof(string));
+            return t.IsPrimitive || t == typeof(string) || t.IsValueType;
         }
 
         //a thread-safe way to hold default instances created at run-time

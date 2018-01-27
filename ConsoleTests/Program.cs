@@ -111,30 +111,35 @@ namespace ConsoleTests
 
         static void Main(string[] args)
         {
-            Dictionary<string, int> dictionary = new Dictionary<string, int>();
+            Console.WriteLine(typeof(string).IsPrimitiveType());
+            Console.WriteLine(typeof(DateTime).IsPrimitiveType());
+            Console.WriteLine(typeof(DateTime?).IsPrimitiveType());
+            Console.WriteLine(typeof(int?).IsPrimitiveType());
+            Console.WriteLine(typeof(int).IsPrimitiveType());
+            //Dictionary<string, int> dictionary = new Dictionary<string, int>();
 
-            dictionary.Add("cat1", 1);
-            dictionary.Add("dog2", 2);
-            dictionary.Add("cat3", 3);
-            dictionary.Add("dog4", 4);
-            dictionary.Add("cat5", 5);
-            dictionary.Add("dog6", 6);
-            dictionary.Add("cat7", 7);
-            dictionary.Add("dog8", 8);
-            dictionary.Add("cat9", 9);
-            dictionary.Add("dog10", 10);
-            dictionary.Add("dog11", 11);
+            //dictionary.Add("cat1", 1);
+            //dictionary.Add("dog2", 2);
+            //dictionary.Add("cat3", 3);
+            //dictionary.Add("dog4", 4);
+            //dictionary.Add("cat5", 5);
+            //dictionary.Add("dog6", 6);
+            //dictionary.Add("cat7", 7);
+            //dictionary.Add("dog8", 8);
+            //dictionary.Add("cat9", 9);
+            //dictionary.Add("dog10", 10);
+            //dictionary.Add("dog11", 11);
 
-            dictionary.Add("dog100", 100);
+            //dictionary.Add("dog100", 100);
 
-            var firstHalf = new Dictionary<string, int>();
-            int i = 0, count = dictionary.Count;
-            foreach (var item in dictionary.Keys.ToList())
-            {
-                firstHalf.Add(item, dictionary[item]);
-                dictionary.Remove(item);
-                if (++i == count / 2) break;
-            }
+            //var firstHalf = new Dictionary<string, int>();
+            //int i = 0, count = dictionary.Count;
+            //foreach (var item in dictionary.Keys.ToList())
+            //{
+            //    firstHalf.Add(item, dictionary[item]);
+            //    dictionary.Remove(item);
+            //    if (++i == count / 2) break;
+            //}
             Console.ReadKey();
             //var t = Type.ReflectionOnlyGetType("NHibernate.HibernateException, NHibernate", false, true);
 
