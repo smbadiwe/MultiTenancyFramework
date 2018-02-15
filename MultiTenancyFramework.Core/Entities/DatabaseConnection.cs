@@ -7,28 +7,20 @@ namespace MultiTenancyFramework.Entities
     {
         public virtual string ConnectionString { get; set; }
         /// <summary>
-        /// Comma-separated values of the IDs of the tenants whose data is on this DB
+        /// Comma-separated values of the InstitutionCode of the tenants whose data is on this DB
         /// </summary>
         public virtual string TenantsOnIt { get; set; }
         /// <summary>
-        /// The IDs of the tenants whose data is on this DB
+        /// The InstitutionCode of the tenants whose data is on this DB
         /// </summary>
-        public virtual HashSet<long> TenantsIDs
+        public virtual HashSet<string> TenantCodes
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(TenantsOnIt)) return new HashSet<long>();
+                if (string.IsNullOrWhiteSpace(TenantsOnIt)) return new HashSet<string>();
 
                 var splitted = TenantsOnIt.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                HashSet<long> userRoles = new HashSet<long>();
-                foreach (var item in splitted)
-                {
-                    long id;
-                    if (long.TryParse(item, out id))
-                    {
-                        userRoles.Add(id);
-                    }
-                }
+                HashSet<string> userRoles = new HashSet<string>(splitted);
                 return userRoles;
             }
         }
