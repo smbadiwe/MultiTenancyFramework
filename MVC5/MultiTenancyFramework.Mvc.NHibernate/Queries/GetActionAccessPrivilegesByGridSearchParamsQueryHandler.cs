@@ -13,7 +13,8 @@ namespace MultiTenancyFramework.NHibernate.Queries
             var query = session.QueryOver<ActionAccessPrivilege>();
             if (!string.IsNullOrWhiteSpace(theQuery.Name))
             {
-                query = query.Where(x => x.DisplayName.IsInsensitiveLike(theQuery.Name, MatchMode.Anywhere));
+                query = query.Where(x => x.DisplayName.IsInsensitiveLike(theQuery.Name, MatchMode.Anywhere)
+                || x.Name.IsInsensitiveLike(theQuery.Name, MatchMode.Anywhere));
             }
             if (theQuery.AccessScope.HasValue && theQuery.AccessScope.Value > 0)
             {
