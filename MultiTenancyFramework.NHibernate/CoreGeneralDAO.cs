@@ -70,20 +70,34 @@ namespace MultiTenancyFramework.NHibernate
 
         public IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false, string entityName = null) where U : class //, IBaseEntity<long>
         {
-            var session = BuildSession();
-
-            if (string.IsNullOrWhiteSpace(entityName))
+            try
             {
-                var typeofU = typeof(U);
-                if (typeof(IBaseEntity<long>).IsAssignableFrom(typeofU))
-                    return session.CreateSQLQuery(query).AddEntity(typeofU).List<U>();
+                var session = BuildSession();
 
-                if (typeofU.IsPrimitiveType())
-                    return session.CreateSQLQuery(query).List<U>();
-
-                return session.CreateSQLQuery(query).SetResultTransformer(Transformers.AliasToBean(typeofU)).List<U>();
+                var sqlQuery = session.CreateSQLQuery(query);
+                if (string.IsNullOrWhiteSpace(entityName))
+                {
+                    var typeofU = typeof(U);
+                    if (typeof(IBaseEntity<long>).IsAssignableFrom(typeofU))
+                    {
+                        sqlQuery.AddEntity(typeofU);
+                    }
+                    else
+                    {
+                        sqlQuery.SetResultTransformer(Transformers.AliasToBean(typeofU));
+                    }
+                }
+                else
+                {
+                    sqlQuery.AddEntity(entityName);
+                }
+                return sqlQuery.List<U>();
             }
-            return session.CreateSQLQuery(query).AddEntity(entityName).List<U>();
+            catch (System.Exception ex)
+            {
+                Utilities.Logger.Log(ex);
+                throw;
+            }
         }
 
         /// <summary>
