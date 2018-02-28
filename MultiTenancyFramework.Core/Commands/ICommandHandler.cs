@@ -8,7 +8,7 @@ namespace MultiTenancyFramework.Commands
         void Handle(TCommand command);
     }
 
-    public interface ICommandHandlerAsync<TCommand> where TCommand : ICommand
+    public interface ICommandHandlerAsync<TCommand> where TCommand : ICommandAsync
     {
         Task Handle(TCommand command, CancellationToken token = default(CancellationToken));
     }

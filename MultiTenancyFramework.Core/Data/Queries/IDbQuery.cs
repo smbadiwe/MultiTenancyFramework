@@ -3,4 +3,8 @@
     public interface IDbQuery<TResult>
     {
     }
+
+    public interface IDbQueryAsync<TResult>
+    {
+    }
 }

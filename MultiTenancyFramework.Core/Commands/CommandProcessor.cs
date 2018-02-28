@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MultiTenancyFramework.Commands
 {
@@ -21,6 +23,18 @@ namespace MultiTenancyFramework.Commands
 
             dynamic handler = _serviceProvider.GetService(handlerType);
             handler.Handle((dynamic)command);
+        }
+
+        [DebuggerStepThrough]
+        public Task ProcessAsync(ICommandAsync command, CancellationToken token = default(CancellationToken))
+        {
+            if (command == null) throw new ArgumentNullException("command");
+
+            var handlerType =
+                typeof(ICommandHandlerAsync<>).MakeGenericType(command.GetType());
+
+            dynamic handler = _serviceProvider.GetService(handlerType);
+            return handler.Handle((dynamic)command, (dynamic)token);
         }
     }
 }

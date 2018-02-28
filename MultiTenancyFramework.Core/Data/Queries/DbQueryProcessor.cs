@@ -26,11 +26,11 @@ namespace MultiTenancyFramework.Data.Queries
             dynamic handler = _serviceProvider.GetService(handlerType);
             handler.InstitutionCode = InstitutionCode;
 
-            return handler.Handle(query);
+            return handler.Handle((dynamic)query);
         }
 
         [DebuggerStepThrough]
-        public Task<TResult> ProcessAsync<TResult>(IDbQuery<TResult> query, CancellationToken token = default(CancellationToken))
+        public Task<TResult> ProcessAsync<TResult>(IDbQueryAsync<TResult> query, CancellationToken token = default(CancellationToken))
         {
             if (query == null) throw new ArgumentNullException("query");
 
@@ -40,7 +40,7 @@ namespace MultiTenancyFramework.Data.Queries
             dynamic handler = _serviceProvider.GetService(handlerType);
             handler.InstitutionCode = InstitutionCode;
 
-            return handler.Handle(query, token);
+            return handler.Handle((dynamic)query, (dynamic)token);
         }
     }
 }
