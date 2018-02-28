@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace MultiTenancyFramework
 {
     /// <summary>
-    /// Send email using SMTP
+    /// Send email using SMTP. Please prefer <see cref="EmailSender"/> class to this one.
     /// </summary>
     public static class Emailer
     {
