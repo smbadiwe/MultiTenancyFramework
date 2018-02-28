@@ -95,6 +95,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CoreDAO.ReadsAsync.cs" />
     <Compile Include="Maps\PrivilegeMap.cs" />
     <Compile Include="NHManager\AutomappingConfiguration.cs" />
     <Compile Include="NHManager\Conventions\InstitutionCodePropertyConvention.cs" />

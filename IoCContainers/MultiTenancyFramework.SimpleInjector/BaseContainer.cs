@@ -28,7 +28,9 @@ namespace MultiTenancyFramework.SimpleInjector
             var assemblies = IoCUtility.GetAssembliesForRegistration("MultiTenancyFramework.SimpleInjector", assembliesToScan);
 
             container.Register(typeof(ICommandHandler<>), assemblies);
+            container.Register(typeof(ICommandHandlerAsync<>), assemblies);
             container.Register(typeof(IDbQueryHandler<,>), assemblies);
+            container.Register(typeof(IDbQueryHandlerAsync<,>), assemblies);
 
             var exportedTypes = assemblies.SelectMany(x => x.ExportedTypes).Where(x => !x.IsAbstract);
 

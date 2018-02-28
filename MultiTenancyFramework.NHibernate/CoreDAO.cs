@@ -26,7 +26,7 @@ namespace MultiTenancyFramework.NHibernate
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="idT"></typeparam>
-    public class CoreDAO<T, idT> : CoreGridPagingDAO<T, idT>, ICoreDAO<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
+    public partial class CoreDAO<T, idT> : CoreGridPagingDAO<T, idT>, ICoreDAO<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
     {
         public void CommitChanges()
         {
@@ -268,6 +268,16 @@ namespace MultiTenancyFramework.NHibernate
             return GetResultUsingProjection(query, fields);
         }
 
+        public IList<idT> RetrieveIDs()
+        {
+            var session = BuildSession();
+            if (string.IsNullOrWhiteSpace(EntityName))
+            {
+                return session.QueryOver<T>().Select(x => x.Id).List<idT>();
+            }
+            return session.QueryOver<T>(EntityName).Select(x => x.Id).List<idT>();
+        }
+        
         private IList<T> GetResultUsingProjection(IQueryOver<T, T> query, params string[] fields)
         {
             if (fields == null || fields.Length == 0)
@@ -288,16 +298,6 @@ namespace MultiTenancyFramework.NHibernate
                 .List<T>();
 
             return results;
-        }
-        
-        public IList<idT> RetrieveIDs()
-        {
-            var session = BuildSession();
-            if (string.IsNullOrWhiteSpace(EntityName))
-            {
-                return session.QueryOver<T>().Select(x => x.Id).List<idT>();
-            }
-            return session.QueryOver<T>(EntityName).Select(x => x.Id).List<idT>();
         }
         
         public void SqlBulkInsert(IList<T> items, bool isDataMigration = false, string schema = "dbo")

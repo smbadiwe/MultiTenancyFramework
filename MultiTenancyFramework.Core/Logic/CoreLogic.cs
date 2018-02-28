@@ -44,7 +44,7 @@ namespace MultiTenancyFramework.Logic
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="idT"></typeparam>
-    public abstract class CoreLogic<T, idT> : CoreBaseLogic<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
+    public abstract partial class CoreLogic<T, idT> : CoreBaseLogic<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
     {
         /// <summary>
         /// Use this to point to entities that are hosted centrally

@@ -1,12 +1,14 @@
 ﻿using MultiTenancyFramework.Entities;
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace MultiTenancyFramework.Data
 {
     public partial interface ICoreReadsDAO<T, idT> : ICoreGeneralDAO where T : IBaseEntity<idT> where idT : IEquatable<idT>
     {
-        IList<idT> RetrieveIDs();
+        Task<IList<idT>> RetrieveIDsAsync(CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// 
@@ -14,48 +16,48 @@ namespace MultiTenancyFramework.Data
         /// <param name="IDs"></param>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        IList<T> RetrieveByIDs(idT[] IDs, params string[] fields);
+        Task<IList<T>> RetrieveByIDsAsync(idT[] IDs, string[] fields, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Retrieves all.
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        IList<T> RetrieveAll(params string[] fields);
+        Task<IList<T>> RetrieveAllAsync(string[] fields, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        IList<T> RetrieveAllActive(params string[] fields);
+        Task<IList<T>> RetrieveAllActiveAsync(string[] fields, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        IList<T> RetrieveAllInactive(params string[] fields);
+        Task<IList<T>> RetrieveAllInactiveAsync(string[] fields, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        IList<T> RetrieveAllDeleted(params string[] fields);
+        Task<IList<T>> RetrieveAllDeletedAsync(string[] fields, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Retrieve the first item found inthe db. This is useful for tables expected to have just one enty
         /// </summary>
         /// <returns></returns>
-        T RetrieveOne();
+        Task<T> RetrieveOneAsync(CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Retrieves the specified id.
         /// </summary>
         /// <param name="id">The id.</param>
         /// <returns></returns>
-        T Retrieve(idT id);
+        Task<T> RetrieveAsync(idT id, CancellationToken token = default(CancellationToken));
         
         /// <summary>
         /// Retrieves the specified id. NB: Use this only when you're sure the 
@@ -65,8 +67,7 @@ namespace MultiTenancyFramework.Data
         /// </summary>
         /// <param name="id">The id.</param>
         /// <returns></returns>
-        T Load(idT id);
-
+        Task<T> LoadAsync(idT id, CancellationToken token = default(CancellationToken));
     }
 
     public partial interface ICoreReadsDAO<T> : ICoreReadsDAO<T, long> where T : IEntity<long>

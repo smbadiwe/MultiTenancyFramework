@@ -74,6 +74,7 @@
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandProcessor.cs" />
     <Compile Include="Caching\ICacheManager.cs" />
+    <Compile Include="Data\ICoreDAO.ReadsAsync.cs" />
     <Compile Include="Data\IDataInitializer.cs" />
     <Compile Include="Data\IPrivilegeDAO.cs" />
     <Compile Include="Data\Queries\GetPhotosByOwnerIdAndImageTypeQuery.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="IO\CsvWriter.cs" />
     <Compile Include="IO\IOManager.cs" />
     <Compile Include="Logic\CoreBaseLogic.cs" />
+    <Compile Include="Logic\CoreLogic.Async.cs" />
     <Compile Include="Logic\CoreLogic.cs" />
     <Compile Include="Logic\IAuditTrailLogger.cs" />
     <Compile Include="Logic\AppUserLogic.cs" />
