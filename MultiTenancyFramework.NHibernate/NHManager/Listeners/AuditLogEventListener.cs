@@ -10,6 +10,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
 {
@@ -44,15 +46,24 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
                 EntityEntry entry = sessionImpl.PersistenceContext.GetEntry(entity);
                 entry.Status = Status.Loaded;
                 entity.IsDeleted = true;
-                object id = @event.Persister.GetIdentifier(entity, @event.Session.EntityMode);
-                object[] fields = @event.Persister.GetPropertyValues(entity, @event.Session.EntityMode);
-                object version = @event.Persister.GetVersion(entity, @event.Session.EntityMode);
+                //object id = @event.Persister.GetIdentifier(entity, @event.Session.EntityMode);
+                //object[] fields = @event.Persister.GetPropertyValues(entity, @event.Session.EntityMode);
+                //object version = @event.Persister.GetVersion(entity, @event.Session.EntityMode);
+                object id = @event.Persister.GetIdentifier(entity);
+                object[] fields = @event.Persister.GetPropertyValues(entity);
+                object version = @event.Persister.GetVersion(entity);
 
                 @event.Persister.Update(id, fields, new int[1], false, fields, version, entity, null, sessionImpl);
 
                 PackageAuditLogItem(EventType.SoftDeleted, @event.Persister, entity, fields, entry.DeletedState);
             }
             return true;
+        }
+
+        public Task<bool> OnPreDeleteAsync(PreDeleteEvent @event, CancellationToken cancellationToken)
+        {
+            var result = OnPreDelete(@event);
+            return Task.FromResult(result);
         }
 
         public void OnMerge(MergeEvent @event)
@@ -65,6 +76,17 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
             DoMerge(@event);
         }
 
+        public Task OnMergeAsync(MergeEvent @event, CancellationToken cancellationToken)
+        {
+            OnMerge(@event);
+            return Task.CompletedTask;
+        }
+
+        public Task OnMergeAsync(MergeEvent @event, IDictionary copiedAlready, CancellationToken cancellationToken)
+        {
+            OnMerge(@event, copiedAlready);
+            return Task.CompletedTask;
+        }
         private void DoMerge(MergeEvent @event)
         {
             var entity = ValidateOblect(@event.Original);
@@ -99,7 +121,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
         private void PackageAuditLogItem(EventType eventType, IEntityPersister persister, IEntity<idT> entity, object[] currentValues, object[] oldValues)
         {
             if (currentValues == null) return;
-            
+
             entity.LastDateModified = DateTime.Now.GetLocalTime();
             var audit = CreateLogRecord(entity.InstitutionCode, NHUtils.CurrentUser, entity, entity.LastDateModified, eventType);
             if (audit != null)
@@ -173,7 +195,8 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Listeners
 
             IEntityPersister persister = entry.Persister;
 
-            var currState = currentState = persister.GetPropertyValues(entity, session.EntityMode);
+            //var currState = currentState = persister.GetPropertyValues(entity, session.EntityMode);
+            var currState = currentState = persister.GetPropertyValues(entity);
             object[] loadedState = entry.LoadedState;
 
             return persister.EntityMetamodel.Properties

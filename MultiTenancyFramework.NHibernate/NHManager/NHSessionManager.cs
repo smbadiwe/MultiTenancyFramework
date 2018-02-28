@@ -13,9 +13,11 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Caching;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Web;
@@ -31,11 +33,10 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// Key is institution code
         /// </summary>
         public static readonly ConcurrentDictionary<string, ISessionFactory> SessionFactories = new ConcurrentDictionary<string, ISessionFactory>();
-
+        
         /// <summary>
         /// Key is built from GetSessionKey method
         /// </summary>
-
         public static Dictionary<string, ISessionStorage> SessionStorages
         {
             get
@@ -243,7 +244,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// <param name="dbConnection"></param>
         /// <param name="doFreshSession"></param>
         /// <returns></returns>
-        public static ISession GetSession(string institutionCode = "", IDbConnection dbConnection = null, bool doFreshSession = false)
+        public static ISession GetSession(string institutionCode = "", DbConnection dbConnection = null, bool doFreshSession = false)
         {
             bool isWebSession = IsWeb();
             string sessionKey = GetSessionKey(institutionCode, isWebSession);
