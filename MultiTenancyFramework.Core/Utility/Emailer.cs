@@ -92,7 +92,7 @@ namespace MultiTenancyFramework
             }
             catch (Exception ex)
             {
-                Logger.Log("[Swallowed] error sending mail: {0}", ex.GetFullExceptionMessage());
+                Logger.Log("[Swallowed] error sending mail [To: {0}. Subject: {1}]:\n{2}", msg.To.ToString(), msg.Subject, ex.GetFullExceptionMessage());
             }
             return false;
         }
