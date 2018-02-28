@@ -113,6 +113,5 @@ namespace MultiTenancyFramework
                 cache.Set(SS_SYS_SETTINGS, value, 1440);  // 24 hrs
             }
         }
-
     }
 }
