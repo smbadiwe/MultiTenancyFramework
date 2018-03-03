@@ -6,6 +6,8 @@ using NHibernate.Transform;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MultiTenancyFramework.NHibernate
 {
@@ -68,29 +70,35 @@ namespace MultiTenancyFramework.NHibernate
             NHSessionManager.CloseStorage(_institutionCode);
         }
 
+        private IQuery GetSqlQueryObject<U>(string query, bool clearSession = false, string entityName = null) where U : class //, IBaseEntity<long>
+        {
+            var session = BuildSession();
+
+            var sqlQuery = session.CreateSQLQuery(query);
+            if (string.IsNullOrWhiteSpace(entityName))
+            {
+                var typeofU = typeof(U);
+                if (typeof(IBaseEntity<long>).IsAssignableFrom(typeofU))
+                {
+                    sqlQuery.AddEntity(typeofU);
+                }
+                else
+                {
+                    sqlQuery.SetResultTransformer(Transformers.AliasToBean(typeofU));
+                }
+            }
+            else
+            {
+                sqlQuery.AddEntity(entityName);
+            }
+
+            return sqlQuery;
+        }
         public IList<U> RetrieveUsingDirectQuery<U>(string query, bool clearSession = false, string entityName = null) where U : class //, IBaseEntity<long>
         {
             try
             {
-                var session = BuildSession();
-
-                var sqlQuery = session.CreateSQLQuery(query);
-                if (string.IsNullOrWhiteSpace(entityName))
-                {
-                    var typeofU = typeof(U);
-                    if (typeof(IBaseEntity<long>).IsAssignableFrom(typeofU))
-                    {
-                        sqlQuery.AddEntity(typeofU);
-                    }
-                    else
-                    {
-                        sqlQuery.SetResultTransformer(Transformers.AliasToBean(typeofU));
-                    }
-                }
-                else
-                {
-                    sqlQuery.AddEntity(entityName);
-                }
+                var sqlQuery = GetSqlQueryObject<U>(query, clearSession, entityName);
                 return sqlQuery.List<U>();
             }
             catch (System.Exception ex)
@@ -100,6 +108,19 @@ namespace MultiTenancyFramework.NHibernate
             }
         }
 
+        public async Task<IList<U>> RetrieveUsingDirectQueryAsync<U>(string query, bool clearSession = false, string entityName = null, CancellationToken token = default(CancellationToken)) where U : class //, IBaseEntity<long>
+        {
+            try
+            {
+                var sqlQuery = GetSqlQueryObject<U>(query, clearSession, entityName);
+                return await sqlQuery.ListAsync<U>(token);
+            }
+            catch (System.Exception ex)
+            {
+                Utilities.Logger.Log(ex);
+                throw;
+            }
+        }
         /// <summary>
         /// This one is only for when an IList will do.
         /// </summary>
@@ -115,6 +136,23 @@ namespace MultiTenancyFramework.NHibernate
         {
             var session = BuildSession();
             session.CreateSQLQuery(query).ExecuteUpdate();
+        }
+
+        /// <summary>
+        /// This one is only for when an IList will do.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public async Task<IList> RetrieveUsingDirectQuery2Async(string query, bool clearSession = false, CancellationToken token = default(CancellationToken))
+        {
+            var session = BuildSession();
+            return await session.CreateSQLQuery(query).ListAsync(token);
+        }
+
+        public async Task RunDirectQueryAsync(string query, bool clearSession = false, CancellationToken token = default(CancellationToken))
+        {
+            var session = BuildSession();
+            await session.CreateSQLQuery(query).ExecuteUpdateAsync(token);
         }
 
         /// <summary>
@@ -139,6 +177,37 @@ namespace MultiTenancyFramework.NHibernate
                 command.CommandTimeout = 120;
                 command.CommandText = query;
                 int rows = command.ExecuteNonQuery();
+                Utilities.Logger.Log($"Query Ran:\n{query}\nRows Affected: {rows}. Database: {connection.Database}");
+            }
+            if (closeConnection)
+            {
+                connection.Close();
+                connection.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Run a query using ADO.NET. Default implementation supports SQL Server and MySql.
+        /// This uses command.ExecuteNonQuery();, so is fit for non-select queries
+        /// </summary>
+        /// <param name="query">The query to run.</param>
+        public virtual async Task RunDirectQueryADODotNETAsync(string query, bool closeConnection = false, CancellationToken token = default(CancellationToken))
+        {
+            var session = BuildSession();
+            var connection = session.Connection;
+
+            if (connection.State == ConnectionState.Open)
+            {
+                // For some reason I can't tell, if you use the already open conection, the query does not run.
+                // So I close it and re-open it.
+                connection.Close();
+            }
+            connection.Open();
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandTimeout = 120;
+                command.CommandText = query;
+                int rows = await command.ExecuteNonQueryAsync(token);
                 Utilities.Logger.Log($"Query Ran:\n{query}\nRows Affected: {rows}. Database: {connection.Database}");
             }
             if (closeConnection)
