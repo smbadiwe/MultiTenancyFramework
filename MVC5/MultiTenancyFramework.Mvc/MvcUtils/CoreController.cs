@@ -244,24 +244,47 @@ namespace MultiTenancyFramework.Mvc
             return View("Error", new ErrorMessageModel(errorMessage));
         }
 
-        protected void AlertSuccess(string message, bool dismissable = true, bool clearModel = true)
+        protected virtual void AlertSuccess(string message, bool dismissable = true, bool clearModel = true)
         {
             AddAlert(AlertStyles.Success, message, dismissable);
             if (clearModel) ModelState.Clear();
         }
 
-        protected void AlertInformation(string message, bool dismissable = true)
+        protected virtual void AlertInformation(string message, bool dismissable = true)
         {
             AddAlert(AlertStyles.Information, message, dismissable);
         }
 
-        protected void AlertWarning(string message, bool dismissable = false)
+        protected virtual void AlertWarning(string message, bool dismissable = false)
         {
             Logger.Log(LoggingLevel.Warn, message);
             AddAlert(AlertStyles.Warning, message, dismissable);
         }
 
-        protected void AlertFailure(string message = "Failure processing request", bool dismissable = false)
+        protected virtual void AlertFailure(Exception ex, bool dismissable = false)
+        {
+            Logger.Log(ex);
+            string message = "";
+            var genEx = ex as GeneralException;
+            if (genEx != null)
+            {
+                if (genEx.ExceptionType == ExceptionType.DatabaseRelated)
+                {
+                    message = "A database error occurred. We're looking into it.";
+                }
+                else
+                {
+                    message = ex.Message;
+                }
+            }
+            else
+            {
+                message = ex.Message;
+            }
+            AddAlert(AlertStyles.Danger, message, dismissable);
+        }
+
+        protected virtual void AlertFailure(string message = "Failure processing request", bool dismissable = false)
         {
             Logger.Log(LoggingLevel.Error, message);
             AddAlert(AlertStyles.Danger, message, dismissable);
