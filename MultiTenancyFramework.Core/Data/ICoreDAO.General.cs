@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MultiTenancyFramework.Data
 {
-    public interface ICoreGeneralDAO
+    public interface ICoreGeneralDAO : ICoreUnitOfWorkDAO
     {
         IDbConnection GetConnection();
 

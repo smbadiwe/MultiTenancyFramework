@@ -1,4 +1,7 @@
-﻿namespace MultiTenancyFramework.Data
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace MultiTenancyFramework.Data
 {
     public interface ICoreUnitOfWorkDAO
     {
@@ -11,6 +14,7 @@
         /// Rollbacks the changes.
         /// </summary>
         void RollbackChanges();
-
+        Task CommitChangesAsync(CancellationToken token = default(CancellationToken));
+        Task RollbackChangesAsync(CancellationToken token = default(CancellationToken));
     }
 }

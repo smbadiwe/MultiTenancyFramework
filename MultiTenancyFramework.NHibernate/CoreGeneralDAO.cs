@@ -65,6 +65,58 @@ namespace MultiTenancyFramework.NHibernate
             return NHSessionManager.GetSession(_institutionCode);
         }
 
+        protected virtual void CommitChanges(ISession session)
+        {
+            if (session.IsConnected && session.Transaction != null && session.Transaction.IsActive && !session.Transaction.WasCommitted)
+            {
+                session.Transaction.Commit();
+            }
+        }
+
+        public virtual void CommitChanges()
+        {
+            CommitChanges(BuildSession());
+        }
+
+        public virtual void RollbackChanges()
+        {
+            RollbackChanges(BuildSession());
+        }
+
+        protected virtual void RollbackChanges(ISession session)
+        {
+            if (session.Transaction != null && session.IsConnected && session.Transaction.IsActive && !session.Transaction.WasCommitted && !session.Transaction.WasRolledBack)
+            {
+                session.Transaction.Rollback();
+            }
+        }
+
+        public virtual async Task CommitChangesAsync(CancellationToken token = default(CancellationToken))
+        {
+            await CommitChangesAsync(BuildSession(), token);
+        }
+
+        public virtual async Task RollbackChangesAsync(CancellationToken token = default(CancellationToken))
+        {
+            await RollbackChangesAsync(BuildSession(), token);
+        }
+
+        protected virtual async Task CommitChangesAsync(ISession session, CancellationToken token = default(CancellationToken))
+        {
+            if (session.IsConnected && session.Transaction != null && session.Transaction.IsActive && !session.Transaction.WasCommitted)
+            {
+                await session.Transaction.CommitAsync(token);
+            }
+        }
+
+        protected virtual async Task RollbackChangesAsync(ISession session, CancellationToken token = default(CancellationToken))
+        {
+            if (session.Transaction != null && session.IsConnected && session.Transaction.IsActive && !session.Transaction.WasCommitted && !session.Transaction.WasRolledBack)
+            {
+                await session.Transaction.RollbackAsync();
+            }
+        }
+
         public void CloseSession()
         {
             NHSessionManager.CloseStorage(_institutionCode);

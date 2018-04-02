@@ -28,24 +28,6 @@ namespace MultiTenancyFramework.NHibernate
     /// <typeparam name="idT"></typeparam>
     public partial class CoreDAO<T, idT> : CoreGridPagingDAO<T, idT>, ICoreDAO<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
     {
-        public void CommitChanges()
-        {
-            var session = BuildSession();
-            if (session.IsConnected && session.Transaction != null && session.Transaction.IsActive && !session.Transaction.WasCommitted)
-            {
-                session.Transaction.Commit();
-            }
-        }
-
-        public void RollbackChanges()
-        {
-            var session = BuildSession();
-            if (session.Transaction != null && session.IsConnected && session.Transaction.IsActive && !session.Transaction.WasCommitted && !session.Transaction.WasRolledBack)
-            {
-                session.Transaction.Rollback();
-            }
-        }
-
         public void Save(T obj)
         {
             var session = BuildSession();
