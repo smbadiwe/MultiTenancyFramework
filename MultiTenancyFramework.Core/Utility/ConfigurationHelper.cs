@@ -88,7 +88,11 @@ namespace MultiTenancyFramework
 
         public static string GetSiteUrl()
         {
-            return AppSettingsItem<string>("SiteUrl");
+            var url = AppSettingsItem<string>("SiteUrl") ?? string.Empty;
+            if (!url.EndsWith("/"))
+                url = url + "/";
+
+            return url;
         }
     }
 }

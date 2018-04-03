@@ -97,6 +97,8 @@
   <ItemGroup>
     <Compile Include="CoreDAO.ReadsAsync.cs" />
     <Compile Include="Maps\PrivilegeMap.cs" />
+    <Compile Include="TaskManager\GetTaskByTypeQueryHandler.cs" />
+    <Compile Include="TaskManager\ScheduleTaskMap.cs" />
     <Compile Include="NHManager\AutomappingConfiguration.cs" />
     <Compile Include="NHManager\Conventions\InstitutionCodePropertyConvention.cs" />
     <Compile Include="NHManager\Listeners\MySqlExceptionConverter.cs" />
@@ -148,6 +150,7 @@
     <Compile Include="Queries\GetUserLoginByLoginProviderKeyAndUserIdQueryHandler.cs" />
     <Compile Include="Queries\GetUserLoginssByUserIdQueryHandler.cs" />
     <Compile Include="SqlManipulations.cs" />
+    <Compile Include="TaskManager\SearchQueuedEmailsQueryHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MultiTenancyFramework.Core\MultiTenancyFramework.Core.csproj">

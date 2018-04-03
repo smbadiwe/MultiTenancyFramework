@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using MultiTenancyFramework.Core.TaskManager.Tasks;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using System.Linq;
+using System;
 
 namespace MultiTenancyFramework
 {
@@ -43,71 +48,209 @@ namespace MultiTenancyFramework
             {
                 toEmails = Settings.DefaultEmailReceiver;
             }
+            if (string.IsNullOrWhiteSpace(bccEmails))
+            {
+                bccEmails = Settings.DefaultBccEmailReceiver;
+            }
+            else if (!string.IsNullOrWhiteSpace(Settings.DefaultBccEmailReceiver))
+            {
+                bccEmails = string.Format("{0},{1}", Settings.DefaultBccEmailReceiver, bccEmails);
+            }
             try
             {
-                var mailMsg = new MailMessage
-                {
-                    Subject = Settings.DefaultEmailSubject,
-                    IsBodyHtml = true,
-                    Body = message,
-                    Sender = new MailAddress(Settings.DefaultEmailSender, Settings.DefaultSenderDisplayName),
-                    From = new MailAddress(Settings.DefaultEmailSender, Settings.DefaultSenderDisplayName)
-                };
-                mailMsg.To.Add(toEmails);
-                if (!string.IsNullOrWhiteSpace(ccEmails))
-                {
-                    mailMsg.CC.Add(ccEmails);
-                }
-
-                if (string.IsNullOrWhiteSpace(bccEmails))
-                {
-                    bccEmails = Settings.DefaultBccEmailReceiver;
-                }
-                else if (!string.IsNullOrWhiteSpace(Settings.DefaultBccEmailReceiver))
-                {
-                    bccEmails = string.Format("{0},{1}", Settings.DefaultBccEmailReceiver, bccEmails);
-                }
-
-                if (!string.IsNullOrWhiteSpace(bccEmails))
-                {
-                    mailMsg.Bcc.Add(bccEmails);
-                }
-                if (attachments != null && attachments.Count > 0)
-                {
-                    foreach (var attachment in attachments)
-                    {
-                        try
-                        {
-                            var att = new Attachment(attachment.FilePath, attachment.MediaType);
-                            if (!string.IsNullOrWhiteSpace(attachment.ContentId))
-                            {
-                                att.ContentId = attachment.ContentId;
-                                att.ContentDisposition.Inline = true;
-                                att.ContentDisposition.DispositionType = DispositionTypeNames.Inline;
-                            }
-                            mailMsg.Attachments.Add(att);
-                        }
-                        catch (System.Exception)
-                        {
-                            // We can afford to let attachment not attach. The main message will still be sent
-                            //throw;
-                        }
-                    }
-                }
-
-                // Send
-                using (mailMsg)
-                {
-                    using (var client = Emailer.GetDefaultClient())
-                    {
-                        return await Emailer.SendEmail(mailMsg, client);
-                    }
-                }
+                await SendEmail(
+                        emailAccount: Settings.ToEmailAccount(), 
+                        subject: Settings.DefaultEmailSubject, 
+                        body: message, 
+                        fromAddress: Settings.DefaultEmailSender, 
+                        fromName: Settings.DefaultSenderDisplayName, 
+                        toAddress: toEmails,
+                        toName: null,
+                        replyTo: null,
+                        replyToName: null,
+                        cc: ccEmails?.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries),
+                        bcc: bccEmails?.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries),
+                        attachments: attachments,
+                        attachedDownloadId: 0,
+                        headers: null);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Utilities.Logger.Log(ex.GetFullExceptionMessage());
                 return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Sends an email. This will crash if anything goes wrong, so if you don't need a crash, swallow it
+        /// </summary>
+        /// <param name="emailAccount">Email account to use</param>
+        /// <param name="subject">Subject</param>
+        /// <param name="body">Body</param>
+        /// <param name="fromAddress">From address</param>
+        /// <param name="fromName">From display name</param>
+        /// <param name="toAddress">To address</param>
+        /// <param name="toName">To display name</param>
+        /// <param name="replyTo">ReplyTo address</param>
+        /// <param name="replyToName">ReplyTo display name</param>
+        /// <param name="bcc">BCC addresses list</param>
+        /// <param name="cc">CC addresses list</param>
+        /// <param name="attachmentFilePath">Attachment file path</param>
+        /// <param name="attachmentFileName">Attachment file name. If specified, then this file name will be sent to a recipient. Otherwise, "AttachmentFilePath" name will be used.</param>
+        /// <param name="attachedDownloadId">Attachment download ID (another attachedment)</param>
+        /// <param name="headers">Headers</param>
+        public virtual async Task SendEmail(EmailAccount emailAccount, string subject, string body,
+            string toAddress, string toName,
+             string replyTo = null, string replyToName = null,
+            IEnumerable<string> bcc = null, IEnumerable<string> cc = null,
+            IEnumerable<EmailAttachment> attachments = null,
+            int attachedDownloadId = 0, IDictionary<string, string> headers = null)
+        {
+            await SendEmail(emailAccount, subject, body, emailAccount.Email, emailAccount.DisplayName, toAddress, toName
+                , replyTo, replyToName, bcc, cc, attachments, attachedDownloadId, headers);
+        }
+
+        /// <summary>
+        /// Sends an email. This will crash if anything goes wrong, so if you don't need a crash, swallow it
+        /// </summary>
+        /// <param name="emailAccount">Email account to use</param>
+        /// <param name="subject">Subject</param>
+        /// <param name="body">Body</param>
+        /// <param name="fromAddress">From address</param>
+        /// <param name="fromName">From display name</param>
+        /// <param name="toAddress">To address</param>
+        /// <param name="toName">To display name</param>
+        /// <param name="replyTo">ReplyTo address</param>
+        /// <param name="replyToName">ReplyTo display name</param>
+        /// <param name="bcc">BCC addresses list</param>
+        /// <param name="cc">CC addresses list</param>
+        /// <param name="attachmentFilePath">Attachment file path</param>
+        /// <param name="attachmentFileName">Attachment file name. If specified, then this file name will be sent to a recipient. Otherwise, "AttachmentFilePath" name will be used.</param>
+        /// <param name="attachedDownloadId">Attachment download ID (another attachedment)</param>
+        /// <param name="headers">Headers</param>
+        public virtual async Task SendEmail(EmailAccount emailAccount, string subject, string body,
+            string fromAddress, string fromName, string toAddress, string toName,
+             string replyTo = null, string replyToName = null,
+            IEnumerable<string> bcc = null, IEnumerable<string> cc = null,
+            IEnumerable<EmailAttachment> attachments = null,
+            int attachedDownloadId = 0, IDictionary<string, string> headers = null)
+        {
+            var message = new MailMessage
+            {
+                //from, to, reply to
+                From = new MailAddress(fromAddress, fromName)
+            };
+            message.To.Add(new MailAddress(toAddress, toName));
+            if (!string.IsNullOrWhiteSpace(replyTo))
+            {
+                message.ReplyToList.Add(new MailAddress(replyTo, replyToName));
+            }
+
+            //BCC
+            if (bcc != null)
+            {
+                foreach (var address in bcc.Where(bccValue => !string.IsNullOrWhiteSpace(bccValue)))
+                {
+                    message.Bcc.Add(address.Trim());
+                }
+            }
+
+            //CC
+            if (cc != null)
+            {
+                foreach (var address in cc.Where(ccValue => !string.IsNullOrWhiteSpace(ccValue)))
+                {
+                    message.CC.Add(address.Trim());
+                }
+            }
+
+            //content
+            message.Subject = subject;
+            message.Body = body;
+            message.IsBodyHtml = true;
+
+            //headers
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                {
+                    message.Headers.Add(header.Key, header.Value);
+                }
+            }
+            //create the file attachment for this e-mail message
+            if (attachments != null)
+            {
+                foreach (var attachment in attachments)
+                {
+                    try
+                    {
+                        var att = new Attachment(attachment.FilePath);
+                        if (!string.IsNullOrWhiteSpace(attachment.MediaType))
+                        {
+                            att.ContentType = new ContentType(attachment.MediaType);
+                        }
+                        if (!string.IsNullOrWhiteSpace(attachment.ContentId))
+                        {
+                            att.ContentId = attachment.ContentId;
+                            att.ContentDisposition.Inline = true;
+                            att.ContentDisposition.DispositionType = DispositionTypeNames.Inline;
+                        }
+                        //att.ContentDisposition.CreationDate = File.GetCreationTime(attachment.FilePath);
+                        //att.ContentDisposition.ModificationDate = File.GetLastWriteTime(attachment.FilePath);
+                        //att.ContentDisposition.ReadDate = File.GetLastAccessTime(attachment.FilePath);
+
+                        message.Attachments.Add(att);
+                    }
+                    catch (Exception)
+                    {
+                        // We can afford to let attachment not attach. The main message will still be sent
+                        //throw;
+                    }
+                }
+            }
+
+            #region if (attachedDownloadId > 0)
+            ////another attachment?
+            //if (attachedDownloadId > 0)
+            //{
+            //    var download = _downloadService.GetDownloadById(attachedDownloadId);
+            //    if (download != null)
+            //    {
+            //        //we do not support URLs as attachments
+            //        if (!download.UseDownloadUrl)
+            //        {
+            //            var fileName = !string.IsNullOrWhiteSpace(download.Filename) ? download.Filename : download.Id.ToString();
+            //            fileName += download.Extension;
+
+
+            //            var ms = new MemoryStream(download.DownloadBinary);
+            //            var attachment = new Attachment(ms, fileName);
+            //            //string contentType = !string.IsNullOrWhiteSpace(download.ContentType) ? download.ContentType : "application/octet-stream";
+            //            //var attachment = new Attachment(ms, fileName, contentType);
+            //            attachment.ContentDisposition.CreationDate = DateTime.UtcNow;
+            //            attachment.ContentDisposition.ModificationDate = DateTime.UtcNow;
+            //            attachment.ContentDisposition.ReadDate = DateTime.UtcNow;
+            //            message.Attachments.Add(attachment);
+            //        }
+            //    }
+            //} 
+            #endregion
+
+            //send email
+            using (var smtpClient = new SmtpClient())
+            {
+                smtpClient.UseDefaultCredentials = emailAccount.UseDefaultCredentials;
+                smtpClient.Host = emailAccount.Host;
+                smtpClient.Port = emailAccount.Port;
+                smtpClient.EnableSsl = emailAccount.EnableSsl;
+                smtpClient.Credentials = emailAccount.UseDefaultCredentials ?
+                    CredentialCache.DefaultNetworkCredentials :
+                    new NetworkCredential(emailAccount.Username, emailAccount.Password);
+
+                ServicePointManager.ServerCertificateValidationCallback = (obj, cert, chain, policy) => true;
+
+                await smtpClient.SendMailAsync(message);
             }
         }
 

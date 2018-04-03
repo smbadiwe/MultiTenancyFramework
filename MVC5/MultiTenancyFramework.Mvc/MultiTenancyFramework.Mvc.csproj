@@ -164,6 +164,7 @@
     <Compile Include="MvcUtils\GlobalAuthorizeAttribute.cs" />
     <Compile Include="MvcUtils\InstitutionFilterConfig.cs" />
     <Compile Include="MvcUtils\InstitutionRouteConfig.cs" />
+    <Compile Include="MvcUtils\KeepAliveFilter.cs" />
     <Compile Include="MvcUtils\LowerCaseRoute.cs" />
     <Compile Include="MvcUtils\MvcUtility.cs" />
     <Compile Include="MvcUtils\MyModelMetadataProvider.cs" />

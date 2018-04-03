@@ -113,5 +113,57 @@ namespace MultiTenancyFramework
                 cache.Set(SS_SYS_SETTINGS, value, 1440);  // 24 hrs
             }
         }
+
+        public static string GetMimeType(string filename)
+        {
+            var extension = System.IO.Path.GetExtension(filename)?.ToLower();
+            string contentType;
+            switch (extension)
+            {
+                case ".pdf":
+                    contentType = "application/pdf";
+                    break;
+                case ".jpeg":
+                case ".jpg":
+                    contentType = "image/jpeg";
+                    break;
+                case ".png":
+                    contentType = "image/png";
+                    break;
+                case ".txt":
+                    contentType = "text/plain";
+                    break;
+                case ".csv":
+                    contentType = "text/csv";
+                    break;
+                case ".docx":
+                    contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                    break;
+                case ".pptx":
+                    contentType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+                    break;
+                case ".xlsx":
+                    contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    break;
+                case ".zip":
+                    contentType = "application/zip";
+                    break;
+                case ".rar":
+                    contentType = "application/x-rar";
+                    break;
+                case ".json":
+                    contentType = "application/json";
+                    break;
+                case ".xml":
+                    contentType = "application/xml";
+                    break;
+                default:
+                    contentType = "application/octet-stream";
+                    //contentType = MimeMapping.GetMimeMapping(filename);
+                    break;
+            }
+
+            return contentType;
+        }
     }
 }

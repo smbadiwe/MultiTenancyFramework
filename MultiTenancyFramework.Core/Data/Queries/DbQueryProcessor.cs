@@ -35,7 +35,7 @@ namespace MultiTenancyFramework.Data.Queries
             if (query == null) throw new ArgumentNullException("query");
 
             var handlerType =
-                typeof(IDbQueryHandlerAsync<,>).MakeGenericType(query.GetType(), typeof(TResult));
+                typeof(IDbQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResult));
 
             dynamic handler = _serviceProvider.GetService(handlerType);
             handler.InstitutionCode = InstitutionCode;
