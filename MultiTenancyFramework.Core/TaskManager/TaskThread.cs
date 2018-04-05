@@ -43,13 +43,19 @@ namespace MultiTenancyFramework.Core.TaskManager
 
         private void Run()
         {
-            if (Seconds <= 0)
-                return;
+            logger.Log(LoggingLevel.Trace, $"About to run {_tasks.Count} tasks for institution: '{InstitutionCode}'");
 
+            if (Seconds <= 0)
+            {
+                logger.Log(LoggingLevel.Trace, $"Aborting run prematurely for institution: '{InstitutionCode}': Seconds = {Seconds} <= 0.");
+                return;
+            }
             StartedUtc = DateTime.UtcNow;
             IsRunning = true;
             foreach (var taskType in _tasks)
             {
+                logger.Log(LoggingLevel.Trace, $"About to call api for task: '{taskType.Value}' tasks for institution: '{InstitutionCode}'");
+
                 //create and send post data
                 var postData = new NameValueCollection
                 {
@@ -66,7 +72,7 @@ namespace MultiTenancyFramework.Core.TaskManager
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(LoggingLevel.Error, $"Error running {taskType} for institution '{InstitutionCode}'\n{ex.GetFullExceptionMessage()}\n");
+                    logger.Log(LoggingLevel.Error, $"Error running {taskType.Value} for institution '{InstitutionCode}'\n{ex.GetFullExceptionMessage()}\n");
                 }
 
             }
