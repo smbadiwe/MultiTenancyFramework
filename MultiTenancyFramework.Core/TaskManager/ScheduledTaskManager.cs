@@ -64,51 +64,58 @@ namespace MultiTenancyFramework.Core.TaskManager
             _logger.Log(LoggingLevel.Trace, $"Tasks will be queued for {institutions.Count} institutions");
             foreach (var institution in institutions)
             {
-                var taskService = new ScheduledTaskEngine(institution.Code);
-                var scheduleTasks = taskService.RetrieveAllActive();
-
-                _logger.Log(LoggingLevel.Trace, $"{scheduleTasks.Count} task(s) will be queued for '{institution.Name}'");
-                if (scheduleTasks.Count > 0)
+                try
                 {
-                    //group by threads with the same seconds
-                    foreach (var scheduleTaskGrouped in scheduleTasks.GroupBy(x => x.Seconds))
-                    {
-                        //create a thread
-                        var taskThread = new TaskThread(institution.Code)
-                        {
-                            Seconds = scheduleTaskGrouped.Key,
-                        };
-                        foreach (var scheduleTask in scheduleTaskGrouped)
-                        {
-                            taskThread.AddTask(scheduleTask);
-                        }
-                        _taskThreads.Add(taskThread);
-                    }
+                    var taskService = new ScheduledTaskEngine(institution.Code);
+                    var scheduleTasks = taskService.RetrieveAllActive();
 
-                    //sometimes a task period could be set to several hours (or even days).
-                    //in this case a probability that it'll be run is quite small (an application could be restarted)
-                    //we should manually run the tasks which weren't run for a long time
-                    var notRunTasks = scheduleTasks
-                        //find tasks with "run period" more than 30 minutes
-                        .Where(x => x.Seconds >= _notRunTasksInterval)
-                        .Where(x => !x.LastStartUtc.HasValue || x.LastStartUtc.Value.AddSeconds(x.Seconds) < DateTime.UtcNow)
-                        ;
-                    //create a thread for the tasks which weren't run for a long time
-                    if (notRunTasks.Any())
+                    _logger.Log(LoggingLevel.Trace, $"{scheduleTasks.Count} task(s) will be queued for '{institution.Name}'");
+                    if (scheduleTasks.Count > 0)
                     {
-                        var taskThread = new TaskThread(institution.Code)
+                        //group by threads with the same seconds
+                        foreach (var scheduleTaskGrouped in scheduleTasks.GroupBy(x => x.Seconds))
                         {
-                            RunOnlyOnce = true,
-                            Seconds = 60 * 5 //let's run such tasks in 5 minutes after application start
-                        };
-                        foreach (var scheduleTask in notRunTasks)
-                        {
-                            taskThread.AddTask(scheduleTask);
+                            //create a thread
+                            var taskThread = new TaskThread(institution.Code)
+                            {
+                                Seconds = scheduleTaskGrouped.Key,
+                            };
+                            foreach (var scheduleTask in scheduleTaskGrouped)
+                            {
+                                taskThread.AddTask(scheduleTask);
+                            }
+                            _taskThreads.Add(taskThread);
                         }
-                        _taskThreads.Add(taskThread);
+
+                        //sometimes a task period could be set to several hours (or even days).
+                        //in this case a probability that it'll be run is quite small (an application could be restarted)
+                        //we should manually run the tasks which weren't run for a long time
+                        var notRunTasks = scheduleTasks
+                            //find tasks with "run period" more than 30 minutes
+                            .Where(x => x.Seconds >= _notRunTasksInterval)
+                            .Where(x => !x.LastStartUtc.HasValue || x.LastStartUtc.Value.AddSeconds(x.Seconds) < DateTime.UtcNow)
+                            ;
+                        //create a thread for the tasks which weren't run for a long time
+                        if (notRunTasks.Any())
+                        {
+                            var taskThread = new TaskThread(institution.Code)
+                            {
+                                RunOnlyOnce = true,
+                                Seconds = 60 * 5 //let's run such tasks in 5 minutes after application start
+                            };
+                            foreach (var scheduleTask in notRunTasks)
+                            {
+                                taskThread.AddTask(scheduleTask);
+                            }
+                            _taskThreads.Add(taskThread);
+                        }
+
+                        _logger.Log(LoggingLevel.Trace, $"Done queueing the {scheduleTasks.Count} task(s) for '{institution.Name}'");
                     }
-                    
-                    _logger.Log(LoggingLevel.Trace, $"Done queueing the {scheduleTasks.Count} task(s) for '{institution.Name}'");
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log(LoggingLevel.Error, $"Error while queueing task(s) for '{institution.Name}': \n{ex.GetFullExceptionMessage()}\n");
                 }
             }
 

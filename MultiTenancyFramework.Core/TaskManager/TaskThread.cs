@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace MultiTenancyFramework.Core.TaskManager
 {
@@ -69,7 +66,7 @@ namespace MultiTenancyFramework.Core.TaskManager
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(ex);
+                    logger.Log(LoggingLevel.Error, $"Error running {taskType} for institution '{InstitutionCode}'\n{ex.GetFullExceptionMessage()}\n");
                 }
 
             }
