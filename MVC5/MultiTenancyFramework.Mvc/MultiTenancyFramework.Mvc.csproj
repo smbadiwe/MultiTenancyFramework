@@ -172,6 +172,7 @@
     <Compile Include="MvcUtils\ReLoginModel.cs" />
     <Compile Include="MvcUtils\ScheduledTaskApiController.cs" />
     <Compile Include="MvcUtils\TrimModelBinder.cs" />
+    <Compile Include="MvcUtils\ValidateAntiForgeryTokenOnPost.cs" />
     <Compile Include="MvcUtils\ValidateUsingPrivilegeForActionAttribute.cs" />
     <Compile Include="MvcUtils\ViewNotFoundException.cs" />
     <Compile Include="MyMvcServiceLocator.cs" />

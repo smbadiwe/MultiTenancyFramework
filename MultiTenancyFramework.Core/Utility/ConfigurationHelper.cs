@@ -41,9 +41,9 @@ namespace MultiTenancyFramework
         /// <typeparam name="TR">The type of the item value.</typeparam>
         /// <param name="key">The key.</param>
         /// <returns></returns>
-        public static TR AppSettingsItem<TR>(string key)
+        public static TR AppSettingsItem<TR>(string key, TR defaultVal = default(TR))
         {
-            TR result = default(TR);
+            TR result = defaultVal;
             if (string.IsNullOrWhiteSpace(key)) return result;
 
             var theValue = System.Configuration.ConfigurationManager.AppSettings[key];

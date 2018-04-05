@@ -30,9 +30,9 @@ namespace MultiTenancyFramework.Core.TaskManager
 
         internal TaskThread(string institutionCode)
         {
-            this._tasks = new Dictionary<string, string>();
-            this.Seconds = 10 * 60;
-            this.InstitutionCode = institutionCode;
+            _tasks = new Dictionary<string, string>();
+            Seconds = ConfigurationHelper.AppSettingsItem("TaskThreadIntervalInSeconds", 600);
+            InstitutionCode = institutionCode;
             logger = Utilities.Logger;
             logger.SetNLogLogger("TaskThread-" + institutionCode);
         }
@@ -69,6 +69,8 @@ namespace MultiTenancyFramework.Core.TaskManager
                     {
                         client.UploadValues(_scheduleTaskUrl, postData);
                     }
+                    logger.Log(LoggingLevel.Trace, $"Back from api call for task: '{taskType.Value}' tasks for institution: '{InstitutionCode}'");
+
                 }
                 catch (Exception ex)
                 {
@@ -89,6 +91,7 @@ namespace MultiTenancyFramework.Core.TaskManager
             }
             else
             {
+                InitTimer(); // this guy... well...
                 _timer.Change(Interval, Interval);
             }
         }
@@ -134,6 +137,11 @@ namespace MultiTenancyFramework.Core.TaskManager
             {
                 _tasks.Add(task.Name, task.Type);
             }
+        }
+
+        public override string ToString()
+        {
+            return $"TaskThread-{InstitutionCode ?? Utilities.INST_DEFAULT_CODE} [{_tasks?.Count} task(s)]";
         }
 
         #endregion

@@ -12,6 +12,7 @@ namespace MultiTenancyFramework.Mvc
             filters.Add(new KeepAliveFilter(), int.MinValue); // run first
             filters.Add(new GlobalAuthorizeAttribute());
             filters.Add(new GlobalExceptionFilterAttribute());
+            filters.Add(new ValidateAntiForgeryTokenOnPost());
         }
     }
 }

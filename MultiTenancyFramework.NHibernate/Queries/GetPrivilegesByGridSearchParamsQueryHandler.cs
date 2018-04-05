@@ -1,7 +1,7 @@
 ﻿using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
-using NHibernate.Criterion;
+using System.Linq;
 
 namespace MultiTenancyFramework.NHibernate.Queries
 {
@@ -15,10 +15,10 @@ namespace MultiTenancyFramework.NHibernate.Queries
         public RetrievedData<Privilege> Handle(GetPrivilegesByGridSearchParamsQuery theQuery)
         {
             var session = BuildSession();
-            var query = session.QueryOver<Privilege>(EntityName);
+            var query = session.Query<Privilege>(EntityName);
             if (!string.IsNullOrWhiteSpace(theQuery.Name))
             {
-                query = query.Where(x => x.Name.IsInsensitiveLike(theQuery.Name) || x.DisplayName.IsInsensitiveLike(theQuery.Name));
+                query = query.Where(x => x.Name.Contains(theQuery.Name) || x.DisplayName.Contains(theQuery.Name));
             }
             if (theQuery.AccessScope.HasValue && theQuery.AccessScope.Value > 0)
             {

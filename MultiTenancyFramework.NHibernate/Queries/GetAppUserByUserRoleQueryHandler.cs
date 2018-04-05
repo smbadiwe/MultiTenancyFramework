@@ -2,6 +2,7 @@
 using MultiTenancyFramework.Entities;
 using NHibernate.Criterion;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MultiTenancyFramework.NHibernate.Queries
 {
@@ -16,9 +17,9 @@ namespace MultiTenancyFramework.NHibernate.Queries
         public IList<AppUser> Handle(GetAppUserByUserRoleQuery theQuery)
         {
             var session = BuildSession();
-            var query = session.QueryOver<AppUser>(EntityName)
-                .Where(x => x.UserRoles.IsInsensitiveLike($"{theQuery.UserRoleId},", MatchMode.Anywhere));
-            return query.List();
+            var query = session.Query<AppUser>(EntityName)
+                .Where(x => x.UserRoles.Contains($"{theQuery.UserRoleId},"));
+            return query.ToList();
         }
     }
 }

@@ -11,6 +11,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Specialized;
+using System.Net;
 
 namespace ConsoleTests
 {
@@ -111,11 +113,34 @@ namespace ConsoleTests
 
         static void Main(string[] args)
         {
-            Console.WriteLine(typeof(string).IsPrimitiveType());
-            Console.WriteLine(typeof(DateTime).IsPrimitiveType());
-            Console.WriteLine(typeof(DateTime?).IsPrimitiveType());
-            Console.WriteLine(typeof(int?).IsPrimitiveType());
-            Console.WriteLine(typeof(int).IsPrimitiveType());
+            Task.Run(() =>
+            {
+
+                var postData = new NameValueCollection
+                {
+                    {"taskType", null},
+                    {"instCode", null}
+                };
+
+                try
+                {
+                    var _scheduleTaskUrl = "http://localhost/schoolsoul/scheduledtaskapi/runtask";
+                    using (var client = new WebClient())
+                    {
+                        client.UploadValues(_scheduleTaskUrl, postData);
+                    }
+                    Console.WriteLine("Call to {0} done well", _scheduleTaskUrl);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            });
+            //Console.WriteLine(typeof(string).IsPrimitiveType());
+            //Console.WriteLine(typeof(DateTime).IsPrimitiveType());
+            //Console.WriteLine(typeof(DateTime?).IsPrimitiveType());
+            //Console.WriteLine(typeof(int?).IsPrimitiveType());
+            //Console.WriteLine(typeof(int).IsPrimitiveType());
             //Dictionary<string, int> dictionary = new Dictionary<string, int>();
 
             //dictionary.Add("cat1", 1);

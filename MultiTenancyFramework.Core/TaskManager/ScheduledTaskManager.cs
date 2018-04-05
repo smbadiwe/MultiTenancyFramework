@@ -136,7 +136,14 @@ namespace MultiTenancyFramework.Core.TaskManager
             _logger.Log(LoggingLevel.Trace, $"Starting up the {_taskThreads.Count} task thread(s).");
             foreach (var taskThread in _taskThreads)
             {
-                taskThread.InitTimer();
+                try
+                {
+                    taskThread.InitTimer();
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log(LoggingLevel.Error, $"Error disposing thread: {taskThread} task thread(s).\n{ex.GetFullExceptionMessage()}");
+                }
             }
             _logger.Log(LoggingLevel.Trace, $"Done starting up the {_taskThreads.Count} task thread(s).");
         }
@@ -149,7 +156,14 @@ namespace MultiTenancyFramework.Core.TaskManager
             _logger.Log(LoggingLevel.Trace, $"Stopping the {_taskThreads.Count} task thread(s).");
             foreach (var taskThread in _taskThreads)
             {
-                taskThread.Dispose();
+                try
+                {
+                    taskThread.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log(LoggingLevel.Error, $"Error disposing thread: {taskThread} task thread(s).\n{ex.GetFullExceptionMessage()}");
+                }
             }
 
             _isInitialized = false;

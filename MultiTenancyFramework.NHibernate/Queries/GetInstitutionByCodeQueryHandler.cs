@@ -1,5 +1,6 @@
 ﻿using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
+using System.Linq;
 
 namespace MultiTenancyFramework.NHibernate.Queries
 {
@@ -13,7 +14,7 @@ namespace MultiTenancyFramework.NHibernate.Queries
         public Institution Handle(GetInstitutionByCodeQuery theQuery)
         {
             var session = BuildSession();
-            var query = session.QueryOver<Institution>(EntityName).Where(x => x.Code == theQuery.Code);
+            var query = session.Query<Institution>(EntityName).Where(x => x.Code == theQuery.Code);
             return query.SingleOrDefault();
         }
     }

@@ -1,5 +1,6 @@
 ﻿using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
+using System.Linq;
 
 namespace MultiTenancyFramework.NHibernate.Queries
 {
@@ -9,8 +10,8 @@ namespace MultiTenancyFramework.NHibernate.Queries
         public DatabaseConnection Handle(GetDatabaseConnectionByNameAndConnectionStringQuery theQuery)
         {
             var session = BuildSession();
-            var query = session.QueryOver<DatabaseConnection>()
-                .Where(x => x.Name == theQuery.Name).And(x => x.ConnectionString == theQuery.ConnectionString);
+            var query = session.Query<DatabaseConnection>()
+                .Where(x => x.Name == theQuery.Name && x.ConnectionString == theQuery.ConnectionString);
             return query.SingleOrDefault();
         }
     }

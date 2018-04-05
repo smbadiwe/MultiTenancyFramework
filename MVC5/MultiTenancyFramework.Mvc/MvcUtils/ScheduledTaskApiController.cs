@@ -9,9 +9,11 @@ namespace MultiTenancyFramework.Mvc.MvcUtils
     /// It's not meant to be used or browsed.
     /// </summary>
     /// <seealso cref="Controller" />
+    [AllowAnonymous]
     public class ScheduledTaskApiController : Controller
     {
         [HttpPost]
+        [IgnoreAntiForgeryToken]
         public async Task<ActionResult> RunTask(string taskType, string instCode)
         {
             try
