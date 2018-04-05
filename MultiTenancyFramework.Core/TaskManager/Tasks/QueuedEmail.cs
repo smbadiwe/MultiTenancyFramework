@@ -8,22 +8,22 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
         /// <summary>
         /// Gets or sets the From property (email address)
         /// </summary>
-        public virtual string From { get; set; }
+        public virtual string Sender { get; set; }
 
         /// <summary>
-        /// Gets or sets the FromName property
+        /// Gets or sets the Sender Display Name property
         /// </summary>
-        public virtual string FromName { get; set; }
+        public virtual string SenderName { get; set; }
 
         /// <summary>
-        /// Gets or sets the To property (email address)
+        /// Gets or sets the To receiver(s) (email address(es)). If more than one, separate with , or ;
         /// </summary>
-        public virtual string To { get; set; }
+        public virtual string Receivers { get; set; }
 
         /// <summary>
-        /// Gets or sets the ToName property
+        /// Gets or sets the Sender Display Name property
         /// </summary>
-        public virtual string ToName { get; set; }
+        public virtual string ReceiverName { get; set; }
 
         /// <summary>
         /// Gets or sets the ReplyTo property (email address)

@@ -1,9 +1,7 @@
 ﻿using MultiTenancyFramework.Core.TaskManager;
 using MultiTenancyFramework.Data.Queries;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using NHibernate.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -17,12 +15,11 @@ namespace MultiTenancyFramework.NHibernate.TaskManager
                 return null;
 
             var session = BuildSession();
-            var query = session.QueryOver<ScheduledTask>()
+            var query = session.Query<ScheduledTask>()
                 .Where(x => x.Type == theQuery.Type)
-                .OrderBy(x => x.Id).Desc
-                .Take(1);
+                .OrderByDescending(x => x.Id);
 
-            return await query.SingleOrDefaultAsync(token);
+            return await query.FirstOrDefaultAsync();
         }
     }
 }

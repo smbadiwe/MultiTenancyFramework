@@ -38,7 +38,7 @@ namespace MultiTenancyFramework
         /// <param name="toEmails">To.</param>
         /// <param name="message">The message.</param>
         /// <param name="attachments">Attachments. Key is the file path; value is the content type.</param>
-        public virtual async Task<bool> SendAsync(string toEmails, string message, IList<EmailAttachment> attachments = null, string ccEmails = null, string bccEmails = null)
+        public virtual async Task<bool> SendEmail(string toEmails, string message, IList<EmailAttachment> attachments = null, string ccEmails = null, string bccEmails = null)
         {
             if (string.IsNullOrWhiteSpace(message))
             {
@@ -56,14 +56,15 @@ namespace MultiTenancyFramework
             {
                 bccEmails = string.Format("{0},{1}", Settings.DefaultBccEmailReceiver, bccEmails);
             }
+
             try
             {
                 await SendEmail(
-                        emailAccount: Settings.ToEmailAccount(), 
-                        subject: Settings.DefaultEmailSubject, 
-                        body: message, 
-                        fromAddress: Settings.DefaultEmailSender, 
-                        fromName: Settings.DefaultSenderDisplayName, 
+                        emailAccount: null,
+                        subject: Settings.DefaultEmailSubject,
+                        body: message,
+                        fromAddress: Settings.DefaultEmailSender,
+                        fromName: Settings.DefaultSenderDisplayName,
                         toAddress: toEmails,
                         toName: null,
                         replyTo: null,
@@ -136,9 +137,23 @@ namespace MultiTenancyFramework
             IEnumerable<EmailAttachment> attachments = null,
             int attachedDownloadId = 0, IDictionary<string, string> headers = null)
         {
+
+            if (emailAccount == null)
+            {
+                emailAccount = await new EmailAccountLogic().GetDefaultAccount();
+            }
+            if (string.IsNullOrWhiteSpace(fromAddress))
+            {
+                fromAddress = emailAccount.Email;
+            }
+            if (string.IsNullOrWhiteSpace(fromName))
+            {
+                fromName = emailAccount.DisplayName;
+            }
+
+            //from, to, reply to
             var message = new MailMessage
             {
-                //from, to, reply to
                 From = new MailAddress(fromAddress, fromName)
             };
             message.To.Add(new MailAddress(toAddress, toName));

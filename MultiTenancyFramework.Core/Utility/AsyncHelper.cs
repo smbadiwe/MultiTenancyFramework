@@ -12,6 +12,20 @@ namespace MultiTenancyFramework
                   TaskContinuationOptions.None,
                   TaskScheduler.Default);
 
+        public static TResult RunSync<TResult>(Task<TResult> task)
+        {
+            return task
+              .GetAwaiter()
+              .GetResult();
+        }
+
+        public static void RunSync(Task task)
+        {
+            task
+              .GetAwaiter()
+              .GetResult();
+        }
+
         public static TResult RunSync<TResult>(Func<Task<TResult>> func)
         {
             return _myTaskFactory

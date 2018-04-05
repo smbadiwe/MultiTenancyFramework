@@ -17,7 +17,7 @@
                 if (_logger == null)
                 {
                     _logger = Utilities.Logger;
-                    _logger.SetLogger(NLog.LogManager.GetLogger(GetType().FullName));
+                    _logger.SetNLogLogger(GetType().FullName);
                 }
                 return _logger;
             }
@@ -39,7 +39,7 @@
                 if (_logger == null)
                 {
                     _logger = Utilities.Logger;
-                    _logger.SetLogger(NLog.LogManager.GetLogger(GetType().FullName));
+                    _logger.SetNLogLogger(GetType().FullName);
                 }
                 return _logger;
             }

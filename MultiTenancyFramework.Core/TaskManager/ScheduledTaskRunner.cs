@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MultiTenancyFramework.Core.TaskManager
@@ -11,6 +9,7 @@ namespace MultiTenancyFramework.Core.TaskManager
         #region Fields
 
         private bool? _disabled;
+        private ILogger logger;
 
         #endregion
 
@@ -23,6 +22,8 @@ namespace MultiTenancyFramework.Core.TaskManager
         public ScheduledTaskRunner(ScheduledTask task)
         {
             ScheduleTask = task;
+            logger = Utilities.Logger;
+            logger.SetNLogLogger("ScheduledTaskRunner");
         }
 
         #endregion
@@ -34,8 +35,6 @@ namespace MultiTenancyFramework.Core.TaskManager
         /// </summary>
         private async Task ExecuteTask()
         {
-            var scheduleTaskService = new ScheduledTaskEngine(ScheduleTask.InstitutionCode);
-
             if (IsDisabled)
                 return;
 
@@ -53,13 +52,21 @@ namespace MultiTenancyFramework.Core.TaskManager
             if (task == null)
                 return;
 
+            var scheduleTaskService = new ScheduledTaskEngine(ScheduleTask.InstitutionCode);
+
             ScheduleTask.LastStartUtc = DateTime.UtcNow;
             //update appropriate datetime properties
-            scheduleTaskService.Update(ScheduleTask);
+            await scheduleTaskService.UpdateAsync(ScheduleTask);
+
+            logger.Log(LoggingLevel.Trace, $"ScheduledTaskRunner: Now about to execute [{ScheduleTask.Name}] task");
+
             await task.Execute(ScheduleTask.InstitutionCode);
+
+            logger.Log(LoggingLevel.Trace, $"ScheduledTaskRunner: Done executing [{ScheduleTask.Name}] task");
+
             ScheduleTask.LastEndUtc = ScheduleTask.LastSuccessUtc = DateTime.UtcNow;
             //update appropriate datetime properties
-            scheduleTaskService.Update(ScheduleTask);
+            await scheduleTaskService.UpdateAsync(ScheduleTask);
         }
 
         /// <summary>
@@ -119,15 +126,17 @@ namespace MultiTenancyFramework.Core.TaskManager
             }
             catch (Exception exc)
             {
+                logger.Log(LoggingLevel.Error, $"ScheduledTaskRunner: Error while running the '{ScheduleTask.Name}' schedule task:\n{exc.GetFullExceptionMessage()}.\nUpdating schedule task record now.");
+                logger.Log(exc);
+
                 var scheduleTaskService = new ScheduledTaskEngine(ScheduleTask.InstitutionCode);
 
                 ScheduleTask.IsDisabled = ScheduleTask.StopOnError;
                 ScheduleTask.LastEndUtc = DateTime.UtcNow;
-                scheduleTaskService.Update(ScheduleTask);
+                await scheduleTaskService.UpdateAsync(ScheduleTask);
 
                 //log error
-                var logger = Utilities.Logger;
-                logger.Log(new GeneralException($"Error while running the '{ScheduleTask.Name}' schedule task. {exc.Message}", exc));
+                logger.Log(LoggingLevel.Trace, $"ScheduledTaskRunner: Schedule task record [{ScheduleTask.Name}] updated. Aborting...");
                 if (throwException)
                     throw;
             }

@@ -1,4 +1,5 @@
-﻿using MultiTenancyFramework.Entities;
+﻿using MultiTenancyFramework.Core.TaskManager.Tasks;
+using MultiTenancyFramework.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -47,6 +48,7 @@ namespace MultiTenancyFramework
             return client;
         }
 
+        public static EmailAccount LoggerEmailAccount = null;
         public static bool EmailLogMessage(string logMessage, bool isInfo)
         {
             if (!EmailLogMessages || string.IsNullOrWhiteSpace(logMessage)) return true;
@@ -61,9 +63,12 @@ namespace MultiTenancyFramework
                 subject = string.Format("ERROR ON {0} - {1}", ApplicationName, DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss tt"));
             }
             var sender = new EmailSender();
+            if (LoggerEmailAccount == null)
+            {
+                LoggerEmailAccount = new EmailAccountLogic().GetLoggingAccount();
+            }
             sender.Settings.DefaultEmailSubject = subject;
-            sender.SendAsync(null, logMessage).ConfigureAwait(false);
-            //BackgroundTaskRunner.Run(async () => await sender.SendAsync(null, logMessage));
+            sender.SendEmail(LoggerEmailAccount, subject, logMessage, null, null).ConfigureAwait(false);
             return true;
         }
         
@@ -161,7 +166,7 @@ namespace MultiTenancyFramework
 
                 using (msg)
                 {
-                    var good = AsyncHelper.RunSync(() => SendEmail(msg, client));
+                    var good = AsyncHelper.RunSync(SendEmail(msg, client));
                     return good;
                 }
             }

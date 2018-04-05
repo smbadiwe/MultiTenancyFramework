@@ -36,7 +36,7 @@ namespace MultiTenancyFramework.Mvc
             }
 
             return new EmailSender(_settings)
-                .SendAsync(message.Destination, message.Body, emailMsg?.EmailAttachments, ccEmails: emailMsg?.CC, bccEmails: emailMsg?.BCC);
+                .SendEmail(message.Destination, message.Body, emailMsg?.EmailAttachments, ccEmails: emailMsg?.CC, bccEmails: emailMsg?.BCC);
         }
     }
 

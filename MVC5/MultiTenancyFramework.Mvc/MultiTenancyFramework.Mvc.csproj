@@ -170,6 +170,7 @@
     <Compile Include="MvcUtils\MyModelMetadataProvider.cs" />
     <Compile Include="MvcUtils\MyRazorViewEngine.cs" />
     <Compile Include="MvcUtils\ReLoginModel.cs" />
+    <Compile Include="MvcUtils\ScheduledTaskApiController.cs" />
     <Compile Include="MvcUtils\TrimModelBinder.cs" />
     <Compile Include="MvcUtils\ValidateUsingPrivilegeForActionAttribute.cs" />
     <Compile Include="MvcUtils\ViewNotFoundException.cs" />

@@ -16,35 +16,35 @@ namespace MultiTenancyFramework.Data
         /// <param name="IDs"></param>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        Task<IList<T>> RetrieveByIDsAsync(idT[] IDs, string[] fields, CancellationToken token = default(CancellationToken));
+        Task<IList<T>> RetrieveByIDsAsync(idT[] IDs, string[] fields = null, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Retrieves all.
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        Task<IList<T>> RetrieveAllAsync(string[] fields, CancellationToken token = default(CancellationToken));
+        Task<IList<T>> RetrieveAllAsync(string[] fields = null, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        Task<IList<T>> RetrieveAllActiveAsync(string[] fields, CancellationToken token = default(CancellationToken));
+        Task<IList<T>> RetrieveAllActiveAsync(string[] fields = null, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        Task<IList<T>> RetrieveAllInactiveAsync(string[] fields, CancellationToken token = default(CancellationToken));
+        Task<IList<T>> RetrieveAllInactiveAsync(string[] fields = null, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        Task<IList<T>> RetrieveAllDeletedAsync(string[] fields, CancellationToken token = default(CancellationToken));
+        Task<IList<T>> RetrieveAllDeletedAsync(string[] fields = null, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Retrieve the first item found inthe db. This is useful for tables expected to have just one enty

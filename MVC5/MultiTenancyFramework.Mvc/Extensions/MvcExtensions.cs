@@ -11,6 +11,19 @@ namespace MultiTenancyFramework
 {
     public static class MvcExtensions
     {
+        public static string GetErrorMessages(this ModelStateDictionary modelState)
+        {
+            var sb = new System.Text.StringBuilder("One or more data items received is invalid<br /><br />");
+            foreach (ModelState state in modelState.Values)
+            {
+                foreach (ModelError error in state.Errors)
+                {
+                    sb.AppendFormat("{0}<br />", error.ErrorMessage);
+                }
+            }
+            return sb.ToString();
+        }
+
         /// <summary>
         /// Export data table as file. Only CSV for now
         /// </summary>

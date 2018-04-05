@@ -61,7 +61,7 @@ namespace MultiTenancyFramework.NHibernate
             return await session.QueryOver<T>(EntityName).Select(x => x.Id).ListAsync<idT>(token);
         }
 
-        public async Task<IList<T>> RetrieveAllAsync(string[] fields, CancellationToken token = default(CancellationToken))
+        public async Task<IList<T>> RetrieveAllAsync(string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             var session = BuildSession();
             IQueryOver<T, T> query;
@@ -77,7 +77,7 @@ namespace MultiTenancyFramework.NHibernate
             return await GetResultUsingProjectionAsync(query, fields, token);
         }
 
-        public async Task<IList<T>> RetrieveAllActiveAsync(string[] fields, CancellationToken token = default(CancellationToken))
+        public async Task<IList<T>> RetrieveAllActiveAsync(string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             var session = BuildSession();
             IQueryOver<T, T> query;
@@ -94,7 +94,7 @@ namespace MultiTenancyFramework.NHibernate
             return await GetResultUsingProjectionAsync(query, fields, token);
         }
 
-        public async Task<IList<T>> RetrieveAllDeletedAsync(string[] fields, CancellationToken token = default(CancellationToken))
+        public async Task<IList<T>> RetrieveAllDeletedAsync(string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             var session = BuildSession();
             IQueryOver<T, T> query;
@@ -111,7 +111,7 @@ namespace MultiTenancyFramework.NHibernate
             return await GetResultUsingProjectionAsync(query, fields, token);
         }
 
-        public async Task<IList<T>> RetrieveAllInactiveAsync(string[] fields, CancellationToken token = default(CancellationToken))
+        public async Task<IList<T>> RetrieveAllInactiveAsync(string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             var session = BuildSession();
             IQueryOver<T, T> query;
@@ -128,7 +128,7 @@ namespace MultiTenancyFramework.NHibernate
             return await GetResultUsingProjectionAsync(query, fields, token);
         }
 
-        public async Task<IList<T>> RetrieveByIDsAsync(idT[] IDs, string[] fields, CancellationToken token = default(CancellationToken))
+        public async Task<IList<T>> RetrieveByIDsAsync(idT[] IDs, string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             var session = BuildSession();
             IQueryOver<T, T> query;
@@ -145,7 +145,7 @@ namespace MultiTenancyFramework.NHibernate
             return await GetResultUsingProjectionAsync(query, fields, token);
         }
 
-        private Task<IList<T>> GetResultUsingProjectionAsync(IQueryOver<T, T> query, string[] fields, CancellationToken token = default(CancellationToken))
+        private Task<IList<T>> GetResultUsingProjectionAsync(IQueryOver<T, T> query, string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             if (fields == null || fields.Length == 0)
             {

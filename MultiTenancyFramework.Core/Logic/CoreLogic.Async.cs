@@ -16,13 +16,21 @@ namespace MultiTenancyFramework.Logic
     /// <typeparam name="idT"></typeparam>
     public abstract partial class CoreLogic<T, idT> : CoreBaseLogic<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
     {
+
+        public async Task<T> RetrieveAsync(idT id, CancellationToken token = default(CancellationToken))
+        {
+            _dao.InstitutionCode = InstitutionCode;
+            _dao.EntityName = EntityName;
+            return await _dao.RetrieveAsync(id, token);
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="IDs"></param>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        public virtual async Task<Dictionary<idT, T>> RetrieveByIDsAsDictionaryAsync(idT[] IDs, string[] fields, CancellationToken token = default(CancellationToken))
+        public virtual async Task<Dictionary<idT, T>> RetrieveByIDsAsDictionaryAsync(idT[] IDs, string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             var list = await RetrieveByIDsAsync(IDs, fields, token);
             return list?.ToDictionary(x => x.Id);
@@ -34,7 +42,7 @@ namespace MultiTenancyFramework.Logic
         /// <param name="IDs"></param>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        public virtual async Task<IList<T>> RetrieveByIDsAsync(idT[] IDs, string[] fields, CancellationToken token = default(CancellationToken))
+        public virtual async Task<IList<T>> RetrieveByIDsAsync(idT[] IDs, string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             _dao.InstitutionCode = InstitutionCode;
             _dao.EntityName = EntityName;
@@ -53,7 +61,7 @@ namespace MultiTenancyFramework.Logic
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        public virtual async Task<IList<T>> RetrieveAllAsync(string[] fields, CancellationToken token = default(CancellationToken))
+        public virtual async Task<IList<T>> RetrieveAllAsync(string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             _dao.InstitutionCode = InstitutionCode;
             _dao.EntityName = EntityName;
@@ -65,7 +73,7 @@ namespace MultiTenancyFramework.Logic
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        public virtual async Task<IList<T>> RetrieveAllActiveAsync(string[] fields, CancellationToken token = default(CancellationToken))
+        public virtual async Task<IList<T>> RetrieveAllActiveAsync(string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             _dao.InstitutionCode = InstitutionCode;
             _dao.EntityName = EntityName;
@@ -77,7 +85,7 @@ namespace MultiTenancyFramework.Logic
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        public virtual async Task<IList<T>> RetrieveAllInactiveAsync(string[] fields, CancellationToken token = default(CancellationToken))
+        public virtual async Task<IList<T>> RetrieveAllInactiveAsync(string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             _dao.InstitutionCode = InstitutionCode;
             _dao.EntityName = EntityName;
@@ -89,7 +97,7 @@ namespace MultiTenancyFramework.Logic
         /// </summary>
         /// <param name="fields">fields you're interested in getting their field values. If null, all fields are selected</param>
         /// <returns></returns>
-        public virtual async Task<IList<T>> RetrieveAllDeletedAsync(string[] fields, CancellationToken token = default(CancellationToken))
+        public virtual async Task<IList<T>> RetrieveAllDeletedAsync(string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             _dao.InstitutionCode = InstitutionCode;
             _dao.EntityName = EntityName;

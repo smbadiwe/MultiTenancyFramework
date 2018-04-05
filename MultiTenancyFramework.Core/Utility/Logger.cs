@@ -10,7 +10,7 @@ namespace MultiTenancyFramework
 {
     public class Logger : ILogger
     {
-        private static NLog.Logger _logger = LogManager.GetLogger(ConfigurationHelper.AppSettingsItem<string>("AppName") ?? "MultiTenancyFramework");
+        private NLog.Logger _logger = LogManager.GetLogger(ConfigurationHelper.AppSettingsItem<string>("AppName") ?? "MultiTenancyFramework");
 
         public void SetLogger(object logger)
         {
@@ -19,6 +19,10 @@ namespace MultiTenancyFramework
                 var loggr = logger as NLog.Logger;
                 if (loggr != null)
                     _logger = loggr;
+            }
+            else
+            {
+                _logger = LogManager.GetLogger(ConfigurationHelper.AppSettingsItem<string>("AppName") ?? "MultiTenancyFramework");
             }
         }
 

@@ -3,9 +3,9 @@
 namespace MultiTenancyFramework.Core.TaskManager.Tasks
 {
     /// <summary>
-    /// Represents an email account
+    /// Represents an email account. It's hosted centrally.
     /// </summary>
-    public  class EmailAccount : BaseEntity
+    public class EmailAccount : BaseEntity, IAmHostedCentrally
     {
         /// <summary>
         /// Gets or sets an email address
@@ -16,6 +16,11 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
         /// Gets or sets an email display name
         /// </summary>
         public virtual string DisplayName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the scope.
+        /// </summary>
+        public virtual EmailAccountScope Scope { get; set; }
 
         /// <summary>
         /// Gets or sets an email host
@@ -59,5 +64,14 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
                 return this.Email;
             }
         }
+    }
+
+    public enum EmailAccountScope
+    {
+        Info,
+        Billings,
+        Payments,
+        Logging,
+        Promo,
     }
 }

@@ -30,59 +30,72 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
 
         public async Task Execute(string institutionCode)
         {
-            var _queuedEmailService = new QueuedEmailLogic(institutionCode);
-            var query = new SearchQueuedEmailsQuery
+            var logger = Utilities.Logger;
+            logger.SetNLogLogger("QueuedMessagesSendTask");
+            logger.Log(LoggingLevel.Trace, "QueuedMessagesSendTask: Executing now...");
+            try
             {
-                LoadNotSentItemsOnly = true,
-                LoadOnlyItemsToBeSent = true,
-                MaxSendTries = 3,
-                PageSize = 500
-            };
-            var processor = Utilities.QueryProcessor;
-            processor.InstitutionCode = institutionCode;
-            var queuedEmails = await processor.ProcessAsync(query);
+                var _queuedEmailService = new QueuedEmailLogic(institutionCode);
+                var query = new SearchQueuedEmailsQuery
+                {
+                    LoadNotSentItemsOnly = true,
+                    LoadOnlyItemsToBeSent = true,
+                    MaxSendTries = 3,
+                    PageSize = 500
+                };
+                var processor = Utilities.QueryProcessor;
+                processor.InstitutionCode = institutionCode;
+                var queuedEmails = processor.Process(query);
+                logger.Log(LoggingLevel.Trace, $"QueuedMessagesSendTask: {queuedEmails.DataBatch.Count} queued emails to be processed now");
+                if (queuedEmails.DataBatch.Count == 0) return;
 
-            var emailSender = new EmailSender();
-            foreach (var queuedEmail in queuedEmails.DataBatch)
-            {
-                var bcc = string.IsNullOrWhiteSpace(queuedEmail.Bcc)
-                            ? null
-                            : queuedEmail.Bcc.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                var cc = string.IsNullOrWhiteSpace(queuedEmail.CC)
-                            ? null
-                            : queuedEmail.CC.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                var attachment = string.IsNullOrWhiteSpace(queuedEmail.AttachmentFilePath)
-                                    ? null
-                                    : new[] { new EmailAttachment {
+                var emailSender = new EmailSender();
+                foreach (var queuedEmail in queuedEmails.DataBatch)
+                {
+                    var bcc = string.IsNullOrWhiteSpace(queuedEmail.Bcc)
+                                ? null
+                                : queuedEmail.Bcc.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    var cc = string.IsNullOrWhiteSpace(queuedEmail.CC)
+                                ? null
+                                : queuedEmail.CC.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    var attachment = string.IsNullOrWhiteSpace(queuedEmail.AttachmentFilePath)
+                                        ? null
+                                        : new[] { new EmailAttachment {
                                         FilePath = queuedEmail.AttachmentFilePath,
                                         MediaType = Utilities.GetMimeType(queuedEmail.AttachmentFilePath),
                                     } };
-                try
-                {
+                    try
+                    {
 
-                    await emailSender.SendEmail(queuedEmail.EmailAccount,
-                            queuedEmail.Subject,
-                            queuedEmail.Body,
-                            queuedEmail.From,
-                            queuedEmail.FromName,
-                            queuedEmail.To,
-                            queuedEmail.ToName,
-                            queuedEmail.ReplyTo,
-                            queuedEmail.ReplyToName,
-                            bcc,
-                            cc);
+                        await emailSender.SendEmail(queuedEmail.EmailAccount,
+                                queuedEmail.Subject,
+                                queuedEmail.Body,
+                                queuedEmail.Sender,
+                                queuedEmail.SenderName,
+                                queuedEmail.Receivers,
+                                queuedEmail.ReceiverName,
+                                queuedEmail.ReplyTo,
+                                queuedEmail.ReplyToName,
+                                bcc,
+                                cc);
 
-                    queuedEmail.SentOnUtc = DateTime.UtcNow;
+                        queuedEmail.SentOnUtc = DateTime.UtcNow;
+                    }
+                    catch (Exception exc)
+                    {
+                        logger.Log(LoggingLevel.Error, $"QueuedMessagesSendTask: Error sending e-mail. {exc.Message}.\n{exc.GetFullExceptionMessage()}");
+                    }
+                    finally
+                    {
+                        queuedEmail.SentTries++;
+                        _queuedEmailService.Update(queuedEmail);
+                    }
                 }
-                catch (Exception exc)
-                {
-                    Utilities.Logger.Log($"QueuedMessagesSendTask: Error sending e-mail. {exc.Message}.\n{exc.GetFullExceptionMessage()}");
-                }
-                finally
-                {
-                    queuedEmail.SentTries++;
-                    _queuedEmailService.Update(queuedEmail);
-                }
+            }
+            finally
+            {
+                logger.Log(LoggingLevel.Trace, "QueuedMessagesSendTask: All done. Winding up now...");
+                logger.SetNLogLogger(null);
             }
         }
     }

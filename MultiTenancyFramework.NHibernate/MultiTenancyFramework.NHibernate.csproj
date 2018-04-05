@@ -151,6 +151,7 @@
     <Compile Include="Queries\GetUserLoginssByUserIdQueryHandler.cs" />
     <Compile Include="SqlManipulations.cs" />
     <Compile Include="TaskManager\SearchQueuedEmailsQueryHandler.cs" />
+    <Compile Include="TaskManager\Tasks\QueuedEmailMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MultiTenancyFramework.Core\MultiTenancyFramework.Core.csproj">

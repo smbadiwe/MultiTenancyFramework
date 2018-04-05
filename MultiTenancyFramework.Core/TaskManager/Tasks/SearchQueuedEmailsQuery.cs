@@ -4,7 +4,7 @@ using System;
 
 namespace MultiTenancyFramework.Core.TaskManager.Tasks
 {
-    public class SearchQueuedEmailsQuery : DbPagingQuery, IDbQueryAsync<RetrievedData<QueuedEmail>>
+    public class SearchQueuedEmailsQuery : DbPagingQuery, IDbQuery<RetrievedData<QueuedEmail>>
     {
         public string FromEmail { get; set; }
         public string ToEmail { get; set; }

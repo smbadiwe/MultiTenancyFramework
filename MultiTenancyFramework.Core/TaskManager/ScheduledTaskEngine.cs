@@ -15,32 +15,73 @@ namespace MultiTenancyFramework.Core.TaskManager
 
         }
 
+        public override IList<ScheduledTask> RetrieveAllActive(params string[] fields)
+        {
+            var list = base.RetrieveAllActive(fields);
+            if (list == null || list.Count == 0)
+            {
+                list = RetrieveAll().Where(x => x.IsEnabled).ToList();
+            }
+            return list;
+        }
+
+        public override async Task<IList<ScheduledTask>> RetrieveAllActiveAsync(string[] fields = null, CancellationToken token = default(CancellationToken))
+        {
+            var list = await base.RetrieveAllActiveAsync(fields, token);
+            if (list == null || list.Count == 0)
+            {
+                list = (await RetrieveAllAsync(fields, token)).Where(x => x.IsEnabled).ToList();
+            }
+            return list;
+        }
+
         public override IList<ScheduledTask> RetrieveAll(params string[] fields)
         {
             var list = base.RetrieveAll(fields);
             if (list == null || list.Count == 0)
             {
-                list = AsyncHelper.RunSync(() => EnsureListExists(list));
+                list = EnsureListExists(list);
             }
             return list;
         }
 
-        public override async Task<IList<ScheduledTask>> RetrieveAllAsync(string[] fields, CancellationToken token = default(CancellationToken))
+        public override async Task<IList<ScheduledTask>> RetrieveAllAsync(string[] fields = null, CancellationToken token = default(CancellationToken))
         {
             var list = await base.RetrieveAllAsync(fields, token);
             if (list == null || list.Count == 0)
             {
-                list = await EnsureListExists(list);
+                list = await EnsureListExistsAsync(list);
             }
             return list;
         }
 
-        private async Task<IList<ScheduledTask>> EnsureListExists(IList<ScheduledTask> list, CancellationToken token = default(CancellationToken))
+        private async Task<IList<ScheduledTask>> EnsureListExistsAsync(IList<ScheduledTask> list, CancellationToken token = default(CancellationToken))
         {
+            if (list == null) list = new List<ScheduledTask>();
+            PrePeocess(list);
+
+            if (list.Count > 0)
+                await InsertAsync(list, token);
+            return list;
+        }
+
+        private IList<ScheduledTask> EnsureListExists(IList<ScheduledTask> list)
+        {
+            if (list == null) list = new List<ScheduledTask>();
+            PrePeocess(list);
+
+            if (list.Count > 0)
+                Insert(list);
+            return list;
+        }
+
+        private void PrePeocess(IList<ScheduledTask> list)
+        {
+            if (list.Count > 0) return;
+
             var taskTypes = new AppDomainTypeFinder().FindClassesOfType<IRunnableTask>();
-            if (taskTypes == null || !taskTypes.Any())
+            if (taskTypes != null)
             {
-                list = new List<ScheduledTask>();
                 bool isCentralInst = string.IsNullOrWhiteSpace(InstitutionCode) || InstitutionCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.OrdinalIgnoreCase);
                 foreach (var type in taskTypes)
                 {
@@ -54,9 +95,8 @@ namespace MultiTenancyFramework.Core.TaskManager
                     }
                 }
 
-                await InsertAsync(list, token);
             }
-            return list;
+
         }
     }
 }

@@ -292,15 +292,7 @@ namespace MultiTenancyFramework.Mvc
 
         protected virtual void AlertFailureInvalidModel(bool dismissable = false)
         {
-            var sb = new System.Text.StringBuilder("One or more data items received is invalid<br /><br />");
-            foreach (ModelState modelState in ModelState.Values)
-            {
-                foreach (ModelError error in modelState.Errors)
-                {
-                    sb.AppendFormat("{0}<br />", error.ErrorMessage);
-                }
-            }
-            AddAlert(AlertStyles.Danger, sb.ToString(), dismissable);
+            AddAlert(AlertStyles.Danger, ModelState.GetErrorMessages(), dismissable);
         }
 
         private void AddAlert(string alertStyle, string message, bool dismissable)
