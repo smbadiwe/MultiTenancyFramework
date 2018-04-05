@@ -23,14 +23,26 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
         public virtual EmailAccountScope Scope { get; set; }
 
         /// <summary>
-        /// Gets or sets an email host
+        /// Gets or sets the type of the account.
         /// </summary>
-        public virtual string Host { get; set; }
+        public virtual EmailAccountType AccountType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the default email address to BCC.
+        /// </summary>
+        public virtual string DefaultBcc { get; set; }
+
+        /// <summary>
+        /// Gets or sets an email host
+        /// Default is smtp.gmail.com
+        /// </summary>
+        public virtual string Host { get; set; } = "smtp.gmail.com";
 
         /// <summary>
         /// Gets or sets an email port
+        /// Default is 587
         /// </summary>
-        public virtual int Port { get; set; }
+        public virtual int Port { get; set; } = 587;
 
         /// <summary>
         /// Gets or sets an email user name
@@ -43,14 +55,20 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
         public virtual string Password { get; set; }
 
         /// <summary>
-        /// Gets or sets a value that controls whether the SmtpClient uses Secure Sockets Layer (SSL) to encrypt the connection
+        /// Gets or sets a value that controls whether the SmtpClient uses Secure Sockets Layer (SSL) to encrypt the connection. 
+        /// Default is true
         /// </summary>
-        public virtual bool EnableSsl { get; set; }
+        public virtual bool EnableSsl { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a value that controls whether the default system credentials of the application are sent with requests.
         /// </summary>
         public virtual bool UseDefaultCredentials { get; set; }
+
+        // for API
+        public virtual string ApiKey { get; set; }
+        public virtual string ApiBaseUrl { get; set; }
+        public virtual string ApiRequestUrl { get; set; }
 
         /// <summary>
         /// Gets a friendly email account name
@@ -66,9 +84,20 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
         }
     }
 
+    public enum EmailAccountType
+    {
+        [EnumDescription("SMTP-Based")]
+        SmtpBased,
+        [EnumDescription("API-Based")]
+        ApiBased
+    }
+
     public enum EmailAccountScope
     {
-        Info,
+        /// <summary>
+        /// The default. could be info@...
+        /// </summary>
+        Default,
         Billings,
         Payments,
         Logging,

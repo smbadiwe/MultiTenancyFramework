@@ -290,7 +290,8 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 }
                 else
                 {
-                    session = fac.OpenSession(dbConnection);
+                    //session = fac.OpenSession(dbConnection);
+                    session = fac.WithOptions().Connection(dbConnection).OpenSession();
                 }
             }
 

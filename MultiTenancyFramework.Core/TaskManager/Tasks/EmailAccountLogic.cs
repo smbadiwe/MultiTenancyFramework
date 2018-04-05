@@ -55,7 +55,7 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
             return accounts?.FirstOrDefault(x =>
                 x.Scope == EmailAccountScope.Payments
                 || x.Scope == EmailAccountScope.Billings
-                || x.Scope == EmailAccountScope.Info);
+                || x.Scope == EmailAccountScope.Default);
         }
 
         public async Task<EmailAccount> GetBillingsAccount()
@@ -64,7 +64,7 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
 
             return accounts?.FirstOrDefault(x =>
                 x.Scope == EmailAccountScope.Billings
-                || x.Scope == EmailAccountScope.Info);
+                || x.Scope == EmailAccountScope.Default);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
 
                 return accounts?.FirstOrDefault(x =>
                     x.Scope == EmailAccountScope.Logging
-                    || x.Scope == EmailAccountScope.Info);
+                    || x.Scope == EmailAccountScope.Default);
             }
             catch (System.Exception)
             {
@@ -94,7 +94,7 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
 
             return accounts?.FirstOrDefault(x =>
                 x.Scope == EmailAccountScope.Promo
-                || x.Scope == EmailAccountScope.Info);
+                || x.Scope == EmailAccountScope.Default);
         }
 
         public async Task<EmailAccount> GetDefaultAccount()
@@ -102,7 +102,7 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
             var accounts = await RetrieveAllActiveAsync();
 
             return accounts?.FirstOrDefault(x =>
-                x.Scope == EmailAccountScope.Info);
+                x.Scope == EmailAccountScope.Default);
         }
 
         public async Task<EmailAccount> GetInfoAccount()
@@ -110,7 +110,7 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
             var accounts = await RetrieveAllActiveAsync();
 
             return accounts?.FirstOrDefault(x =>
-                x.Scope == EmailAccountScope.Info);
+                x.Scope == EmailAccountScope.Default);
         }
 
         public async Task<EmailAccount> GetByScope(EmailAccountScope scope)
@@ -121,12 +121,12 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
             switch (scope)
             {
                 case EmailAccountScope.Payments:
-                    query = x => x.Scope == scope || x.Scope == EmailAccountScope.Billings || x.Scope == EmailAccountScope.Info;
+                    query = x => x.Scope == scope || x.Scope == EmailAccountScope.Billings || x.Scope == EmailAccountScope.Default;
                     break;
                 case EmailAccountScope.Promo:
                 case EmailAccountScope.Logging:
                 case EmailAccountScope.Billings:
-                    query = x => x.Scope == scope || x.Scope == EmailAccountScope.Info;
+                    query = x => x.Scope == scope || x.Scope == EmailAccountScope.Default;
                     break;
                 default:
                     query = x => x.Scope == scope;
