@@ -35,13 +35,14 @@ namespace MultiTenancyFramework.Mvc
             var values = filterContext.RouteData.Values;
             var instCode = Convert.ToString(values["institution"]);
 
+            var webHelper = new WebHelper(filterContext.HttpContext);
             // If user is not logged in (authenticated) yet, 
-            var IdentityUser = WebUtilities.GetCurrentlyLoggedInUser(filterContext.HttpContext.Session);
+            var IdentityUser = webHelper.GetCurrentlyLoggedInUser();
             //if (!filterContext.HttpContext.Request.IsAuthenticated)
             if (IdentityUser == null || filterContext.HttpContext.Session?.IsNewSession == true)
             {
                 // It's not anonymous, so force user to login
-                WebUtilities.LogOut();
+                webHelper.LogOut();
                 filterContext.Result = MvcUtility.GetLoginPageResult(instCode);
                 return;
             }
@@ -69,12 +70,12 @@ namespace MultiTenancyFramework.Mvc
             // At this point, we have established that we have a logged-in user. So...
             #region Authorize at Privilege level
 
-            var userPrivList = WebUtilities.LoggedInUsersPrivilegesDict;
+            var userPrivList = webHelper.LoggedInUsersPrivilegesDict;
             //This should never be true under normal circumstances, 'cos a properly logged-in user
             // should have at least one user privllege
             if (userPrivList == null)
             {
-                WebUtilities.LogOut();
+                webHelper.LogOut();
                 filterContext.Result = MvcUtility.GetLoginPageResult(instCode);
                 return;
             }

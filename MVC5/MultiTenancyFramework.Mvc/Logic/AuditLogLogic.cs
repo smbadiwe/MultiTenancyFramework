@@ -73,22 +73,24 @@ namespace MultiTenancyFramework.Logic
             };
             try
             {
+                
                 if (HttpContext.Current != null)
                 {
+                    var webHelper = new WebHelper();
                     if (!string.IsNullOrWhiteSpace(userName)) // usuall when the user fails to type in the right username (action == AuditAction.FAILEDLOGIN)
                     {
                         auditTrail.UserName = userName;
                     }
                     else
                     {
-                        var user = WebUtilities.GetCurrentlyLoggedInUser();
+                        var user = webHelper.GetCurrentlyLoggedInUser();
                         if (user != null)
                         {
                             auditTrail.UserName = user.UserName;
                             auditTrail.UserId = user.Id;
                         }
                     }
-                    auditTrail.ClientIpAddress = IPResolver.GetIP4Address();
+                    auditTrail.ClientIpAddress = webHelper.GetCurrentIpAddress();
                     auditTrail.ClientName = HttpContext.Current.Request.UserHostName;
                 }
             }

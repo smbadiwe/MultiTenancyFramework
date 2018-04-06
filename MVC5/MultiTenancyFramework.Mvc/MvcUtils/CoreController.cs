@@ -42,6 +42,16 @@ namespace MultiTenancyFramework.Mvc
             }
         }
 
+        private WebHelper _webHelper;
+        protected virtual WebHelper WebHelper
+        {
+            get
+            {
+                if (_webHelper == null) _webHelper = new WebHelper(HttpContext);
+                return _webHelper;
+            }
+        }
+
         /// <summary>
         /// = Request.RequestContext.RouteData.Values["institution"]. It's appearing in too many controllers now.
         /// BTW, there is also WebUtilities.InstitutionCode which essentially same, just that that one
@@ -57,7 +67,7 @@ namespace MultiTenancyFramework.Mvc
                 }
                 catch (Exception)
                 {
-                    return WebUtilities.InstitutionCode;
+                    return WebHelper.InstitutionCode;
                 }
             }
         }
@@ -80,7 +90,7 @@ namespace MultiTenancyFramework.Mvc
         /// <code>WebUtilities.GetCurrentlyLoggedInUser();</code>
         /// <para>If you need to set the value, call <code>WebUtilities.SetCurrentlyLoggedInUser(newValue);</code></para>
         /// </summary>
-        protected virtual IdentityUser IdentityUser { get { return WebUtilities.GetCurrentlyLoggedInUser(Session); } }
+        protected virtual IdentityUser IdentityUser { get { return WebHelper.GetCurrentlyLoggedInUser(); } }
 
         /// <summary>
         /// Current datetime
