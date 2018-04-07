@@ -55,6 +55,9 @@ namespace MultiTenancyFramework
         /// <param name="args">The arguments. If an object instance is part of the list, it will be JSON-serialized</param>
         public virtual void Log(LoggingLevel level, string format, params object[] args)
         {
+            var loglevel = GetLogLevel(level);
+            if (!_logger.IsEnabled(loglevel)) return;
+
             if (!string.IsNullOrWhiteSpace(format))
             {
                 if (args != null && args.Length > 0)
@@ -74,7 +77,7 @@ namespace MultiTenancyFramework
                     }
                 }
 
-                _logger.Log(GetLogLevel(level), format, args);
+                _logger.Log(loglevel, format, args);
 
                 logLogic.InsertLog(_logger.Name, HttpContext.Current, level, string.Format(format, args));
             }
@@ -106,7 +109,7 @@ namespace MultiTenancyFramework
                     }
                     catch (Exception ex2)
                     {
-                        Log(LoggingLevel.Warn, "Error sending log email: " + ex2.GetFullExceptionMessage());
+                        Log(LoggingLevel.Warn, "Error sending log email: {0}", ex2.Message);
                     }
                 }
             }

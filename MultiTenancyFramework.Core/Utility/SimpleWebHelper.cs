@@ -144,13 +144,22 @@ namespace MultiTenancyFramework
                     #endregion
                 }
 
-                var query = new GetInstitutionByCodeQuery
+                // if it's a tenant
+                if (!string.IsNullOrWhiteSpace(instCode) && !instCode.Equals(core, StringComparison.OrdinalIgnoreCase))
                 {
-                    Code = instCode,
-                };
-                var inst = Utilities.QueryProcessor.Process(query);
-                if (inst == null) throw new GeneralException($"The code: {instCode} does not belong to any institution on our system.", ExceptionType.UnidentifiedInstitutionCode);
-
+                    var query = new GetInstitutionByCodeQuery
+                    {
+                        Code = instCode,
+                    };
+                    var inst = Utilities.QueryProcessor.Process(query);
+                    if (inst == null)
+                    {
+                        if (IsStaticResource())
+                            instCode = core;
+                        else
+                            throw new GeneralException($"The code: {instCode} does not belong to any institution on our system.", ExceptionType.UnidentifiedInstitutionCode);
+                    }
+                }
                 _httpContext.Request.RequestContext.RouteData.Values["institution"] = instCode;
                 if (_httpContext.Session != null)
                     _httpContext.Session[SS_CODE] = instCode;
@@ -216,18 +225,20 @@ namespace MultiTenancyFramework
 
             try
             {
-                if (httpContext.Items.Contains(HttpRequestIsAvailable))
-                    return Convert.ToBoolean(httpContext.Items[HttpRequestIsAvailable]);
-
-                if (httpContext.Request == null)
+                // Because I add this item on Application_BeginRequest
+                if (!httpContext.Items.Contains(HttpRequestIsAvailable))
                     return false;
+
+                return Convert.ToBoolean(httpContext.Items[HttpRequestIsAvailable]);
+
+                // This crashes where Request is not available.
+                //if (httpContext.Request == null)
+                //    return false;
             }
             catch (HttpException)
             {
                 return false;
             }
-
-            return true;
         }
 
         public virtual bool TryWriteWebConfig()

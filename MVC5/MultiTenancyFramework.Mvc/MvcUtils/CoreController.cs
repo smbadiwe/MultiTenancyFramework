@@ -296,7 +296,6 @@ namespace MultiTenancyFramework.Mvc
 
         protected virtual void AlertFailure(string message = "Failure processing request", bool dismissable = false)
         {
-            Logger.Log(LoggingLevel.Error, message);
             AddAlert(AlertStyles.Danger, message, dismissable);
         }
 

@@ -126,6 +126,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseMvcHttpApplication.cs" />
     <Compile Include="Data\Queries\GetActionAccessPrivilegesByGridSearchParamsQuery.cs" />
     <Compile Include="Data\Queries\GetControllersQuery.cs" />
     <Compile Include="Data\Queries\GetActionsQuery.cs" />

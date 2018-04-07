@@ -16,6 +16,20 @@ namespace MultiTenancyFramework.Core.TaskManager
 
         }
 
+        public override void OnBeforeUpdatingList(IList<ScheduledTask> e)
+        {
+            foreach (var elm in e)
+                elm.SkipAudit = true;
+
+            base.OnBeforeUpdatingList(e);
+        }
+
+        public override void OnBeforeUpdating(ScheduledTask e)
+        {
+            e.SkipAudit = true;
+            base.OnBeforeUpdating(e);
+        }
+
         public override IList<ScheduledTask> RetrieveAllActive(params string[] fields)
         {
             var list = base.RetrieveAllActive(fields);

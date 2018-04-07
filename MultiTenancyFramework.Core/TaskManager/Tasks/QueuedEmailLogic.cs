@@ -56,6 +56,8 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
 
                 if (string.IsNullOrWhiteSpace(em.SenderName) && em.EmailAccount != null)
                     em.SenderName = em.EmailAccount.DisplayName;
+
+                em.SkipAudit = true;
             }
         }
 
@@ -73,6 +75,8 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
 
             if (string.IsNullOrWhiteSpace(e.SenderName) && e.EmailAccount != null)
                 e.SenderName = e.EmailAccount.DisplayName;
+
+            e.SkipAudit = true;
         }
     }
 }

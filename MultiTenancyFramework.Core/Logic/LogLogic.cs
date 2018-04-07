@@ -28,18 +28,30 @@ namespace MultiTenancyFramework.Logic
         /// <returns>Log item items</returns>
         public async Task<RetrievedData<Log>> GetAllLogs(DateTime? fromUtc = null, DateTime? toUtc = null,
             string message = "", LoggingLevel? logLevel = null, string instCode = "",
+            string ip = "", string sessionId = "", string username = "", string logger = "",
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
             if (string.IsNullOrWhiteSpace(instCode))
                 return new RetrievedData<Log>();
 
             var query = _dao.Table;
-            if (fromUtc.HasValue)
+            if (fromUtc.HasValue && fromUtc.Value > DateTime.MinValue)
                 query = query.Where(l => fromUtc.Value <= l.DateCreated);
-            if (toUtc.HasValue)
+            if (toUtc.HasValue && toUtc.Value > DateTime.MinValue)
                 query = query.Where(l => toUtc.Value >= l.DateCreated);
             if (logLevel.HasValue)
                 query = query.Where(l => logLevel == l.LoggingLevel);
+
+            if (!string.IsNullOrWhiteSpace(instCode))
+                query = query.Where(l => instCode == l.InstitutionId);
+            if (!string.IsNullOrWhiteSpace(username))
+                query = query.Where(l => username.StartsWith(l.UserId));
+            if (!string.IsNullOrWhiteSpace(logger))
+                query = query.Where(l => logger == l.Logger);
+            if (!string.IsNullOrWhiteSpace(sessionId))
+                query = query.Where(l => sessionId == l.SessionId);
+            if (!string.IsNullOrWhiteSpace(ip))
+                query = query.Where(l => ip == l.IpAddress);
 
             if (!string.IsNullOrWhiteSpace(message))
                 query = query.Where(l => l.ShortMessage.Contains(message) || l.FullMessage.Contains(message));
@@ -50,6 +62,12 @@ namespace MultiTenancyFramework.Logic
             return log;
         }
         
+        public IList<string> GetLoggers()
+        {
+            var query = _dao.Table;
+            return query.Select(x => x.Logger).Distinct().ToList();
+        }
+
         /// <summary>
         /// Adds the log to per-request cache. They will be flushed to DB at once, at the end of request.
         /// </summary>
@@ -128,6 +146,20 @@ namespace MultiTenancyFramework.Logic
         public void FlushRequestLogs()
         {
             Insert(RequestLogs);
+        }
+
+        public override void OnBeforeUpdatingList(IList<Log> e)
+        {
+            foreach (var elm in e)
+                elm.SkipAudit = true;
+
+            base.OnBeforeUpdatingList(e);
+        }
+
+        public override void OnBeforeUpdating(Log e)
+        {
+            e.SkipAudit = true;
+            base.OnBeforeUpdating(e);
         }
 
         private List<Log> RequestLogs
