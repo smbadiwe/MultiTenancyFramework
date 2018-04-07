@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
 using System;
+using MultiTenancyFramework.Tasks;
 
 namespace MultiTenancyFramework.Core.TaskManager
 {
@@ -82,7 +83,7 @@ namespace MultiTenancyFramework.Core.TaskManager
             var taskTypes = new AppDomainTypeFinder().FindClassesOfType<IRunnableTask>();
             if (taskTypes != null)
             {
-                bool isCentralInst = string.IsNullOrWhiteSpace(InstitutionCode) || InstitutionCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.OrdinalIgnoreCase);
+                bool isCentralInst = string.IsNullOrWhiteSpace(InstitutionCode) || InstitutionCode.Equals(Utilities.INST_DEFAULT_CODE, StringComparison.InvariantCultureIgnoreCase);
                 foreach (var type in taskTypes)
                 {
                     var instance = Activator.CreateInstance(type) as IRunnableTask;

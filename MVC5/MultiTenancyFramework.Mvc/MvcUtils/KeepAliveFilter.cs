@@ -1,17 +1,21 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 
 namespace MultiTenancyFramework.Mvc
 {
-    public class KeepAliveFilter : ActionFilterAttribute
+    public class KeepAliveFilter : IActionFilter
     {
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        public void OnActionExecuting(ActionExecutingContext filterContext)
         {
             if (filterContext.HttpContext.Request.RawUrl.Contains("keepalive/index"))
             {
                 filterContext.Result = new EmptyResult();
-                return;
             }
-            base.OnActionExecuting(filterContext);
         }
+
+        public void OnActionExecuted(ActionExecutedContext filterContext)
+        {
+        }
+
     }
 }

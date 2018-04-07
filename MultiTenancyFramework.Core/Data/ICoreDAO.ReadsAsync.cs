@@ -3,11 +3,14 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Threading;
+using System.Linq;
 
 namespace MultiTenancyFramework.Data
 {
     public partial interface ICoreReadsDAO<T, idT> : ICoreGeneralDAO where T : IBaseEntity<idT> where idT : IEquatable<idT>
     {
+        IQueryable<T> Table { get; }
+
         Task<IList<idT>> RetrieveIDsAsync(CancellationToken token = default(CancellationToken));
 
         /// <summary>

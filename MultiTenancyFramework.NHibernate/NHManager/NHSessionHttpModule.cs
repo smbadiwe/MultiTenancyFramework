@@ -9,25 +9,25 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// <summary>
         /// Constant key for storing the session in the HttpContext
         /// </summary>
-        private HttpApplication _context;
+        private HttpApplication _app;
         public void Dispose()
         {
-            if (_context != null)
+            if (_app != null)
             {
-                _context.Dispose();
+                _app.Dispose();
             }
         }
 
-        public void Init(HttpApplication context)
+        public void Init(HttpApplication app)
         {
-            context.BeginRequest += Application_BeginRequest;
-            context.Error += Application_Error;
-            _context = context;
+            app.BeginRequest += Application_BeginRequest;
+            app.Error += Application_Error;
+            _app = app;
         }
         
         private void Application_BeginRequest(object sender, EventArgs e)
         {
-            _context.Context.AddOnRequestCompleted(x =>
+            _app.Context.AddOnRequestCompleted(x =>
             {
                 // exclude static resources
                 //  The key is that from an MVC point of view, if the Physical Path has an extension, then it's a physical resource
@@ -38,7 +38,6 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 if (x.Items.Contains(WebSessionStorage.CurrentSessionKey))
                 {
                     var storageSet = new Dictionary<string, ISessionStorage>(NHSessionManager.SessionStorages);
-
                     if (storageSet != null && storageSet.Count > 0)
                     {
                         foreach (var storage in storageSet.Values)
@@ -58,7 +57,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
         private void Application_Error(object sender, EventArgs e)
         {
-            var lastError = _context.Server.GetLastError();
+            var lastError = _app.Server.GetLastError();
             var logger = Utilities.Logger;
             try
             {
@@ -74,14 +73,14 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             }
             finally
             {
-                if (_context.Context != null && _context.Context.Response != null)
+                if (_app.Context != null && _app.Context.Response != null)
                 {
                     //var baseUrl = ConfigurationHelper.GetSiteUrl() ?? _context.Context.Request.Url.Authority;
 
                     var errorUrl = "~/500.html"; // $"{baseUrl}/{_context.Context.Request.RequestContext.RouteData.Values["institution"]}/Error/?gl=1&ErrorMessage={lastError.Message}";
                     //logger.Log($"A.._Error (NHSessionHttpModule) called. Redirecting to {errorUrl}");
-                    _context.Context.Response.StatusCode = 500;
-                    _context.Context.Response.Redirect(errorUrl);
+                    _app.Context.Response.StatusCode = 500;
+                    _app.Context.Response.Redirect(errorUrl);
                 }
             }
         }

@@ -189,7 +189,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             return baseType.FullName;
         }
 
-        internal static void CloseStorage(string institutionCode = null, bool isWebSession = true)
+        public static void CloseStorage(string institutionCode = null, bool isWebSession = true)
         {
             CloseStorage(GetSessionKey(institutionCode, isWebSession));
         }

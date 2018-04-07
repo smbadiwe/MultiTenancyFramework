@@ -110,32 +110,36 @@ namespace ConsoleTests
             .ToExcel(new Dictionary<string, string> { { "Title", "Test Sheet" }, { "For", "FGC Okigwe" }, { "Date Done", DateTime.Now.ToString() } });
         }
 
+        class Ass2 : Ass
+        {
+            public override int Id { get; set; } = 25;
+        }
+        class Ass
+        {
+            public virtual int Id { get; set; } = 5;
 
+            private List<int> myVar = new List<int>();
+
+            public  List<int> MyProperty
+            {
+                get { return myVar; }
+            }
+
+            public override string ToString()
+            {
+                return Id.ToStringLookup();
+            }
+        }
         static void Main(string[] args)
         {
-            Task.Run(() =>
+            var ass = new Ass();
+            ass.MyProperty.Add(1);
+            ass.MyProperty.Add(41);
+            ass.MyProperty.Add(12);
+            foreach (var intt in ass.MyProperty)
             {
-
-                var postData = new NameValueCollection
-                {
-                    {"taskType", null},
-                    {"instCode", null}
-                };
-
-                try
-                {
-                    var _scheduleTaskUrl = "http://localhost/schoolsoul/scheduledtaskapi/runtask";
-                    using (var client = new WebClient())
-                    {
-                        client.UploadValues(_scheduleTaskUrl, postData);
-                    }
-                    Console.WriteLine("Call to {0} done well", _scheduleTaskUrl);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
-            });
+                Console.WriteLine(intt);
+            }
             //Console.WriteLine(typeof(string).IsPrimitiveType());
             //Console.WriteLine(typeof(DateTime).IsPrimitiveType());
             //Console.WriteLine(typeof(DateTime?).IsPrimitiveType());
@@ -165,7 +169,6 @@ namespace ConsoleTests
             //    dictionary.Remove(item);
             //    if (++i == count / 2) break;
             //}
-            Console.ReadKey();
             //var t = Type.ReflectionOnlyGetType("NHibernate.HibernateException, NHibernate", false, true);
 
             //var isIt = t != null && typeof(ApplicationException).IsAssignableFrom(t);

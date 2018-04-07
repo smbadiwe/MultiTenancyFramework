@@ -43,18 +43,18 @@ namespace MultiTenancyFramework.Core.TaskManager
 
         private void Run()
         {
-            logger.Log(LoggingLevel.Trace, $"About to run {_tasks.Count} tasks for institution: '{InstitutionCode}'");
+            logger.Trace($"About to run {_tasks.Count} tasks for institution: '{InstitutionCode}'");
 
             if (Seconds <= 0)
             {
-                logger.Log(LoggingLevel.Trace, $"Aborting run prematurely for institution: '{InstitutionCode}': Seconds = {Seconds} <= 0.");
+                logger.Trace($"Aborting run prematurely for institution: '{InstitutionCode}': Seconds = {Seconds} <= 0.");
                 return;
             }
             StartedUtc = DateTime.UtcNow;
             IsRunning = true;
             foreach (var taskType in _tasks)
             {
-                logger.Log(LoggingLevel.Trace, $"About to call api for task: '{taskType.Value}' tasks for institution: '{InstitutionCode}'");
+                logger.Trace($"About to call api for task: '{taskType.Value}' tasks for institution: '{InstitutionCode}'");
 
                 //create and send post data
                 var postData = new NameValueCollection
@@ -69,12 +69,12 @@ namespace MultiTenancyFramework.Core.TaskManager
                     {
                         client.UploadValues(_scheduleTaskUrl, postData);
                     }
-                    logger.Log(LoggingLevel.Trace, $"Back from api call for task: '{taskType.Value}' tasks for institution: '{InstitutionCode}'");
+                    logger.Trace($"Back from api call for task: '{taskType.Value}' tasks for institution: '{InstitutionCode}'");
 
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(LoggingLevel.Error, $"Error running {taskType.Value} for institution '{InstitutionCode}'\n{ex.GetFullExceptionMessage()}\n");
+                    logger.Error($"Error running {taskType.Value} for institution '{InstitutionCode}'\n{ex.GetFullExceptionMessage()}\n");
                 }
 
             }

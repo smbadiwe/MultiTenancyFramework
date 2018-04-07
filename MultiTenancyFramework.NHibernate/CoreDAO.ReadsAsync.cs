@@ -5,6 +5,7 @@ using NHibernate.Criterion;
 using NHibernate.Transform;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +13,15 @@ namespace MultiTenancyFramework.NHibernate
 {
     public partial class CoreDAO<T, idT> : CoreGridPagingDAO<T, idT>, ICoreDAO<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
     {
+        public IQueryable<T> Table
+        {
+            get
+            {
+                var session = BuildSession();
+                return session.Query<T>();
+            }
+        }
+
         public async Task<T> LoadAsync(idT id, CancellationToken token = default(CancellationToken))
         {
             var session = BuildSession();

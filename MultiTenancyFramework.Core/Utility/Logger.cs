@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Web;
 using NLog;
 using Newtonsoft.Json;
+using MultiTenancyFramework.Logic;
 
 namespace MultiTenancyFramework
 {
     public class Logger : ILogger
     {
         private NLog.Logger _logger = LogManager.GetLogger(ConfigurationHelper.AppSettingsItem<string>("AppName") ?? "MultiTenancyFramework");
+        private LogLogic logLogic = new LogLogic();
 
         public void SetLogger(object logger)
         {
@@ -74,22 +75,9 @@ namespace MultiTenancyFramework
                 }
 
                 _logger.Log(GetLogLevel(level), format, args);
+
+                logLogic.InsertLog(_logger.Name, HttpContext.Current, level, string.Format(format, args));
             }
-        }
-
-        public void Log(string format, params object[] args)
-        {
-            Log(LoggingLevel.Debug, format, args);
-        }
-
-        public virtual void Log(string info)
-        {
-            Log(LoggingLevel.Debug, info, null);
-        }
-
-        public virtual void Log(LoggingLevel level, string info)
-        {
-            Log(level, info, null);
         }
 
         public virtual void Log(Exception ex, bool isFatal = false)
@@ -98,13 +86,18 @@ namespace MultiTenancyFramework
             if (ex is System.Threading.ThreadAbortException) return;
             var context = HttpContext.Current;
 
-            LoggerConfigurationManager.LoadConfigFileAndSetLoggerConfigProp(context?.Server);
             bool doNotSendEmail;
             var exMsg = BuildErrorMsg(ex, context, out doNotSendEmail);
 
             if (!string.IsNullOrWhiteSpace(exMsg))
             {
-                _logger.Log(isFatal ? LogLevel.Fatal : LogLevel.Error, exMsg);
+                LoggerConfigurationManager.LoadConfigFileAndSetLoggerConfigProp(context?.Server);
+                var level = isFatal ? LoggingLevel.Fatal : LoggingLevel.Error;
+
+                _logger.Log(GetLogLevel(level), exMsg);
+
+                logLogic.InsertLog(_logger.Name, context, level, ex.Message, exMsg);
+
                 if (false == doNotSendEmail)
                 {
                     try
@@ -117,6 +110,26 @@ namespace MultiTenancyFramework
                     }
                 }
             }
+        }
+
+        public void Log(string format, params object[] args)
+        {
+            Log(LoggingLevel.Debug, format, args);
+        }
+        
+        public void Trace(string format, params object[] args)
+        {
+            Log(LoggingLevel.Trace, format, args);
+        }
+
+        public void Error(string format, params object[] args)
+        {
+            Log(LoggingLevel.Error, format, args);
+        }
+
+        public void Info(string format, params object[] args)
+        {
+            Log(LoggingLevel.Info, format, args);
         }
 
         private string BuildErrorMsg(Exception ex, HttpContext context, out bool doNotSendEmail)
@@ -160,11 +173,11 @@ namespace MultiTenancyFramework
                 Console.WriteLine(exceptionMessage);
                 if (isInfo)
                 {
-                    Trace.TraceInformation(exceptionMessage);
+                    System.Diagnostics.Trace.TraceInformation(exceptionMessage);
                 }
                 else
                 {
-                    Trace.TraceError(exceptionMessage);
+                    System.Diagnostics.Trace.TraceError(exceptionMessage);
                 }
                 if (context == null) context = HttpContext.Current;
                 string logDirectory = LoggerConfigurationManager.LogDirectory;

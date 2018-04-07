@@ -1,11 +1,11 @@
-﻿using System;
-using System.Net;
+﻿using MultiTenancyFramework.Core.TaskManager;
+using MultiTenancyFramework.Logic;
+using System;
 using System.Threading.Tasks;
-using MultiTenancyFramework.Core.TaskManager;
 
 namespace MultiTenancyFramework.Tasks
 {
-    public class KeepAliveTask : IRunnableTask
+    public class ClearLogTask : IRunnableTask
     {
         public ScheduledTask DefaultTaskPlan
         {
@@ -13,9 +13,9 @@ namespace MultiTenancyFramework.Tasks
             {
                 return new ScheduledTask
                 {
-                    Name = "Keep alive",
-                    Seconds = 300,
-                    Type = typeof(KeepAliveTask).AssemblyQualifiedName,
+                    Name = "Clear logs",
+                    Seconds = 2 * 86400, // 2 day
+                    Type = typeof(ClearLogTask).AssemblyQualifiedName,
                     IsDisabled = false,
                     StopOnError = false,
                 };
@@ -32,11 +32,7 @@ namespace MultiTenancyFramework.Tasks
 
         public Task Execute(string institutionCode)
         {
-            using (var client = new WebClient())
-            {
-                client.DownloadStringAsync(new Uri(ConfigurationHelper.GetSiteUrl() + "keepalive/index"));
-            }
-            return Task.CompletedTask;
+            return new LogLogic().ClearLog();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace MultiTenancyFramework.Mvc.MvcUtils
             }
             catch (System.Exception ex)
             {
-                Utilities.Logger.Log("ScheduledTaskApi/RunTask" + ex.GetFullExceptionMessage());
+                Utilities.Logger.Log("ScheduledTaskApi/RunTask: " + ex.GetFullExceptionMessage());
             }
             return new EmptyResult();
         }

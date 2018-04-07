@@ -8,7 +8,7 @@ namespace MultiTenancyFramework.Data
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="idT"></typeparam>
-    public interface ICoreDAO<T, idT> : ICoreReadsDAO<T, idT>, ICoreBulkInsertDAO<T, idT>, ICoreWritesDAO<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
+    public interface ICoreDAO<T, idT> : ICoreReadsDAO<T, idT>, ICoreGridPagingDAO<T, idT>, ICoreBulkInsertDAO<T, idT>, ICoreWritesDAO<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
     {
 
     }

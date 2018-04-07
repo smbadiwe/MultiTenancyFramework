@@ -45,7 +45,7 @@ namespace MultiTenancyFramework.Core.TaskManager
         /// </summary>
         public void Initialize()
         {
-            _logger.Log(LoggingLevel.Trace, $"Initializing task manager. {_taskThreads.Count} task threads will be cleared and new ones built.");
+            _logger.Trace("Initializing task manager. {0} task threads will be cleared and new ones built.", _taskThreads.Count);
             _taskThreads.Clear();
 
             var allInstitutions = MyServiceLocator.GetInstance<IInstitutionDAO>()
@@ -61,7 +61,7 @@ namespace MultiTenancyFramework.Core.TaskManager
                 institutions.Add(new Institution { Code = Utilities.INST_DEFAULT_CODE, Name = "Core" });
                 institutions.AddRange(allInstitutions);
             }
-            _logger.Log(LoggingLevel.Trace, $"Tasks will be queued for {institutions.Count} institutions");
+            _logger.Trace("Tasks will be queued for {0} institutions", institutions.Count);
             foreach (var institution in institutions)
             {
                 try
@@ -69,7 +69,7 @@ namespace MultiTenancyFramework.Core.TaskManager
                     var taskService = new ScheduledTaskEngine(institution.Code);
                     var scheduleTasks = taskService.RetrieveAllActive();
 
-                    _logger.Log(LoggingLevel.Trace, $"{scheduleTasks.Count} task(s) will be queued for '{institution.Name}'");
+                    _logger.Trace("{0} task(s) will be queued for '{1}'", scheduleTasks.Count, institution.Name);
                     if (scheduleTasks.Count > 0)
                     {
                         //group by threads with the same seconds
@@ -110,17 +110,17 @@ namespace MultiTenancyFramework.Core.TaskManager
                             _taskThreads.Add(taskThread);
                         }
 
-                        _logger.Log(LoggingLevel.Trace, $"Done queueing the {scheduleTasks.Count} task(s) for '{institution.Name}'");
+                        _logger.Trace($"Done queueing the {scheduleTasks.Count} task(s) for '{institution.Name}'");
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.Log(LoggingLevel.Error, $"Error while queueing task(s) for '{institution.Name}': \n{ex.GetFullExceptionMessage()}\n");
+                    _logger.Error("Error while queueing task(s) for '{0}': \n{1}\n", institution.Name, ex.GetFullExceptionMessage());
                 }
             }
 
             _isInitialized = true;
-            _logger.Log(LoggingLevel.Trace, $"Done initializing.");
+            _logger.Trace("Done initializing.");
 
         }
 
@@ -133,7 +133,7 @@ namespace MultiTenancyFramework.Core.TaskManager
             {
                 Initialize();
             }
-            _logger.Log(LoggingLevel.Trace, $"Starting up the {_taskThreads.Count} task thread(s).");
+            _logger.Trace($"Starting up the {_taskThreads.Count} task thread(s).");
             foreach (var taskThread in _taskThreads)
             {
                 try
@@ -142,10 +142,10 @@ namespace MultiTenancyFramework.Core.TaskManager
                 }
                 catch (Exception ex)
                 {
-                    _logger.Log(LoggingLevel.Error, $"Error disposing thread: {taskThread} task thread(s).\n{ex.GetFullExceptionMessage()}");
+                    _logger.Error($"Error disposing thread: {taskThread} task thread(s).\n{ex.GetFullExceptionMessage()}");
                 }
             }
-            _logger.Log(LoggingLevel.Trace, $"Done starting up the {_taskThreads.Count} task thread(s).");
+            _logger.Trace($"Done starting up the {_taskThreads.Count} task thread(s).");
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace MultiTenancyFramework.Core.TaskManager
         /// </summary>
         public void Stop()
         {
-            _logger.Log(LoggingLevel.Trace, $"Stopping the {_taskThreads.Count} task thread(s).");
+            _logger.Trace($"Stopping the {_taskThreads.Count} task thread(s).");
             foreach (var taskThread in _taskThreads)
             {
                 try
@@ -162,12 +162,12 @@ namespace MultiTenancyFramework.Core.TaskManager
                 }
                 catch (Exception ex)
                 {
-                    _logger.Log(LoggingLevel.Error, $"Error disposing thread: {taskThread} task thread(s).\n{ex.GetFullExceptionMessage()}");
+                    _logger.Error($"Error disposing thread: {taskThread} task thread(s).\n{ex.GetFullExceptionMessage()}");
                 }
             }
 
             _isInitialized = false;
-            _logger.Log(LoggingLevel.Trace, $"Done stopping the {_taskThreads.Count} task thread(s).");
+            _logger.Trace($"Done stopping the {_taskThreads.Count} task thread(s).");
         }
 
         #endregion

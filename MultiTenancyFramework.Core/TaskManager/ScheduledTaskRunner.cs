@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using MultiTenancyFramework.Tasks;
 
 namespace MultiTenancyFramework.Core.TaskManager
 {
@@ -58,11 +59,11 @@ namespace MultiTenancyFramework.Core.TaskManager
             //update appropriate datetime properties
             await scheduleTaskService.UpdateAsync(ScheduleTask);
 
-            logger.Log(LoggingLevel.Trace, $"ScheduledTaskRunner: Now about to execute [{ScheduleTask.Name}] task");
+            logger.Trace($"ScheduledTaskRunner: Now about to execute [{ScheduleTask.Name}] task");
 
             await task.Execute(ScheduleTask.InstitutionCode);
 
-            logger.Log(LoggingLevel.Trace, $"ScheduledTaskRunner: Done executing [{ScheduleTask.Name}] task");
+            logger.Trace($"ScheduledTaskRunner: Done executing [{ScheduleTask.Name}] task");
 
             ScheduleTask.LastEndUtc = ScheduleTask.LastSuccessUtc = DateTime.UtcNow;
             //update appropriate datetime properties
@@ -126,7 +127,7 @@ namespace MultiTenancyFramework.Core.TaskManager
             }
             catch (Exception exc)
             {
-                logger.Log(LoggingLevel.Error, $"ScheduledTaskRunner: Error while running the '{ScheduleTask.Name}' schedule task:\n{exc.GetFullExceptionMessage()}.\nUpdating schedule task record now.");
+                logger.Error($"ScheduledTaskRunner: Error while running the '{ScheduleTask.Name}' schedule task:\n{exc.GetFullExceptionMessage()}.\nUpdating schedule task record now.");
                 logger.Log(exc);
 
                 var scheduleTaskService = new ScheduledTaskEngine(ScheduleTask.InstitutionCode);
@@ -136,7 +137,7 @@ namespace MultiTenancyFramework.Core.TaskManager
                 await scheduleTaskService.UpdateAsync(ScheduleTask);
 
                 //log error
-                logger.Log(LoggingLevel.Trace, $"ScheduledTaskRunner: Schedule task record [{ScheduleTask.Name}] updated. Aborting...");
+                logger.Trace($"ScheduledTaskRunner: Schedule task record [{ScheduleTask.Name}] updated. Aborting...");
                 if (throwException)
                     throw;
             }

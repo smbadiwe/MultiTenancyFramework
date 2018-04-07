@@ -113,9 +113,9 @@ namespace MultiTenancyFramework
         private static HttpServerUtility _server;
         public static void LoadConfigFileAndSetLoggerConfigProp(HttpServerUtility server)
         {
-            _server = server;
             if (LoggerConfig != null) return;
 
+            _server = server;
             string xmlFilePath = null;
             if (server == null)
             {

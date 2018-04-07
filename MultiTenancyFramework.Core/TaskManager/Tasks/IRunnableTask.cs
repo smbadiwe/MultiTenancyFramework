@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using MultiTenancyFramework.Core.TaskManager;
+using System.Threading.Tasks;
 
-namespace MultiTenancyFramework.Core.TaskManager
+namespace MultiTenancyFramework.Tasks
 {
     public interface IRunnableTask
     {

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MultiTenancyFramework.Core.TaskManager;
+using MultiTenancyFramework.Core.TaskManager.Tasks;
 
-namespace MultiTenancyFramework.Core.TaskManager.Tasks
+namespace MultiTenancyFramework.Tasks
 {
     public class QueuedMessagesSendTask : IRunnableTask
     {
@@ -32,7 +34,7 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
         {
             var logger = Utilities.Logger;
             logger.SetNLogLogger("QueuedMessagesSendTask");
-            logger.Log(LoggingLevel.Trace, "QueuedMessagesSendTask: Executing now...");
+            logger.Trace("QueuedMessagesSendTask: Executing now...");
             try
             {
                 var _queuedEmailService = new QueuedEmailLogic(institutionCode);
@@ -46,7 +48,7 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
                 var processor = Utilities.QueryProcessor;
                 processor.InstitutionCode = institutionCode;
                 var queuedEmails = processor.Process(query);
-                logger.Log(LoggingLevel.Trace, $"QueuedMessagesSendTask: {queuedEmails.DataBatch.Count} queued emails to be processed now");
+                logger.Trace($"QueuedMessagesSendTask: {queuedEmails.DataBatch.Count} queued emails to be processed now");
                 if (queuedEmails.DataBatch.Count == 0) return;
 
                 var emailSender = new EmailSender();
@@ -83,7 +85,7 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
                     }
                     catch (Exception exc)
                     {
-                        logger.Log(LoggingLevel.Error, $"QueuedMessagesSendTask: Error sending e-mail. {exc.Message}.\n{exc.GetFullExceptionMessage()}");
+                        logger.Error($"QueuedMessagesSendTask: Error sending e-mail. {exc.Message}.\n{exc.GetFullExceptionMessage()}");
                     }
                     finally
                     {
@@ -94,7 +96,7 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
             }
             finally
             {
-                logger.Log(LoggingLevel.Trace, "QueuedMessagesSendTask: All done. Winding up now...");
+                logger.Trace("QueuedMessagesSendTask: All done. Winding up now...");
                 logger.SetNLogLogger(null);
             }
         }

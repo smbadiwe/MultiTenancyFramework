@@ -6,7 +6,7 @@ using System.Web;
 namespace MultiTenancyFramework.Mvc
 {
     /// <summary>
-    /// If you're calling this from a controller, use this.WebHelper instead.
+    /// If you're calling this from a controller, use WebHelper instead.
     /// </summary>
     public class WebUtilities
     {
@@ -15,7 +15,8 @@ namespace MultiTenancyFramework.Mvc
         {
             get
             {
-                if (_webHelper == null) _webHelper = new WebHelper(new HttpContextWrapper(HttpContext.Current));
+                // if (_webHelper == null)
+                _webHelper = new WebHelper(new HttpContextWrapper(HttpContext.Current));
                 return _webHelper;
             }
         }
@@ -75,6 +76,6 @@ namespace MultiTenancyFramework.Mvc
         {
             WebHelper.LogOut(auth, logThis);
         }
-        
+
     }
 }

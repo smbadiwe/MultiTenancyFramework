@@ -16,10 +16,10 @@ namespace MultiTenancyFramework.Mvc
             this._settings = settings;
         }
 
-        public virtual Task SendAsync(IdentityMessage message)
+        public virtual async Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
-            if (string.IsNullOrWhiteSpace(message.Body)) return Task.FromResult(false);
+            if (string.IsNullOrWhiteSpace(message.Body)) return;
 
             if (string.IsNullOrWhiteSpace(message.Destination)) message.Destination = _settings.DefaultEmailReceiver;
 
@@ -35,8 +35,9 @@ namespace MultiTenancyFramework.Mvc
                     _settings.DefaultSenderDisplayName = emailMsg.SenderDisplayName;
             }
 
-            return new EmailSender(_settings)
+            await new EmailSender(_settings)
                 .SendEmail(message.Destination, message.Body, emailMsg?.EmailAttachments, ccEmails: emailMsg?.CC, bccEmails: emailMsg?.BCC);
+            
         }
     }
 

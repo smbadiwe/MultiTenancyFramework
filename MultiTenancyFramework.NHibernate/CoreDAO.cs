@@ -18,7 +18,7 @@ namespace MultiTenancyFramework.NHibernate
     /// This holds the minimum data requirements for each entity. It does not include list retrievals and SQL bulk inserts
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class CoreDAO<T> : CoreDAO<T, long>, ICoreDAO<T> where T : class, IBaseEntity<long>
+    public class CoreDAO<T> : CoreDAO<T, long>, ICoreDAO<T>, ICoreGridPagingDAO<T> where T : class, IBaseEntity<long>
     {
 
     }
@@ -28,7 +28,7 @@ namespace MultiTenancyFramework.NHibernate
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="idT"></typeparam>
-    public partial class CoreDAO<T, idT> : CoreGridPagingDAO<T, idT>, ICoreDAO<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
+    public partial class CoreDAO<T, idT> : CoreGridPagingDAO<T, idT>, ICoreDAO<T, idT>, ICoreGridPagingDAO<T, idT> where T : class, IBaseEntity<idT> where idT : IEquatable<idT>
     {
         public void Save(T obj)
         {
