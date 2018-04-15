@@ -1,6 +1,7 @@
 ﻿using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Entities;
 using NHibernate;
+using NHibernate.Linq;
 using NHibernate.Criterion;
 using NHibernate.Transform;
 using System;
@@ -18,7 +19,11 @@ namespace MultiTenancyFramework.NHibernate
             get
             {
                 var session = BuildSession();
-                return session.Query<T>();
+                if (string.IsNullOrWhiteSpace(EntityName))
+                {
+                    return session.Query<T>();
+                }
+                return session.Query<T>(EntityName);
             }
         }
 
@@ -48,27 +53,12 @@ namespace MultiTenancyFramework.NHibernate
         /// <returns></returns>
         public async Task<T> RetrieveOneAsync(CancellationToken token = default(CancellationToken))
         {
-            var session = BuildSession();
-            IQueryOver<T, T> query;
-            if (string.IsNullOrWhiteSpace(EntityName))
-            {
-                query = session.QueryOver<T>();
-            }
-            else
-            {
-                query = session.QueryOver<T>(EntityName);
-            }
-            return await query.Take(1).SingleOrDefaultAsync(token);
+            return await Table.FirstOrDefaultAsync(token);
         }
 
         public async Task<IList<idT>> RetrieveIDsAsync(CancellationToken token = default(CancellationToken))
         {
-            var session = BuildSession();
-            if (string.IsNullOrWhiteSpace(EntityName))
-            {
-                return await session.QueryOver<T>().Select(x => x.Id).ListAsync<idT>(token);
-            }
-            return await session.QueryOver<T>(EntityName).Select(x => x.Id).ListAsync<idT>(token);
+            return await Table.Select(x => x.Id).ToListAsync(token);
         }
 
         public async Task<IList<T>> RetrieveAllAsync(string[] fields = null, CancellationToken token = default(CancellationToken))

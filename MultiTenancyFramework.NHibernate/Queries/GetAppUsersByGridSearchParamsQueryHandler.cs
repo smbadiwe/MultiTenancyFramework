@@ -1,7 +1,7 @@
 ﻿using MultiTenancyFramework.Data;
 using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
-using NHibernate.Criterion;
+using System.Linq;
 
 namespace MultiTenancyFramework.NHibernate.Queries
 {
@@ -15,7 +15,7 @@ namespace MultiTenancyFramework.NHibernate.Queries
         public RetrievedData<AppUser> Handle(GetAppUsersByGridSearchParamsQuery theQuery)
         {
             var session = BuildSession();
-            var query = session.QueryOver<AppUser>(EntityName);
+            var query = session.Query<AppUser>(EntityName);
 
             if (!string.IsNullOrWhiteSpace(theQuery.LastName))
             {
@@ -31,7 +31,7 @@ namespace MultiTenancyFramework.NHibernate.Queries
             }
             if (theQuery.UserRole > 0)
             {
-                query = query.Where(x => x.UserRoles.IsInsensitiveLike($"{theQuery.UserRole},", MatchMode.Anywhere));
+                query = query.Where(x => x.UserRoles.Contains($"{theQuery.UserRole},"));
             }
             return RetrieveUsingPaging(query, theQuery.PageIndex, theQuery.PageSize);
         }

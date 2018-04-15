@@ -1,5 +1,6 @@
 ﻿using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
+using System.Linq;
 
 namespace MultiTenancyFramework.NHibernate.Queries
 {
@@ -14,7 +15,7 @@ namespace MultiTenancyFramework.NHibernate.Queries
         public AppUser Handle(GetAppUserByEmailQuery theQuery)
         {
             var session = BuildSession();
-            var query = session.QueryOver<AppUser>(EntityName)
+            var query = session.Query<AppUser>(EntityName)
                 .Where(x => x.Email == theQuery.Email);
             return query.SingleOrDefault();
         }

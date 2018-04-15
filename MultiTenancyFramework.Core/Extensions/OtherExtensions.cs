@@ -129,5 +129,14 @@ namespace MultiTenancyFramework
 
             return body.Member.Name;
         }
+
+        private static Expression<Func<T, object>> ToLambda<T>(this IQueryable<T> queryable, string propertyName)
+        {
+            var parameter = Expression.Parameter(typeof(T));
+            var property = Expression.Property(parameter, propertyName);
+            var propAsObject = Expression.Convert(property, typeof(object));
+
+            return Expression.Lambda<Func<T, object>>(propAsObject, parameter);
+        }
     }
 }

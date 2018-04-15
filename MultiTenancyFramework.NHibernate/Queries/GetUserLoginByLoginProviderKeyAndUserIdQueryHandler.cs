@@ -1,5 +1,6 @@
 ﻿using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
+using System.Linq;
 
 namespace MultiTenancyFramework.NHibernate.Queries
 {
@@ -8,12 +9,11 @@ namespace MultiTenancyFramework.NHibernate.Queries
         public UserLogin Handle(GetUserLoginByLoginProviderKeyAndUserIdQuery theQuery)
         {
             var session = BuildSession();
-            var query = session.QueryOver<UserLogin>()
-                .Where(x => x.LoginProvider == theQuery.LoginProvider)
-                .And(x => x.ProviderKey == theQuery.ProviderKey);
+            var query = session.Query<UserLogin>()
+                .Where(x => x.LoginProvider == theQuery.LoginProvider && x.ProviderKey == theQuery.ProviderKey);
             if (theQuery.UserID > 0)
             {
-                query = query.And(x => x.UserId == theQuery.UserID);
+                query = query.Where(x => x.UserId == theQuery.UserID);
             }
             return query.SingleOrDefault();
         }

@@ -11,10 +11,10 @@ namespace MultiTenancyFramework.NHibernate.Queries
         {
             var session = BuildSession();
 
-            var list = session.QueryOver<AuditLog>()
+            var query = session.Query<AuditLog>()
                 .Where(x => x.Entity != null)
-                .OrderBy(t => t.Entity).Asc.Select(s => s.Entity).List<string>();
-            return list.Distinct().ToList();
+                .OrderBy(t => t.Entity).Select(s => s.Entity).Distinct();
+            return query.ToList();
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
-using NHibernate.Criterion;
 using System.Collections.Generic;
 using System.Linq;
 

@@ -1,6 +1,7 @@
 ﻿using MultiTenancyFramework.Data.Queries;
 using MultiTenancyFramework.Entities;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MultiTenancyFramework.NHibernate.Queries
 {
@@ -9,8 +10,8 @@ namespace MultiTenancyFramework.NHibernate.Queries
         public IList<UserLogin> Handle(GetUserLoginsByUserIdQuery theQuery)
         {
             var session = BuildSession();
-            var query = session.QueryOver<UserLogin>().Where(x => x.UserId == theQuery.UserId);
-            return query.List();
+            var query = session.Query<UserLogin>().Where(x => x.UserId == theQuery.UserId);
+            return query.ToList();
         }
     }
 }

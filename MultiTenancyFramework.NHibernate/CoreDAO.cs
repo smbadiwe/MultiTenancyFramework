@@ -155,17 +155,7 @@ namespace MultiTenancyFramework.NHibernate
         /// <returns></returns>
         public T RetrieveOne()
         {
-            var session = BuildSession();
-            IQueryOver<T, T> query;
-            if (string.IsNullOrWhiteSpace(EntityName))
-            {
-                query = session.QueryOver<T>();
-            }
-            else
-            {
-                query = session.QueryOver<T>(EntityName);
-            }
-            return query.Take(1).SingleOrDefault();
+            return Table.FirstOrDefault();
         }
         
         public IList<T> RetrieveAll(params string[] fields)
@@ -254,12 +244,7 @@ namespace MultiTenancyFramework.NHibernate
 
         public IList<idT> RetrieveIDs()
         {
-            var session = BuildSession();
-            if (string.IsNullOrWhiteSpace(EntityName))
-            {
-                return session.QueryOver<T>().Select(x => x.Id).List<idT>();
-            }
-            return session.QueryOver<T>(EntityName).Select(x => x.Id).List<idT>();
+            return Table.Select(x => x.Id).ToList();
         }
         
         private IList<T> GetResultUsingProjection(IQueryOver<T, T> query, params string[] fields)
