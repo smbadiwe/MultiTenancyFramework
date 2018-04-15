@@ -94,6 +94,7 @@
     <Compile Include="Entities\UserLogin.cs" />
     <Compile Include="Extensions\CacheExtensions.cs" />
     <Compile Include="Extensions\EntityExtensions.cs" />
+    <Compile Include="Extensions\IQueryableExtensions.cs" />
     <Compile Include="IModelAttribute.cs" />
     <Compile Include="IoC\IoCUtility.cs" />
     <Compile Include="Data\Queries\DbPagingQuery.cs" />
