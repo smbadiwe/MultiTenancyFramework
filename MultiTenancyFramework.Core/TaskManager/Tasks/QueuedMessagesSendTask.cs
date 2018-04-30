@@ -69,17 +69,7 @@ namespace MultiTenancyFramework.Tasks
                     try
                     {
 
-                        await emailSender.SendEmail(queuedEmail.EmailAccount,
-                                queuedEmail.Subject,
-                                queuedEmail.Body,
-                                queuedEmail.Sender,
-                                queuedEmail.SenderName,
-                                queuedEmail.Receivers,
-                                queuedEmail.ReceiverName,
-                                queuedEmail.ReplyTo,
-                                queuedEmail.ReplyToName,
-                                bcc,
-                                cc);
+                        await emailSender.SendEmail(queuedEmail, bcc, cc);
 
                         queuedEmail.SentOnUtc = DateTime.UtcNow;
                     }

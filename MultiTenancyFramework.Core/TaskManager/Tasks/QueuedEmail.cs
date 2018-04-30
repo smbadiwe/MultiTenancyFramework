@@ -95,15 +95,33 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
         /// </summary>
         public virtual DateTime? SentOnUtc { get; set; }
 
-        ///// <summary>
-        ///// Gets or sets the used email account identifier
-        ///// </summary>
-        //public virtual int EmailAccountId { get; set; }
+        /// <summary>
+        /// Gets or sets the used email account identifier
+        /// </summary>
+        public virtual long EmailAccountId { get; set; }
+
+        public virtual EmailAccount EmailAccount { get; set; }
+
+        private EmailAccount _emailAccount;
 
         /// <summary>
         /// Gets the email account
         /// </summary>
-        public virtual EmailAccount EmailAccount { get; set; }
+        public virtual EmailAccount GetEmailAccount()
+        {
+            return _emailAccount;
+        }
+
+        /// <summary>
+        /// Sets the email account.
+        /// </summary>
+        /// <param name="emailAccount">The email account.</param>
+        public virtual void SetEmailAccount(EmailAccount emailAccount)
+        {
+            _emailAccount = emailAccount;
+            if (emailAccount != null)
+                EmailAccountId = emailAccount.Id;
+        }
 
         /// <summary>
         /// Gets or sets the priority

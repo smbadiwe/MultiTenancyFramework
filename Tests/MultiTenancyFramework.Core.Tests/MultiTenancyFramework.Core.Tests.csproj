@@ -56,6 +56,7 @@
     <Compile Include="Extensions\NumberExtensionsTests.cs" />
     <Compile Include="Extensions\OtherExtensionsTests.cs" />
     <Compile Include="Extensions\ReflectionExtensionsTests.cs" />
+    <Compile Include="Extensions\StringExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\EmailerTests.cs" />
   </ItemGroup>

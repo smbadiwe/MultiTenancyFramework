@@ -1,9 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using MultiTenancyFramework;
-using System.Threading.Tasks;
 
 namespace MultiTenancyFramework.Core.Tests.Extensions
 {

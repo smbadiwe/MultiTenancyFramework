@@ -12,7 +12,7 @@ namespace MultiTenancyFramework.NHibernate.TaskManager.Tasks
             mapping.Map(x => x.Receivers).Length(1000);
             mapping.Map(x => x.Subject).Length(1000);
             mapping.Map(x => x.Body).VarCharMax();
-            mapping.References(x => x.EmailAccount).Fetch.Join();
+            //mapping.References(x => x.EmailAccount).Fetch.Join();
         }
     }
 }

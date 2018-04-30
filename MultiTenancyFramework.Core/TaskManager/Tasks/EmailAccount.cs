@@ -8,12 +8,12 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
     public class EmailAccount : BaseEntity, IAmHostedCentrally
     {
         /// <summary>
-        /// Gets or sets an email address
+        /// Gets or sets sender email address
         /// </summary>
         public virtual string Email { get; set; }
 
         /// <summary>
-        /// Gets or sets an email display name
+        /// Gets or sets an email (sender) display name
         /// </summary>
         public virtual string DisplayName { get; set; }
 
@@ -33,24 +33,24 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
         public virtual string DefaultBcc { get; set; }
 
         /// <summary>
-        /// Gets or sets an email host
+        /// Gets or sets the SMTP host.
         /// Default is smtp.gmail.com
         /// </summary>
         public virtual string Host { get; set; } = "smtp.gmail.com";
 
         /// <summary>
-        /// Gets or sets an email port
+        /// Gets or sets the SMTP port.
         /// Default is 587
         /// </summary>
         public virtual int Port { get; set; } = 587;
 
         /// <summary>
-        /// Gets or sets an email user name
+        /// Gets or sets the SMTP user name
         /// </summary>
         public virtual string Username { get; set; }
 
         /// <summary>
-        /// Gets or sets an email password
+        /// Gets or sets the SMTP password
         /// </summary>
         public virtual string Password { get; set; }
 

@@ -115,6 +115,28 @@ namespace MultiTenancyFramework
         /// <summary>
         /// Sends an email. This will crash if anything goes wrong, so if you don't need a crash, swallow it
         /// </summary>
+        /// <param name="queuedEmail">Queued email</param>
+        /// <param name="bcc">BCC addresses list</param>
+        /// <param name="cc">CC addresses list</param>
+        /// <param name="attachmentFilePath">Attachment file path</param>
+        /// <param name="attachmentFileName">Attachment file name. If specified, then this file name will be sent to a recipient. Otherwise, "AttachmentFilePath" name will be used.</param>
+        /// <param name="attachedDownloadId">Attachment download ID (another attachedment)</param>
+        /// <param name="headers">Headers</param>
+        public virtual async Task SendEmail(QueuedEmail queuedEmail,
+            IEnumerable<string> bcc = null, IEnumerable<string> cc = null,
+            IEnumerable<EmailAttachment> attachments = null,
+            int attachedDownloadId = 0, IDictionary<string, string> headers = null)
+        {
+            if (queuedEmail == null)
+                throw new ArgumentNullException("queuedEmail");
+
+            await SendEmail(queuedEmail.GetEmailAccount(), queuedEmail.Subject, queuedEmail.Body, queuedEmail.Sender, queuedEmail.SenderName, queuedEmail.Receivers, queuedEmail.ReceiverName
+                , queuedEmail.ReplyTo, queuedEmail.ReplyToName, bcc, cc, attachments, attachedDownloadId, headers);
+        }
+
+        /// <summary>
+        /// Sends an email. This will crash if anything goes wrong, so if you don't need a crash, swallow it
+        /// </summary>
         /// <param name="emailAccount">Email account to use</param>
         /// <param name="subject">Subject</param>
         /// <param name="body">Body</param>
@@ -140,7 +162,9 @@ namespace MultiTenancyFramework
 
             if (emailAccount == null)
             {
-                emailAccount = await new EmailAccountLogic().GetDefaultAccount();
+                emailAccount = await new EmailAccountLogic().GetDefaultAccountAsync();
+                if (emailAccount == null)
+                    throw new ArgumentNullException("emailAccount");
             }
             if (string.IsNullOrWhiteSpace(fromAddress))
             {
@@ -253,16 +277,17 @@ namespace MultiTenancyFramework
             #endregion
 
             //send email
-            using (var smtpClient = new SmtpClient())
+            using (var smtpClient = new SmtpClient
             {
-                smtpClient.UseDefaultCredentials = emailAccount.UseDefaultCredentials;
-                smtpClient.Host = emailAccount.Host;
-                smtpClient.Port = emailAccount.Port;
-                smtpClient.EnableSsl = emailAccount.EnableSsl;
-                smtpClient.Credentials = emailAccount.UseDefaultCredentials ?
+                UseDefaultCredentials = emailAccount.UseDefaultCredentials,
+                Host = emailAccount.Host,
+                Port = emailAccount.Port,
+                EnableSsl = emailAccount.EnableSsl,
+                Credentials = emailAccount.UseDefaultCredentials ?
                     CredentialCache.DefaultNetworkCredentials :
-                    new NetworkCredential(emailAccount.Username, emailAccount.Password);
-
+                    new NetworkCredential(emailAccount.Username, emailAccount.Password),
+            })
+            {
                 ServicePointManager.ServerCertificateValidationCallback = (obj, cert, chain, policy) => true;
 
                 await smtpClient.SendMailAsync(message);

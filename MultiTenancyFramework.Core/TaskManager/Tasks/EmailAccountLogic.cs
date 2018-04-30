@@ -16,6 +16,12 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
 
         }
 
+        public async Task SendTestEmail(EmailAccount account, string email)
+        {
+            var sender = new EmailSender();
+            await sender.SendEmail(account, "Test Email", "This is a test email. If you received it, then the email account setup is working fine.", email, string.Empty);
+        }
+
         // This list is not usually long; usually less than 10.
         // So it's OK with me to sort it in memory.
         public override IList<EmailAccount> RetrieveAllActive(params string[] fields)
@@ -97,7 +103,15 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
                 || x.Scope == EmailAccountScope.Default);
         }
 
-        public async Task<EmailAccount> GetDefaultAccount()
+        public EmailAccount GetDefaultAccount()
+        {
+            var accounts = RetrieveAllActive();
+
+            return accounts?.FirstOrDefault(x =>
+                x.Scope == EmailAccountScope.Default);
+        }
+
+        public async Task<EmailAccount> GetDefaultAccountAsync()
         {
             var accounts = await RetrieveAllActiveAsync();
 
