@@ -10,8 +10,13 @@ namespace MultiTenancyFramework
 {
     public class Logger : ILogger
     {
-        private NLog.Logger _logger = LogManager.GetLogger(ConfigurationHelper.AppSettingsItem<string>("AppName") ?? "MultiTenancyFramework");
-        private LogLogic logLogic = new LogLogic();
+        private NLog.Logger _logger;
+        private bool _logToDb;
+        public Logger()
+        {
+            _logger = LogManager.GetLogger(ConfigurationHelper.AppSettingsItem<string>("AppName") ?? "MultiTenancyFramework");
+            _logToDb = true;
+        }
 
         public void SetLogger(object logger)
         {
@@ -24,26 +29,6 @@ namespace MultiTenancyFramework
             else
             {
                 _logger = LogManager.GetLogger(ConfigurationHelper.AppSettingsItem<string>("AppName") ?? "MultiTenancyFramework");
-            }
-        }
-
-        private LogLevel GetLogLevel(LoggingLevel level)
-        {
-            switch (level)
-            {
-                case LoggingLevel.Debug:
-                    return LogLevel.Debug;
-                case LoggingLevel.Error:
-                    return LogLevel.Error;
-                case LoggingLevel.Info:
-                    return LogLevel.Info;
-                case LoggingLevel.Warn:
-                    return LogLevel.Warn;
-                case LoggingLevel.Fatal:
-                    return LogLevel.Fatal;
-                case LoggingLevel.Trace:
-                default:
-                    return LogLevel.Trace;
             }
         }
 
@@ -79,7 +64,10 @@ namespace MultiTenancyFramework
 
                 _logger.Log(loglevel, format, args);
 
-                logLogic.InsertLog(_logger.Name, HttpContext.Current, level, string.Format(format, args));
+                if (_logToDb)
+                {
+                    new LogLogic().InsertLog(_logger.Name, HttpContext.Current, level, string.Format(format, args));
+                }
             }
         }
 
@@ -99,8 +87,11 @@ namespace MultiTenancyFramework
 
                 _logger.Log(GetLogLevel(level), exMsg);
 
-                logLogic.InsertLog(_logger.Name, context, level, ex.Message, exMsg);
-
+                if (_logToDb)
+                {
+                    new LogLogic().InsertLog(_logger.Name, context, level, ex.Message, exMsg);
+                }
+                
                 if (false == doNotSendEmail)
                 {
                     try
@@ -133,6 +124,11 @@ namespace MultiTenancyFramework
         public void Info(string format, params object[] args)
         {
             Log(LoggingLevel.Info, format, args);
+        }
+
+        public void LogToDb(bool saveToDb)
+        {
+            _logToDb = saveToDb;
         }
 
         private string BuildErrorMsg(Exception ex, HttpContext context, out bool doNotSendEmail)
@@ -207,6 +203,26 @@ namespace MultiTenancyFramework
                 }
             }
             catch { }
+        }
+
+        private LogLevel GetLogLevel(LoggingLevel level)
+        {
+            switch (level)
+            {
+                case LoggingLevel.Debug:
+                    return LogLevel.Debug;
+                case LoggingLevel.Error:
+                    return LogLevel.Error;
+                case LoggingLevel.Info:
+                    return LogLevel.Info;
+                case LoggingLevel.Warn:
+                    return LogLevel.Warn;
+                case LoggingLevel.Fatal:
+                    return LogLevel.Fatal;
+                case LoggingLevel.Trace:
+                default:
+                    return LogLevel.Trace;
+            }
         }
 
     }

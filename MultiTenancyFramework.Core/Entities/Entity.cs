@@ -71,7 +71,7 @@ namespace MultiTenancyFramework.Entities
 
         public override int GetHashCode()
         {
-            var code = Id.GetHashCode() + base.GetHashCode();
+            var code = Id.GetHashCode(); // + base.GetHashCode();
             if (string.IsNullOrWhiteSpace(InstitutionCode)) code += InstitutionCode.GetHashCode();
             return code;
         }

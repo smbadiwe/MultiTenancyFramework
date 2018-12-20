@@ -9,15 +9,15 @@ using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Cfg.ConfigurationSchema;
 using NHibernate.Event;
+using NHibernate.Engine;
+using NHibernate.Type;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Caching;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Web;
@@ -368,11 +368,17 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             return null;
         }
 
-        internal static ISessionFactory Init(string cfgFile, string sessionKey, IDictionary<string, string> cfgProperties = null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cfgFile"></param>
+        /// <param name="instCode">The modified Institution Code; will be 'Utilities.INST_DEFAULT_CODE' if not tenant</param>
+        /// <param name="cfgProperties"></param>
+        /// <returns></returns>
+        internal static ISessionFactory Init(string cfgFile, string instCode, IDictionary<string, string> cfgProperties = null)
         {
             Configuration cfg = ConfigureNHibernate(cfgFile, cfgProperties);
-
-            string instCode = sessionKey.Split('_')[0];
+            
             AutoPersistenceModel autoPersistenceModel = AddMappingAssembliesTo(instCode, cfg);
 
             autoPersistenceModel.Conventions.Add<ClassMappingConvention>();
@@ -406,6 +412,8 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             }
         }
 
+        private static ILogger logger = Utilities.Logger;
+
         /// <summary>
         /// 
         /// </summary>
@@ -413,7 +421,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         /// <param name="sessionKey"></param>
         private static ISessionFactory BuildFactory(string instCode, string sessionKey)
         {
-            var logger = Utilities.Logger;
+            logger.LogToDb(false);
             logger.Log("Building session factory for {0} with key: {1}...", instCode, sessionKey);
             try
             {
@@ -425,7 +433,8 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                     DatabaseConnection dbConn = null;
                     if (institution.DatabaseConnectionId > 0)
                     {
-                        dbConn = new CoreDAO<DatabaseConnection>().Retrieve(institution.DatabaseConnectionId);
+                        dbConn = new CoreDAO<DatabaseConnection>() { InstitutionCode = null }
+                        .Retrieve(institution.DatabaseConnectionId);
                     }
                     if (dbConn == null)
                     {
@@ -450,14 +459,16 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                         SessionFactories[instCode] = fac;
                         return fac;
                     }
-                    var cfgProps = new Dictionary<string, string>();
-                    cfgProps.Add(Environment.ConnectionString, dbConn.ConnectionString);
+                    var cfgProps = new Dictionary<string, string>
+                    {
+                        { Environment.ConnectionString, dbConn.ConnectionString }
+                    };
 
-                    return Init(null, sessionKey, cfgProps);
+                    return Init(null, instCode, cfgProps);
                 }
                 else
                 {
-                    return Init(null, sessionKey);
+                    return Init(null, instCode);
                 }
             }
             catch (Exception ex) // I just want to make sure I caught and logged the error
@@ -484,8 +495,10 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 throw new HibernateConfigException("Cannot process NHibernate Section in config file.");
             }
 
-            var mappingAssemblies = new HashSet<string>();
-            mappingAssemblies.Add(ThisAssembly); // Add yourself
+            var mappingAssemblies = new HashSet<string>
+            {
+                ThisAssembly // Add yourself
+            };
 
             // Check for automap overrides, ClassMap<> or .hbm type mapping files
             if (hc.SessionFactory != null)
@@ -596,16 +609,27 @@ namespace MultiTenancyFramework.NHibernate.NHManager
                 cfg.Properties.Remove(Environment.DefaultSchema);
             }
 #if DEBUG
-            cfg.Properties.Add(Environment.UseSqlComments, "true");
-            cfg.Properties.Add(Environment.ShowSql, "true");
-            cfg.Properties.Add(Environment.FormatSql, "true");
-            cfg.Properties.Add(Environment.GenerateStatistics, "true");
+            if (!cfg.Properties.ContainsKey(Environment.UseSqlComments))
+                cfg.Properties.Add(Environment.UseSqlComments, "true");
+            if (!cfg.Properties.ContainsKey(Environment.ShowSql))
+                cfg.Properties.Add(Environment.ShowSql, "true");
+            if (!cfg.Properties.ContainsKey(Environment.FormatSql))
+                cfg.Properties.Add(Environment.FormatSql, "true");
+            if (!cfg.Properties.ContainsKey(Environment.GenerateStatistics))
+                cfg.Properties.Add(Environment.GenerateStatistics, "true");
 #endif
-            cfg.Properties.Add(Environment.ConnectionProvider, "NHibernate.Connection.DriverConnectionProvider");
-            cfg.Properties.Add(Environment.Isolation, "ReadCommitted");
-            cfg.Properties.Add(Environment.ProxyFactoryFactoryClass, "NHibernate.Bytecode.DefaultProxyFactoryFactory, NHibernate");
-            cfg.Properties.Add(Environment.CurrentSessionContextClass, "web");
+            if (!cfg.Properties.ContainsKey(Environment.ConnectionProvider))
+                cfg.Properties.Add(Environment.ConnectionProvider, "NHibernate.Connection.DriverConnectionProvider");
 
+            if (!cfg.Properties.ContainsKey(Environment.Isolation))
+                cfg.Properties.Add(Environment.Isolation, "ReadCommitted");
+
+            if (!cfg.Properties.ContainsKey(Environment.ProxyFactoryFactoryClass))
+                cfg.Properties.Add(Environment.ProxyFactoryFactoryClass, "NHibernate.Bytecode.DefaultProxyFactoryFactory, NHibernate");
+
+            if (!cfg.Properties.ContainsKey(Environment.CurrentSessionContextClass))
+                cfg.Properties.Add(Environment.CurrentSessionContextClass, "web");
+            
             return cfg;
         }
 

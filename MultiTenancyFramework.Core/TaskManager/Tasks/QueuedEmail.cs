@@ -100,7 +100,7 @@ namespace MultiTenancyFramework.Core.TaskManager.Tasks
         /// </summary>
         public virtual long EmailAccountId { get; set; }
 
-        public virtual EmailAccount EmailAccount { get; set; }
+        // public virtual EmailAccount EmailAccount { get; set; }
 
         private EmailAccount _emailAccount;
 

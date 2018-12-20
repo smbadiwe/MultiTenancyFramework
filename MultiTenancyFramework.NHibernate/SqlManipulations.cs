@@ -31,6 +31,7 @@ namespace MultiTenancyFramework.NHibernate
         /// <param name="entityName"></param>
         /// <param name="isDataMigration">For SQL Server: if true, then we need to Keep Identity</param>
         /// <param name="schema">For SQL Server: To be appended to the table name</param>
+        [Obsolete("Use the async/await version instead.")]
         public static void SqlBulkInsert(Type TType, IList items, IDbConnection connection, string tableName, string entityName = null, bool isDataMigration = false, string schema = "dbo")
         {
             if (items == null) return;

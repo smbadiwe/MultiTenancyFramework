@@ -71,9 +71,9 @@ namespace MultiTenancyFramework
         /// <exception cref="GeneralException"></exception>
         public virtual string GetInstitutionCode(out bool requestAvailable)
         {
-            string core = Utilities.INST_DEFAULT_CODE;
             if (IsRequestAvailable(_httpContext))
             {
+                string core = Utilities.INST_DEFAULT_CODE;
                 requestAvailable = true;
                 string instCode;
                 var httpSession = _httpContext.Session;
@@ -82,7 +82,7 @@ namespace MultiTenancyFramework
                 {
                     // This can happen when we invoke this before MVC is activated.
                     #region Pre-MVC 
-                    if (routeData.ContainsKey("institution"))
+                    if (routeData != null && routeData.ContainsKey("institution"))
                     {
                         return Convert.ToString(routeData["institution"]);
                     }

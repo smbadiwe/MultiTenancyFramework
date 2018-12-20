@@ -13,6 +13,7 @@ namespace MultiTenancyFramework.NHibernate.Queries
 
         public Institution Handle(GetInstitutionByCodeQuery theQuery)
         {
+            InstitutionCode = null;
             var session = BuildSession();
             var query = session.Query<Institution>(EntityName).Where(x => x.Code == theQuery.Code);
             return query.SingleOrDefault();

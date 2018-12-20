@@ -4,6 +4,8 @@ namespace MultiTenancyFramework
 {
     public interface ILogger
     {
+        void LogToDb(bool saveToDb);
+
         void SetLogger(object logger);
 
         void Log(Exception ex, bool isFatal = false);

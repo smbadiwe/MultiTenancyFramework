@@ -59,7 +59,7 @@ namespace MultiTenancyFramework.NHibernate
 
         public void TakeOutPermanently(T obj)
         {
-            Delete(obj);
+            RunDirectQuery(string.Format("DELETE FROM {0} WHERE Id = {1};", obj.GetTableName(), obj.Id));
         }
 
         public void Update(T obj)

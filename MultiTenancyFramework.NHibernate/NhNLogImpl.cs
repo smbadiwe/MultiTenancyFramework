@@ -4,24 +4,20 @@ using NLog;
 
 namespace MultiTenancyFramework.NHibernate
 {
-    public class NLogFactory : ILoggerFactory
+    public class NLogFactory : INHibernateLoggerFactory
     {
-        #region ILoggerFactory Members
-
-        public IInternalLogger LoggerFor(Type type)
-        {
-            return new NLogLogger(LogManager.GetLogger(type.FullName));
-        }
-
-        public IInternalLogger LoggerFor(string keyName)
+        public INHibernateLogger LoggerFor(string keyName)
         {
             return new NLogLogger(LogManager.GetLogger(keyName));
         }
 
-        #endregion
+        public INHibernateLogger LoggerFor(Type type)
+        {
+            return new NLogLogger(LogManager.GetLogger(type.FullName));
+        }
     }
 
-    public class NLogLogger : IInternalLogger
+    public class NLogLogger : INHibernateLogger
     {
         private readonly NLog.Logger logger;
 
@@ -29,107 +25,64 @@ namespace MultiTenancyFramework.NHibernate
         {
             this.logger = logger;
         }
-
-        #region Properties
-
-        public bool IsDebugEnabled { get { return logger.IsDebugEnabled; } }
-
-        public bool IsErrorEnabled { get { return logger.IsErrorEnabled; } }
-
-        public bool IsFatalEnabled { get { return logger.IsFatalEnabled; } }
-
-        public bool IsInfoEnabled { get { return logger.IsInfoEnabled; } }
-
-        public bool IsWarnEnabled { get { return logger.IsWarnEnabled; } }
-
-        #endregion
-
-        #region IInternalLogger Methods
-
-        public void Debug(object message, Exception exception)
+        
+        public bool IsEnabled(NHibernateLogLevel logLevel)
         {
-            if (message != null && exception != null)
-                logger.Debug(exception, message.ToString());
+            switch (logLevel)
+            {
+                case NHibernateLogLevel.Debug:
+                    return logger.IsDebugEnabled;
+                case NHibernateLogLevel.Error:
+                    return logger.IsErrorEnabled;
+                case NHibernateLogLevel.Info:
+                    return logger.IsInfoEnabled;
+                case NHibernateLogLevel.Fatal:
+                    return logger.IsFatalEnabled;
+                case NHibernateLogLevel.Trace:
+                    return logger.IsTraceEnabled;
+                case NHibernateLogLevel.Warn:
+                    return logger.IsWarnEnabled;
+                default:
+                    return false;
+            }
         }
 
-        public void Debug(object message)
+        public void Log(NHibernateLogLevel logLevel, NHibernateLogValues state, Exception exception)
         {
-            if (message != null)
-                logger.Debug(message.ToString());
-        }
+            LogLevel level;
+            switch (logLevel)
+            {
+                case NHibernateLogLevel.Debug:
+                    level = LogLevel.Debug;
+                    break;
+                case NHibernateLogLevel.Error:
+                    level = LogLevel.Error;
+                    break;
+                case NHibernateLogLevel.Info:
+                    level = LogLevel.Info;
+                    break;
+                case NHibernateLogLevel.Fatal:
+                    level = LogLevel.Fatal;
+                    break;
+                case NHibernateLogLevel.Trace:
+                    level = LogLevel.Trace;
+                    break;
+                case NHibernateLogLevel.Warn:
+                    level = LogLevel.Warn;
+                    break;
+                default:
+                    level = LogLevel.Debug;
+                    break;
+            }
 
-        public void DebugFormat(string format, params object[] args)
-        {
-            if (!string.IsNullOrWhiteSpace(format))
-                logger.Debug(format, args);
+            if (exception is null)
+            {
+                logger.Log(level, state.Format, state.Args);
+            }
+            else
+            {
+                logger.Log(level, exception, state.Format, state.Args);
+            }
         }
-
-        public void Error(object message, Exception exception)
-        {
-            if (message != null && exception != null)
-                logger.Error(exception, message.ToString());
-        }
-
-        public void Error(object message)
-        {
-            if (message != null)
-                logger.Error(message.ToString());
-        }
-
-        public void ErrorFormat(string format, params object[] args)
-        {
-            if (!string.IsNullOrWhiteSpace(format))
-                logger.Error(format, args);
-        }
-
-        public void Fatal(object message, Exception exception)
-        {
-            if (message != null && exception != null)
-                logger.Fatal(exception, message.ToString());
-        }
-
-        public void Fatal(object message)
-        {
-            if (message != null)
-                logger.Fatal(message.ToString());
-        }
-
-        public void Info(object message, Exception exception)
-        {
-            if (message != null && exception != null)
-                logger.Info(exception, message.ToString());
-        }
-
-        public void Info(object message)
-        {
-            if (message != null)
-                logger.Info(message.ToString());
-        }
-
-        public void InfoFormat(string format, params object[] args)
-        {
-            if (!string.IsNullOrWhiteSpace(format))
-                logger.Info(format, args);
-        }
-
-        public void Warn(object message, Exception exception)
-        {
-            if (message != null && exception != null)
-                logger.Warn(exception, message.ToString());
-        }
-
-        public void Warn(object message)
-        {
-            if (message != null)
-                logger.Warn(message.ToString());
-        }
-
-        public void WarnFormat(string format, params object[] args)
-        {
-            if (!string.IsNullOrWhiteSpace(format))
-                logger.Warn(format, args);
-        }
-
-        #endregion
     }
 }
