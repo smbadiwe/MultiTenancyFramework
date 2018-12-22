@@ -92,7 +92,7 @@ namespace MultiTenancyFramework
                     url = url.Replace(siteUrl, string.Empty);
                     if (string.IsNullOrWhiteSpace(url)) return core;
 
-                    var segments = url.Split('/');
+                    var segments = url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                     switch (segments.Length)
                     {
                         // This code HEAVILY relies on the url templates setup in
@@ -391,6 +391,10 @@ namespace MultiTenancyFramework
                 var qsStart = url.IndexOf('?');
                 if (qsStart > -1)
                     url = url.Substring(0, qsStart);
+
+                // append the final backslash
+                if (!url.EndsWith("/"))
+                    url = url + "/";
             }
 
             return url;

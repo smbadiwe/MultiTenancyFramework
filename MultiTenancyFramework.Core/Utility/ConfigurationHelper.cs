@@ -86,6 +86,10 @@ namespace MultiTenancyFramework
             return result;
         }
 
+        /// <summary>
+        /// The returned value will always end with a '/' and will have no query strings
+        /// </summary>
+        /// <returns></returns>
         public static string GetSiteUrl()
         {
             var url = AppSettingsItem<string>("SiteUrl") ?? string.Empty;
