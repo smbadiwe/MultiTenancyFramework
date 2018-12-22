@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>1.0.0.12</version>
+    <version>1.0.0.13</version>
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
@@ -13,9 +13,9 @@
     <copyright>$copyright$</copyright>
     <tags>SaaS MultiTenant MultiTenancy Framework Software-as-a-Service MVC5 NHibernate FluentNHibernate</tags>
     <dependencies>
-      <dependency id="MultiTenancyFramework.Core" version="1.0.0.12" />
-      <dependency id="MultiTenancyFramework.Mvc" version="1.0.0.12" />
-      <dependency id="MultiTenancyFramework.NHibernate" version="1.0.0.12" />
+      <dependency id="MultiTenancyFramework.Core" version="1.0.0.13" />
+      <dependency id="MultiTenancyFramework.Mvc" version="1.0.0.13" />
+      <dependency id="MultiTenancyFramework.NHibernate" version="1.0.0.13" />
     </dependencies>
   </metadata>
   <files>
