@@ -109,11 +109,14 @@ namespace MultiTenancyFramework.Mvc
             });
         }
 
-        public virtual ActionResult ViewNotFound()
+        public virtual ActionResult ViewNotFound(string msg, string url)
         {
-            return View(SharedErrorViewName, new ErrorMessageModel("Looks like the view for the requested action is not available or under construction")
+            if (string.IsNullOrWhiteSpace(msg))
+                msg = "Looks like the view for the requested action is not available or under construction";
+            return View(SharedErrorViewName, new ErrorMessageModel(msg)
             {
-                ResponseCode = HttpStatusCode.ServiceUnavailable
+                ResponseCode = HttpStatusCode.ServiceUnavailable,
+                FromUrl = url
             });
         }
 

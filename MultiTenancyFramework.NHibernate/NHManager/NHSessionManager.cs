@@ -297,9 +297,12 @@ namespace MultiTenancyFramework.NHibernate.NHManager
 
             if (session != null)
             {
-                session.EnableFilter(Utilities.InstitutionFilterName)
+                if (!ConfigurationHelper.AppSettingsItem<bool>("SingleTenant"))
+                {
+                    session.EnableFilter(Utilities.InstitutionFilterName)
                     .SetParameter(Utilities.InstitutionCodeQueryParamName, institutionCode)
                     .SetParameter(Utilities.SoftDeleteParamName, true);
+                }
                 session.FlushMode = FlushMode.Commit;
                 //Begin a transaction
                 if (!session.IsConnected || session.Transaction == null || !session.Transaction.IsActive || session.Transaction.WasCommitted || session.Transaction.WasRolledBack) //if (storage is WebSessionStorage)

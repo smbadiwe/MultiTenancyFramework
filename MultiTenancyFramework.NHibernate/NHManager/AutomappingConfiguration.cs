@@ -1,20 +1,24 @@
-﻿using FluentNHibernate.Automapping;
-using System;
-using System.Reflection;
-using System.ComponentModel.DataAnnotations.Schema;
-using FluentNHibernate;
-using MultiTenancyFramework.Entities;
-using System.Collections.Generic;
-using System.Linq;
+﻿using FluentNHibernate;
+using FluentNHibernate.Automapping;
 using FluentNHibernate.Mapping;
-using MultiTenancyFramework;
+using MultiTenancyFramework.Entities;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Reflection;
 
 namespace MultiTenancyFramework.NHibernate.NHManager
 {
     public class AutomappingConfiguration : DefaultAutomappingConfiguration
     {
         private Type[] searchableTypes;
-
+        private readonly bool isSingleTenant;
+        public AutomappingConfiguration()
+        {
+            isSingleTenant = ConfigurationHelper.AppSettingsItem<bool>("SingleTenant");
+            searchableTypes = null;
+        }
         /// <summary>
         /// Gets potential types derived from ClassMap
         /// <para>UPDATE: This method will usually not be needed as Fluent NHibernate handles this well for us.</para>
@@ -34,12 +38,17 @@ namespace MultiTenancyFramework.NHibernate.NHManager
         {
             var shouldMap = base.ShouldMap(type) && !type.IsGenericType && !type.IsAbstract
                 && typeof(IBaseEntity).IsAssignableFrom(type);
-            if (shouldMap && searchableTypes != null && searchableTypes.Length > 0)
+            if (shouldMap)
             {
-                // Check if the entity is already explicitly mapped and exclude it here
-                var classMapExists = searchableTypes.Any(x => IsDefinedClassMapOfEntity(x, type));
+                if (searchableTypes != null && searchableTypes.Length > 0)
+                {
+                    // Check if the entity is already explicitly mapped and exclude it here
+                    var classMapExists = searchableTypes.Any(x => IsDefinedClassMapOfEntity(x, type));
 
-                return !classMapExists;
+                    return !classMapExists;
+                }
+
+                if (isSingleTenant && (type == typeof(Institution) || type == typeof(Maps.InstitutionMap))) return false;
             }
             return shouldMap;
         }
@@ -50,10 +59,13 @@ namespace MultiTenancyFramework.NHibernate.NHManager
             if (base.ShouldMap(member) && member.CanWrite
                 && member.MemberInfo.GetCustomAttribute<NotMappedAttribute>() == null)
             {
+                // Don't map institution code property if this is a single-tenant app
+                if (isSingleTenant && member.Name == "InstitutionCode") return false;
+
                 // Check if the property is overridden in a child class. 
                 // If it is, return false, otherwise, return true.
                 // The idea is that if this property is overridden, then we'll map it in the parent class.
-                return false == (member.MemberInfo as PropertyInfo).IsOverridden();
+                if ((member.MemberInfo as PropertyInfo).IsOverridden()) return false;
             }
             return false;
         }

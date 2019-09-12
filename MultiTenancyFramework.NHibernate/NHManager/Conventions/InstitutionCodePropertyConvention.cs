@@ -7,10 +7,13 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Conventions
     {
         public void Apply(IPropertyInstance instance)
         {
-            Entities.BaseEntity e;
-            if (instance.Name == nameof(e.InstitutionCode) && instance.Property.PropertyType == typeof(string))
+            if (!ConfigurationHelper.AppSettingsItem<bool>("SingleTenant"))
             {
-                instance.Index("ind_InstitutionCode");
+                Entities.BaseEntity e;
+                if (instance.Name == nameof(e.InstitutionCode) && instance.Property.PropertyType == typeof(string))
+                {
+                    instance.Index("ind_InstitutionCode");
+                }
             }
         }
 

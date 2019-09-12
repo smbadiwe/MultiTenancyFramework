@@ -16,6 +16,7 @@ namespace MultiTenancyFramework.NHibernate.NHManager.Conventions
             }
             instance.Table(tableName);
             //To filter queries based on what I've defined in the Tenant filter definition
+
             instance.ApplyFilter<AppFilterDefinition>();
         }
     }

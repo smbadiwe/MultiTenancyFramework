@@ -48,7 +48,11 @@ namespace MultiTenancyFramework.Mvc
                     if (filterContext.Exception is InvalidOperationException && filterContext.Exception.Message.Contains("The view '~/Views"))
                     {
                         isFatal = true;
-                        filterContext.Result = MvcUtility.GetPageResult("ViewNotFound", "Error", "", instCode);
+                        filterContext.Result = MvcUtility.GetPageResult("ViewNotFound", "Error", "", instCode,
+                            new System.Collections.Generic.Dictionary<string, object> {
+                                { "msg", filterContext.Exception.Message },
+                                { "url", filterContext.HttpContext.Request.RawUrl }
+                            });
                         return;
                     }
 
