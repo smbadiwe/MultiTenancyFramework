@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<package >
+﻿<?xml version="1.0"?>
+<package>
   <metadata>
     <id>$id$</id>
     <version>1.0.0.13</version>
@@ -11,10 +11,6 @@
     <description>$description$</description>
     <releaseNotes>Read more at https://github.com/smbadiwe/MultiTenancyFramework/wiki. Drop a note if need be.</releaseNotes>
     <copyright>Copyright 2016</copyright>
-    <tags>SaaS MultiTenant MultiTenancy Framework Software-as-a-Service MVC5</tags>
-    <dependencies>
-      <dependency id="MultiTenancyFramework.Core" version="1.0.0.13" />
-      <dependency id="MultiTenancyFramework.Utils" version="1.0.0.13" />
-    </dependencies>
+    <tags>SaaS MultiTenant MultiTenancy Framework Software-as-a-Service</tags>
   </metadata>
 </package>

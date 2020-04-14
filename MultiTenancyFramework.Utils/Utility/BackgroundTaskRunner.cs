@@ -13,8 +13,9 @@ namespace MultiTenancyFramework
         /// </summary>
         /// <param name="action">The action.</param>
         /// <param name="errorHandler">The error handler.</param>
-        /// <exception cref="System.ArgumentNullException">task</exception>
-        public static void Run(Action action, Action<Exception> errorHandler = null)
+        /// <param name="logger">instance of ILogger.</param>
+        /// <exception cref="ArgumentNullException">task</exception>
+        public static void Run(Action action, Action<Exception> errorHandler = null, ILogger logger = null)
         {
             if (action == null)
                 throw new ArgumentNullException("task");
@@ -22,6 +23,17 @@ namespace MultiTenancyFramework
             var task = Task.Run(action);
             if (errorHandler == null)
             {
+                Action<Task> DefaultErrorContinuation = (t) =>
+                {
+                    try
+                    {
+                        if (logger != null && t.Exception != null)
+                            logger.Log(t.Exception.GetBaseException());
+                        t.Wait();
+                    }
+                    catch { }
+                };
+
                 task.ContinueWith(DefaultErrorContinuation,
                     TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.OnlyOnFaulted);
             }
@@ -33,15 +45,5 @@ namespace MultiTenancyFramework
             }
         }
 
-        private static void DefaultErrorContinuation(Task t)
-        {
-            try
-            {
-                if (t.Exception != null)
-                    Utilities.Logger.Log(t.Exception.GetBaseException());
-                t.Wait();
-            }
-            catch { }
-        }
     }
 }

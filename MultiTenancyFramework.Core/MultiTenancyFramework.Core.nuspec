@@ -12,6 +12,10 @@
     <releaseNotes>Read more at https://github.com/smbadiwe/MultiTenancyFramework/wiki. Drop a note if need be.</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>SaaS MultiTenant MultiTenancy Framework Software-as-a-Service</tags>
+
+    <dependencies>
+      <dependency id="MultiTenancyFramework.Utils" version="1.0.0.13" />
+    </dependencies>
   </metadata>
   <files>
     <file src=".\bin\ReleasePackage\MultiTenancyFramework.Core.dll" target="lib\net45" />

@@ -15,6 +15,28 @@ namespace MultiTenancyFramework
 {
     public static class EntityExtensionsMvc
     {
+        public static Mvc.UsernameAndPasswordRule ToMvcVersion(this Entities.UsernameAndPasswordRule rule)
+        {
+            var result = new Mvc.UsernameAndPasswordRule();
+            var ot = rule.GetType();
+            foreach (var prop in result.GetType().GetProperties())
+            {
+                prop.SetValue(result, ot.GetProperty(prop.Name), null);
+            }
+            return result;
+        }
+
+        public static Entities.UsernameAndPasswordRule ToEntityVersion(this Mvc.UsernameAndPasswordRule rule)
+        {
+            var result = new Entities.UsernameAndPasswordRule();
+            var ot = rule.GetType();
+            foreach (var prop in result.GetType().GetProperties())
+            {
+                prop.SetValue(result, ot.GetProperty(prop.Name), null);
+            }
+            return result;
+        }
+
         public static async Task<ClaimsIdentity> GenerateUserIdentityAsync(this IdentityUser user, UserManager<IdentityUser, long> manager)
         {
             //// Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType

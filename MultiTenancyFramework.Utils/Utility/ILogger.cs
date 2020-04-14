@@ -2,6 +2,16 @@
 
 namespace MultiTenancyFramework
 {
+    public enum LoggingLevel
+    {
+        Trace,
+        Debug,
+        Info,
+        Warn,
+        Error,
+        Fatal
+    }
+
     public interface ILogger
     {
         void LogToDb(bool saveToDb);

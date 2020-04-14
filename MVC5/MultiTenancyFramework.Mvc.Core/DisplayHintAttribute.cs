@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace MultiTenancyFramework
+namespace MultiTenancyFramework.Mvc
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="DisplayHintAttribute"/> class, supplying both hint and a display name for the model.

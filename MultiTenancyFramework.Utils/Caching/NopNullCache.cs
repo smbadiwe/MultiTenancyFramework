@@ -1,10 +1,17 @@
 ﻿
+using System;
+
 namespace MultiTenancyFramework.Caching
 {
+    [Obsolete("Use NullCache instead.")]
+    public class NopNullCache : NullCache
+    {
+
+    }
     /// <summary>
-    /// Represents a NopNullCache (caches nothing)
+    /// Represents a NullCache (caches nothing)
     /// </summary>
-    public class NopNullCache : ICacheManager
+    public class NullCache : ICacheManager
     {
         /// <summary>
         /// Gets or sets the value associated with the specified key.
@@ -14,7 +21,7 @@ namespace MultiTenancyFramework.Caching
         /// <returns>The value associated with the specified key.</returns>
         public virtual T Get<T>(string key)
         {
-            return default(T);
+            return default;
         }
 
         /// <summary>

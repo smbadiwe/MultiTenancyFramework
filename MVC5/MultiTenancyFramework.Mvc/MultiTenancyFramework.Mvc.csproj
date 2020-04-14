@@ -95,28 +95,22 @@
     <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.Helpers.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.4\lib\net45\System.Web.Mvc.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.4\lib\net45\System.Web.Razor.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -136,14 +130,9 @@
     <Compile Include="EmailService.cs" />
     <Compile Include="Entities\ActionAccessPrivilege.cs" />
     <Compile Include="Entities\InstitutionAccessValidationResult.cs" />
-    <Compile Include="Extensions\AreaRegistrationContextExtensions.cs" />
     <Compile Include="Extensions\EntityExtensionsMvc.cs" />
-    <Compile Include="Extensions\MvcFormExtension.cs" />
     <Compile Include="Extensions\IIdentityExtensions.cs" />
-    <Compile Include="Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Extensions\IOExtensions.cs" />
-    <Compile Include="Extensions\RouteCollectionExtensions.cs" />
-    <Compile Include="Extensions\UrlHelperExtensions.cs" />
     <Compile Include="Extensions\MvcExtensions.cs" />
     <Compile Include="Identity\ApplicationSignInManager.cs" />
     <Compile Include="Identity\ApplicationUserManager.cs" />
@@ -157,8 +146,6 @@
     <Compile Include="Logic\AuditLogLogic.cs" />
     <Compile Include="Logic\DataCacheMVC.cs" />
     <Compile Include="Logic\ActionAccessPrivilegeLogic.cs" />
-    <Compile Include="MvcUtils\Alert.cs" />
-    <Compile Include="MvcUtils\AllowAccessToParentAttribute.cs" />
     <Compile Include="MvcUtils\AppStartInitializer.cs" />
     <Compile Include="MvcUtils\CoreController.cs" />
     <Compile Include="MvcUtils\EndRequestFilter.cs" />
@@ -168,20 +155,15 @@
     <Compile Include="MvcUtils\GlobalAuthorizeAttribute.cs" />
     <Compile Include="MvcUtils\InstitutionFilterConfig.cs" />
     <Compile Include="MvcUtils\InstitutionRouteConfig.cs" />
-    <Compile Include="MvcUtils\KeepAliveController.cs" />
-    <Compile Include="MvcUtils\KeepAliveFilter.cs" />
-    <Compile Include="MvcUtils\LowerCaseRoute.cs" />
     <Compile Include="MvcUtils\MvcUtility.cs" />
     <Compile Include="MvcUtils\MyModelMetadataProvider.cs" />
     <Compile Include="MvcUtils\MyRazorViewEngine.cs" />
     <Compile Include="MvcUtils\ReLoginModel.cs" />
     <Compile Include="MvcUtils\ScheduledTaskApiController.cs" />
-    <Compile Include="MvcUtils\TrimModelBinder.cs" />
-    <Compile Include="MvcUtils\ValidateAntiForgeryTokenOnPost.cs" />
     <Compile Include="MvcUtils\ValidateUsingPrivilegeForActionAttribute.cs" />
-    <Compile Include="MvcUtils\ViewNotFoundException.cs" />
     <Compile Include="MvcUtils\WebHelper.cs" />
     <Compile Include="MyMvcServiceLocator.cs" />
+    <Compile Include="PerRequestCacheManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SmsService.cs" />
     <Compile Include="WebUtilities.cs" />
@@ -190,6 +172,14 @@
     <ProjectReference Include="..\..\MultiTenancyFramework.Core\MultiTenancyFramework.Core.csproj">
       <Project>{1efeecf2-0332-4b84-8bd3-772f59b0b579}</Project>
       <Name>MultiTenancyFramework.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MultiTenancyFramework.Utils\MultiTenancyFramework.Utils.csproj">
+      <Project>{a6cb600e-8b6f-4d4c-97d1-18c51ded749a}</Project>
+      <Name>MultiTenancyFramework.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MultiTenancyFramework.Mvc.Core\MultiTenancyFramework.Mvc.Core.csproj">
+      <Project>{095fee2e-7f3b-4370-9c8d-4e831d5fb5b5}</Project>
+      <Name>MultiTenancyFramework.Mvc.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

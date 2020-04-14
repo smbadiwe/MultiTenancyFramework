@@ -20,7 +20,7 @@ namespace MultiTenancyFramework.Mvc.Identity
 
             var webContext = context.Get<HttpContextBase>(typeof(HttpContextBase).FullName);
             var cookie = webContext.Request.Cookies[key];
-            return cookie == null ? null : cookie.Value;
+            return cookie?.Value;
         }
 
         public void AppendResponseCookie(IOwinContext context, string key, string value, CookieOptions options)

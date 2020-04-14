@@ -1,4 +1,5 @@
 ﻿using System.Web.Routing;
+using System.Linq;
 
 namespace System.Web.Mvc
 {
@@ -61,35 +62,33 @@ namespace System.Web.Mvc
         /// <returns></returns>
         public static string MyAction(this UrlHelper url, string actionName, string controllerName, string areaName, object routeValues)
         {
-            RouteValueDictionary routes;
-            if (routeValues == null)
+            RouteValueDictionary routes = new RouteValueDictionary(HttpContext.Current.Request.RequestContext.RouteData.Values);
+            if (routeValues != null)
             {
-                routes = new RouteValueDictionary();
+                routes = new RouteValueDictionary(routes.Union(new RouteValueDictionary(routeValues)).ToDictionary(k => k.Key, k => k.Value));
             }
-            else
-            {
-                routes = new RouteValueDictionary(routeValues);
-            }
-            routes["institution"] = HttpContext.Current.Request.RequestContext.RouteData.Values["institution"];
             if (areaName != null) // don't do 'if (!string.IsNullOrWhiteSpace(areaName))'
             {
                 routes["area"] = areaName;
             }
-            if (string.IsNullOrWhiteSpace(actionName))
+            if (!string.IsNullOrWhiteSpace(actionName))
             {
-                actionName = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["action"]);
+                routes["action"] = actionName;
             }
-            routes["action"] = actionName;
             if (!string.IsNullOrWhiteSpace(controllerName))
             {
                 routes["controller"] = controllerName;
             }
 
-            // Some performance optimization here: .RouteUrl instead of .Action
-            if (!string.IsNullOrWhiteSpace(areaName))
-            {
-                return url.RouteUrl(MultiTenancyFramework.Mvc.MvcUtility.GetRouteNameForArea(areaName), routes);
-            }
+            //TODO: Make this hard-coding go away to allow users not need to follow this convention
+            //// Some performance optimization here: .RouteUrl instead of .Action
+            //if (!string.IsNullOrWhiteSpace(areaName))
+            //{
+            //    //return url.RouteUrl(MultiTenancyFramework.Mvc.MvcUtility.GetRouteNameForArea(areaName), routes);
+
+            //    //TODO: Make this hard-coding go away to allow users not need to follow this convention
+            //    return url.RouteUrl($"{areaName}_MultiTenant", routes);
+            //}
             return url.RouteUrl(routes);
         }
 

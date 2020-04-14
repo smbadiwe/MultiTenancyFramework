@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace MultiTenancyFramework.Mvc.MvcUtils
+namespace MultiTenancyFramework.Mvc
 {
     public class TrimModelBinder : IModelBinder
     {
@@ -15,9 +15,9 @@ namespace MultiTenancyFramework.Mvc.MvcUtils
                ? unvalidatedValueProvider.GetValue(bindingContext.ModelName, !shouldPerformRequestValidation)
                : bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
             
-            var attemptedValue = value?.AttemptedValue;
+            var attemptedValue = value?.AttemptedValue?.Trim();
 
-            return string.IsNullOrEmpty(attemptedValue) ? attemptedValue : attemptedValue.Trim();
+            return attemptedValue;
         }
     }
 }

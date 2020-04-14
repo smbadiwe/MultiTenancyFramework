@@ -10,31 +10,23 @@ namespace MultiTenancyFramework
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class CompositeMappingModifyFieldNamesAttribute : Attribute
     {
-        string _fieldNames;
-        bool _useAllPPropertiesWithTHeirDefaultNames;
-        public string FieldNames
-        {
-            get { return _fieldNames; }
-        }
+        public string FieldNames { get; }
 
         /// <summary>
         /// When this is used, all properties of the class it's on will be assumed to be mapped.
         /// So, for our particular use case, just return the property name
         /// </summary>
-        public bool UseAllPPropertiesWithTHeirDefaultNames
-        {
-            get { return _useAllPPropertiesWithTHeirDefaultNames; }
-        }
+        public bool UseAllPropertiesWithTheirDefaultNames { get; }
 
         public Dictionary<string, string> FieldAndPropNames
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(_fieldNames))
+                if (string.IsNullOrWhiteSpace(FieldNames))
                 {
                     return new Dictionary<string, string>();
                 }
-                var split1 = _fieldNames.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                var split1 = FieldNames.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
                 var toReturn = new Dictionary<string, string>();
                 foreach (var item in split1)
                 {
@@ -50,7 +42,7 @@ namespace MultiTenancyFramework
         /// </summary>
         public CompositeMappingModifyFieldNamesAttribute()
         {
-            _useAllPPropertiesWithTHeirDefaultNames = true;
+            UseAllPropertiesWithTheirDefaultNames = true;
         }
 
         /// <summary>
@@ -59,7 +51,7 @@ namespace MultiTenancyFramework
         /// <param name="fieldNames">should be in the form {innerFieldPropName1:innerFieldName1|innerFieldPropName2:innerFieldName2|...}</param>
         public CompositeMappingModifyFieldNamesAttribute(string fieldNames)
         {
-            _fieldNames = fieldNames;
+            FieldNames = fieldNames;
         }
         
     }

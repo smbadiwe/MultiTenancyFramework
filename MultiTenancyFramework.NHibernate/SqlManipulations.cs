@@ -268,7 +268,7 @@ namespace MultiTenancyFramework.NHibernate
                                 for (int j = 0; j < innerProps.Length; j++)
                                 {
                                     var innerProp = innerProps[j];
-                                    if (modifyFieldNameAttr.UseAllPPropertiesWithTHeirDefaultNames)
+                                    if (modifyFieldNameAttr.UseAllPropertiesWithTheirDefaultNames)
                                     {
                                         if (col != innerProp.GetPropertyName()) continue;
                                     }
@@ -303,7 +303,7 @@ namespace MultiTenancyFramework.NHibernate
                             for (int j = 0; j < innerProps.Length; j++)
                             {
                                 var innerProp = innerProps[j];
-                                if (modifyFieldNameAttr.UseAllPPropertiesWithTHeirDefaultNames)
+                                if (modifyFieldNameAttr.UseAllPropertiesWithTheirDefaultNames)
                                 {
                                     if (col != innerProp.GetPropertyName()) continue;
                                 }
@@ -394,7 +394,7 @@ namespace MultiTenancyFramework.NHibernate
                             {
                                 var innerProp = innerProps[k];
                                 string innerPropName = null;
-                                if (modifyFieldNameAttr.UseAllPPropertiesWithTHeirDefaultNames)
+                                if (modifyFieldNameAttr.UseAllPropertiesWithTheirDefaultNames)
                                 {
                                     if (!dt.Columns.ContainsKey(innerProp.GetPropertyName())) continue;
 

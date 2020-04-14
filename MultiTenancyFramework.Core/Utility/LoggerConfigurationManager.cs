@@ -10,16 +10,6 @@ using System.Xml.Linq;
 
 namespace MultiTenancyFramework
 {
-    public enum LoggingLevel
-    {
-        Trace,
-        Debug,
-        Info,
-        Warn,
-        Error,
-        Fatal
-    }
-
     public class LoggerConfigurationManager
     {
 

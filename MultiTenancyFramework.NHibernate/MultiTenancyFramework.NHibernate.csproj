@@ -158,6 +158,10 @@
       <Project>{1efeecf2-0332-4b84-8bd3-772f59b0b579}</Project>
       <Name>MultiTenancyFramework.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MultiTenancyFramework.Utils\MultiTenancyFramework.Utils.csproj">
+      <Project>{a6cb600e-8b6f-4d4c-97d1-18c51ded749a}</Project>
+      <Name>MultiTenancyFramework.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

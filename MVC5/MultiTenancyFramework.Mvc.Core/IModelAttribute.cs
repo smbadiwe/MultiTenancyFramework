@@ -1,5 +1,5 @@
 ﻿
-namespace MultiTenancyFramework
+namespace MultiTenancyFramework.Mvc
 {
     public interface IModelAttribute
     {
