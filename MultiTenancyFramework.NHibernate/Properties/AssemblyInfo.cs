@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MultiTenancyFramework.NHibernate")]
 [assembly: AssemblyDescription("Provides NHibernate-based implementation for the Data Access interfaces in MultiTenancyFramework.Core")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Somadina Mbadiwe")]
+[assembly: AssemblyCompany("Soma Mbadiwe")]
 [assembly: AssemblyProduct("MultiTenancyFramework.NHibernate")]
-[assembly: AssemblyCopyright("Copyright © Somadina Mbadiwe 2016")]
+[assembly: AssemblyCopyright("Copyright © Soma Mbadiwe 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

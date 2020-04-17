@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MultiTenancyFramework.Mvc.NHibernate")]
 [assembly: AssemblyDescription("Provides the infrastructure for building multi-tenant solutions (SaaS) using MVC5 and NHibernate")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Somadina Mbadiwe")]
+[assembly: AssemblyCompany("Soma Mbadiwe")]
 [assembly: AssemblyProduct("MultiTenancyFramework.Mvc.NHibernate")]
-[assembly: AssemblyCopyright("Copyright © Somadina Mbadiwe 2016")]
+[assembly: AssemblyCopyright("Copyright © Soma Mbadiwe 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

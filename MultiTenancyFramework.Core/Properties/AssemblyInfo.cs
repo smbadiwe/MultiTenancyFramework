@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MultiTenancyFramework.Core")]
 [assembly: AssemblyDescription("Provides the core infrastructure for building multi-tenant solutions (SaaS)")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Somadina Mbadiwe")]
+[assembly: AssemblyCompany("Soma Mbadiwe")]
 [assembly: AssemblyProduct("MultiTenancyFramework.Core")]
-[assembly: AssemblyCopyright("Copyright © Somadina Mbadiwe 2016")]
+[assembly: AssemblyCopyright("Copyright © Soma Mbadiwe 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

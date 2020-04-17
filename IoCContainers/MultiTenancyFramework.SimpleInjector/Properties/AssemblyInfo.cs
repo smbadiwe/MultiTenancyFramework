@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MultiTenancyFramework.SimpleInjector")]
 [assembly: AssemblyDescription("SimpleInjector (IoC Container) implementation for MultiTenancyFramework")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Somadina Mbadiwe")]
+[assembly: AssemblyCompany("Soma Mbadiwe")]
 [assembly: AssemblyProduct("MultiTenancyFramework.SimpleInjector")]
-[assembly: AssemblyCopyright("Copyright © Somadina Mbadiwe 2016")]
+[assembly: AssemblyCopyright("Copyright © Soma Mbadiwe 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

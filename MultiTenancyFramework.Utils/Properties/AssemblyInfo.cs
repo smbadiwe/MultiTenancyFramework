@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("MultiTenancyFramework.Utils")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Library of common utilities for typical .NET applications. Contains useful extensions to .NET types, basic caching infrastructure that can be handy, utilities for config file, app domain, async task helper and more. Multi-tenancy not assumed.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Soma Mbadiwe")]
+[assembly: AssemblyCopyright("Copyright © Soma Mbadiwe 2020")]
 [assembly: AssemblyProduct("MultiTenancyFramework.Utils")]
-[assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -17,7 +17,7 @@ namespace MultiTenancyFramework
 
         // This is probably an irrelevant optimisation; but then, I detest unnecessary call stacks.
         // So please, leave these 'HasPrivilege' method overloads the way I wrote them
-        // - Somadina Mbadiwe
+        // - Soma Mbadiwe
 
         public static bool HasPrivilege(this IPrincipal user)
         {
